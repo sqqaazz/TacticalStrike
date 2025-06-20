@@ -1,0 +1,4 @@
+---,UnitType,Name,MaxHP,MaxMP,StartMP,Attack,Armor,Cost,BuildTime,Range,AttackType,ArmorType
+1,1,Sniper,150,200,80,20,5,340,5,1000,Small,Small
+2,2,SwordMan,180,200,50,26,5,130,3,80,Large,Small
+3,3,Mutant,460,200,50,42,9,640,20,130,Normal,Medium
