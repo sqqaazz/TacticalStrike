@@ -124,6 +124,39 @@ void AGridActor::BeginPlay()
 
 	UpdateEnergyTile();
 	DrawEnergyTile();
+
+
+	//FVector2D Start = FVector2D(150, 250);
+	//FVector2D End = FVector2D(850, 650);
+	//float CellSize = 100.f;
+
+	//TArray<FGridEdgeHit> Result = TraceGridEdges(Start, End, CellSize);
+
+	//for (int32 i = 0; i < Result.Num(); i++)
+	//{
+	//	Result[i].Edge = ConvertEdge(Result[i].Edge);
+	//}
+
+
+	//for (const auto& Hit : Result)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Cell (%d, %d), Edge: %s"),
+	//		Hit.Cell.X, Hit.Cell.Y, *Hit.Edge);
+	//}
+
+	//DebugDrawGridTrace(GetWorld(), Result, CellSize);
+
+	//// 3) 전체 선도 그리기
+	//DrawDebugLine(
+	//	GetWorld(),
+	//	FVector(Start, 0),
+	//	FVector(End, 0),
+	//	FColor::Green,
+	//	false,
+	//	60.f,
+	//	0,
+	//	4.f
+	//);
 }
 
 void AGridActor::DrawLine(FVector StartVector, FVector EndVector, float Thiccness, TArray<FVector>& Vertices, TArray<int32>& Triangles)
@@ -224,7 +257,7 @@ bool AGridActor::TileCheck(int32 Row, int32 Column)
 		return false;
 }
 
-void AGridActor::SetGridRange(int32 TileRow, int32 TileColumn, int32 Range)
+void AGridActor::SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner)
 {
 	TQueue<TPair<int32, int32>> Queue;
 	TSet<TPair<int32, int32>> Visited;
@@ -252,7 +285,10 @@ void AGridActor::SetGridRange(int32 TileRow, int32 TileColumn, int32 Range)
 			if (Tile)
 			{
 				GridTileArr[Row][Col]->IsEnergySupplying = true;
-				///UE_LOG(LogTemp, Log, TEXT("DrawRow: %d, DrawCol: %d"), Row, Col);
+				if (ObjectOwner == EObjectOwner::Blue)
+					GridTileArr[Row][Col]->TileOwner = ETileOwner::Blue;		
+				else if (ObjectOwner == EObjectOwner::Red)
+					GridTileArr[Row][Col]->TileOwner = ETileOwner::Red;
 			}
 		}
 
@@ -346,14 +382,20 @@ void AGridActor::UpdateEnergyTile()
 		{
 			AGridTileActor* Tile = GridTileArr[i][j];
 			//ADefaultBuilding* DefaultBuilding = Tile->OnBuildingObject;
-
-			ADefaultBuilding* DefaultBuilding = Cast<ADefaultBuilding>(Tile->ObjectInfo.ObjectActor);
-			if (DefaultBuilding != nullptr)
+			if (Tile != nullptr)
 			{
-				if (Tile->IsBuildingCenter && DefaultBuilding->ObjectInfo.ObjectState == EObjectState::Activated)
+				ADefaultBuilding* DefaultBuilding = Cast<ADefaultBuilding>(Tile->ObjectInfo.ObjectActor);
+				if (DefaultBuilding != nullptr)
 				{
-					//UE_LOG(LogTemp, Log, TEXT("EnergyRange: %d"), DefaultBuilding->EnergyRange);
-					SetGridRange(i, j, DefaultBuilding->EnergyRange);
+					//UE_LOG(LogTemp, Log, TEXT("Owner: %d"), static_cast<int32>(DefaultBuilding->ObjectInfo.ObjectOwner));
+					if (Tile->IsBuildingCenter && DefaultBuilding->ObjectInfo.ObjectState == EObjectState::Activated)
+					{
+						//UE_LOG(LogTemp, Log, TEXT("EnergyRange: %d"), DefaultBuilding->EnergyRange);
+						if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
+							SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+						else if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
+							SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+					}
 				}
 			}
 		}
@@ -362,6 +404,7 @@ void AGridActor::UpdateEnergyTile()
 
 void AGridActor::DrawEnergyTile()
 {
+	//UE_LOG(LogTemp, Log, TEXT("vvvvvvvvvvssfwea"));
 	for (int32 i = 0; i < Rows; i++)
 	{
 		for (int32 j = 0; j < Columns; j++)
@@ -403,10 +446,10 @@ FIntPoint AGridActor::GetStartGridTile(int32 TileRow, int32 TileColumn, int32 Gr
 
 	if (ObjectOwner == EObjectOwner::Red)
 	{
-		StartX = TileRow + FMath::FloorToInt(float(GridSizeX) / 2.0f);
-		StartY = TileColumn + FMath::FloorToInt(float(GridSizeY) / 2.0f);
+		StartX = TileRow - FMath::FloorToInt(float(GridSizeX) / 2.0f);
+		StartY = TileColumn - FMath::FloorToInt(float(GridSizeY) / 2.0f);
 	}
-	else
+	else if (ObjectOwner == EObjectOwner::Blue)
 	{
 		StartX = TileRow - FMath::FloorToInt(float(GridSizeX) / 2.0f);
 		StartY = TileColumn - FMath::FloorToInt(float(GridSizeY) / 2.0f);
@@ -488,7 +531,7 @@ void AGridActor::SetTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding*
 	AGridTileActor* GridTileActor = GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y];
 	
 	FIntPoint StartGridTile = GetStartGridTile(GridTileActor->Rows, GridTileActor->Columns,
-		DefaultBuilding->GridSizeX, DefaultBuilding->GridSizeY, DefaultBuilding->ObjectOwner);
+		DefaultBuilding->GridSizeX, DefaultBuilding->GridSizeY, DefaultBuilding->ObjectInfo.ObjectOwner);
 
 	for (int32 i = 0; i < DefaultBuilding->GridSizeX; i++)
 	{
@@ -498,7 +541,21 @@ void AGridActor::SetTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding*
 			{
 				GridTileArr[StartGridTile.X + i][StartGridTile.Y + j]->ObjectInfo = DefaultBuilding->ObjectInfo;
 				if (ObjectActivated)
-					SetTileDir(FIntPoint(StartGridTile.X + i, StartGridTile.Y + j));
+				{
+					//SetTileDir(FIntPoint(StartGridTile.X + i, StartGridTile.Y + j));
+					 
+					
+					//UE_LOG(LogTemp, Log, TEXT("%d, %d"), StartGridTile.X + i, StartGridTile.Y + j);
+					//UE_LOG(LogTemp, Log, TEXT("[%d, %d], [%d, %d], [%d, %d], [%d, %d]"),
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[0].TileDir,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[0].TileDirState,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[1].TileDir,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[1].TileDirState,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[2].TileDir,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[2].TileDirState,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[3].TileDir,
+						//GridTileArr[StartGridTile.X + i - 1][StartGridTile.Y + j]->TileDirArr[3].TileDirState)
+				}
 				//UE_LOG(LogTemp, Log, TEXT("%d, %d"), StartGridTile.X + i, StartGridTile.Y + j);
 				//GridTileArr[StartGridTile.X + i][StartGridTile.Y + j]->OnObjectCode = DefaultBuilding->BuildingType;
 				//GridTileArr[StartGridTile.X + i][StartGridTile.Y + j]->OnBuildingObject = DefaultBuilding;
@@ -548,7 +605,7 @@ void AGridActor::SetTileDir(FIntPoint BuildingGridPoint)
 void AGridActor::SetTile_Unit(FIntPoint UnitGridPoint, class ADefaultUnit* DefaultUnit)
 {
 	GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ObjectInfo = DefaultUnit->ObjectInfo;
-	UE_LOG(LogTemp, Log, TEXT("UnitType: %s"), *GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ObjectInfo.ObjectActor->GetName());
+	//UE_LOG(LogTemp, Log, TEXT("UnitType: %s"), *GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ObjectInfo.ObjectActor->GetName());
 }
 
 void AGridActor::ViewGridTile()
@@ -570,6 +627,21 @@ void AGridActor::UpdateTurn()
 	//UE_LOG(LogTemp, Log, TEXT("UPdate"));
 	UpdateEnergyTile();
 	DrawEnergyTile();
+}
+
+TArray<class AGridTileActor*> AGridActor::CheckAIEnegyTile()
+{
+	TArray<class AGridTileActor*> AIEnergyTileArr;
+
+	for (int32 i = 0; i < Rows; i++)
+	{
+		for (int32 j = 0; j < Columns; j++)
+		{
+			if (GridTileArr[i][j]->TileOwner == ETileOwner::Red)
+				AIEnergyTileArr.Add(GridTileArr[i][j]);
+		}
+	}
+	return AIEnergyTileArr;
 }
 
 //bool AGridActor::CheckContiguousSubarray(TArray<FVector> Arr1, TArray<FVector> Arr2)
@@ -598,4 +670,168 @@ void AGridActor::UpdateTurn()
 //	//	}
 //	}
 //	return false;
+//}
+
+
+
+//void AGridActor::AddEdgePair(TArray<FGridEdgeHit>& Out, int X, int Y, const FString& Edge)
+//{
+//	Out.Add({ FIntPoint(X, Y), Edge });
+//
+//	if (Edge == "LEFT")
+//		Out.Add({ FIntPoint(X - 1, Y), "RIGHT" });
+//
+//	else if (Edge == "RIGHT")
+//		Out.Add({ FIntPoint(X + 1, Y), "LEFT" });
+//
+//	else if (Edge == "TOP")
+//		Out.Add({ FIntPoint(X, Y + 1), "BOTTOM" });
+//
+//	else if (Edge == "BOTTOM")
+//		Out.Add({ FIntPoint(X, Y - 1), "TOP" });
+//}
+//
+//TArray<FGridEdgeHit> AGridActor::TraceGridEdges(const FVector2D& StartWorld, const FVector2D& EndWorld, float CellSize)
+//{
+//	TArray<FGridEdgeHit> Hits;
+//
+//	FVector2D A = StartWorld / CellSize;
+//	FVector2D B = EndWorld / CellSize;
+//
+//	int X = FMath::FloorToInt(A.X);
+//	int Y = FMath::FloorToInt(A.Y);
+//
+//	int EndX = FMath::FloorToInt(B.X);
+//	int EndY = FMath::FloorToInt(B.Y);
+//
+//	float Dx = B.X - A.X;
+//	float Dy = B.Y - A.Y;
+//
+//	int StepX = (Dx > 0) ? 1 : -1;
+//	int StepY = (Dy > 0) ? 1 : -1;
+//
+//	float InvDx = (Dx != 0) ? 1.f / FMath::Abs(Dx) : TNumericLimits<float>::Max();
+//	float InvDy = (Dy != 0) ? 1.f / FMath::Abs(Dy) : TNumericLimits<float>::Max();
+//
+//	float NextBoundaryX = (StepX > 0 ? (FMath::FloorToFloat(A.X) + 1 - A.X) : (A.X - FMath::FloorToFloat(A.X)));
+//	float NextBoundaryY = (StepY > 0 ? (FMath::FloorToFloat(A.Y) + 1 - A.Y) : (A.Y - FMath::FloorToFloat(A.Y)));
+//
+//	float TMaxX = NextBoundaryX * InvDx;
+//	float TMaxY = NextBoundaryY * InvDy;
+//
+//	float TDeltaX = InvDx;
+//	float TDeltaY = InvDy;
+//
+//	while (X != EndX || Y != EndY)
+//	{
+//		if (TMaxX < TMaxY)
+//		{
+//			FString Edge = (StepX > 0) ? "RIGHT" : "LEFT";
+//			AddEdgePair(Hits, X, Y, Edge);
+//
+//			X += StepX;
+//			TMaxX += TDeltaX;
+//		}
+//		else if (TMaxX > TMaxY)
+//		{
+//			FString Edge = (StepY > 0) ? "TOP" : "BOTTOM";
+//			AddEdgePair(Hits, X, Y, Edge);
+//
+//			Y += StepY;
+//			TMaxY += TDeltaY;
+//		}
+//		else
+//		{
+//			FString Ev = (StepX > 0) ? "RIGHT" : "LEFT";
+//			FString Eh = (StepY > 0) ? "TOP" : "BOTTOM";
+//
+//			AddEdgePair(Hits, X, Y, Ev);
+//			AddEdgePair(Hits, X, Y, Eh);
+//
+//			X += StepX;
+//			Y += StepY;
+//
+//			TMaxX += TDeltaX;
+//			TMaxY += TDeltaY;
+//		}
+//	}
+//
+//	return Hits;
+//}
+//
+//void AGridActor::DebugDrawGridTrace(UWorld* World, const TArray<FGridEdgeHit>& Hits, float CellSize)
+//{
+//	for (const auto& Hit : Hits)
+//	{
+//		DrawGridEdge(
+//			World,
+//			Hit.Cell,
+//			Hit.Edge,
+//			CellSize,
+//			FColor::Red,
+//			6.f,
+//			3.f
+//		);
+//
+//		float X = Hit.Cell.X * CellSize + CellSize * 0.5f;
+//		float Y = Hit.Cell.Y * CellSize + CellSize * 0.5f;
+//
+//		FVector TextPos(X, Y, 50.f);
+//
+//		DrawEdgeText(
+//			World,
+//			TextPos,
+//			FString::Printf(TEXT("(%d, %d) %s"), Hit.Cell.X, Hit.Cell.Y, *Hit.Edge),
+//			60.0f
+//		);
+//	}
+//}
+//
+//void AGridActor::DrawGridEdge(UWorld* World, const FIntPoint& Cell, const FString& Edge, float CellSize, FColor Color, float Thickness, float Duration)
+//{
+//	Thickness = 5.f;
+//	Duration = 60.0f;
+//	Color = FColor::Red;
+//	FVector Start, End;
+//
+//	float X = Cell.X * CellSize;
+//	float Y = Cell.Y * CellSize;
+//
+//	if (Edge == "BOTTOM")
+//	{
+//		Start = FVector(X, Y, 0);
+//		End = FVector(X, Y + CellSize, 0);
+//	}
+//	else if (Edge == "TOP")
+//	{
+//		Start = FVector(X + CellSize, Y, 0);
+//		End = FVector(X + CellSize, Y + CellSize, 0);
+//	}
+//	else if (Edge == "RIGHT")
+//	{
+//		Start = FVector(X, Y + CellSize, 0);
+//		End = FVector(X + CellSize, Y + CellSize, 0);
+//	}
+//	else if (Edge == "LEFT")
+//	{
+//		Start = FVector(X, Y, 0);
+//		End = FVector(X + CellSize, Y, 0);
+//	}
+//
+//	DrawDebugLine(World, Start, End, Color, false, Duration, 0, Thickness);
+//}
+//
+//void AGridActor::DrawEdgeText(UWorld* World, const FVector& Position, const FString& Text, float Duration = 60.0f)
+//{
+//	DrawDebugString(World, Position, Text, nullptr, FColor::White, Duration, false);
+//}
+//
+//FString AGridActor::ConvertEdge(const FString& Edge)
+//{
+//	if (Edge == "RIGHT")  return "TOP";
+//	if (Edge == "LEFT")   return "BOTTOM";
+//	if (Edge == "TOP")    return "RIGHT";
+//	if (Edge == "BOTTOM") return "LEFT";
+//
+//	return Edge;
 //}

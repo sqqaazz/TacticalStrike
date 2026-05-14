@@ -162,8 +162,12 @@ void ADefaultSpawningActor::SpawnUnit(FObjectInfo ObjectInfo, ADefaultBuilding* 
 	{
 		if (SpawningBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
 		{
-			ARifleMan* RifleMan = GetWorld()->SpawnActor<ARifleMan>(SpawnRifleMan_Blue, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
-			RifleMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+			//ARifleMan* RifleMan = GetWorld()->SpawnActor<ARifleMan>(SpawnRifleMan_Blue, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			//RifleMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+
+			ARifleMan* RifleMan = GetWorld()->SpawnActorDeferred<ARifleMan>(SpawnRifleMan_Blue, FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
+			RifleMan->ObjectInfo = ObjectInfo;
+			RifleMan->FinishSpawning(FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 			
 			ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(CommanderController->GetPawn());
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(RifleMan->GetController());
@@ -176,8 +180,10 @@ void ADefaultSpawningActor::SpawnUnit(FObjectInfo ObjectInfo, ADefaultBuilding* 
 		}
 		else if (SpawningBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
 		{
-			ARifleMan* RifleMan = GetWorld()->SpawnActor<ARifleMan>(SpawnRifleMan_Red, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
-			RifleMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+			//ARifleMan* RifleMan = GetWorld()->SpawnActor<ARifleMan>(SpawnRifleMan_Red, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			ARifleMan* RifleMan = GetWorld()->SpawnActorDeferred<ARifleMan>(SpawnRifleMan_Red, FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
+			RifleMan->ObjectInfo = ObjectInfo;
+			RifleMan->FinishSpawning(FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 
 			ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(CommanderAI->GetPawn());
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(RifleMan->GetController());
@@ -197,8 +203,12 @@ void ADefaultSpawningActor::SpawnUnit(FObjectInfo ObjectInfo, ADefaultBuilding* 
 	{
 		if (SpawningBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
 		{
-			ASwordMan* SwordMan = GetWorld()->SpawnActor<ASwordMan>(SpawnSwordMan_Blue, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			//ASwordMan* SwordMan = GetWorld()->SpawnActor<ASwordMan>(SpawnSwordMan_Blue, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			//SwordMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+
+			ASwordMan* SwordMan = GetWorld()->SpawnActorDeferred<ASwordMan>(SpawnSwordMan_Blue, FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 			SwordMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+			SwordMan->FinishSpawning(FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 
 			ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(CommanderController->GetPawn());
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(SwordMan->GetController());
@@ -213,8 +223,12 @@ void ADefaultSpawningActor::SpawnUnit(FObjectInfo ObjectInfo, ADefaultBuilding* 
 		}
 		else if (SpawningBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
 		{
-			ASwordMan* SwordMan = GetWorld()->SpawnActor<ASwordMan>(SpawnSwordMan_Red, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			ASwordMan* SwordMan = GetWorld()->SpawnActorDeferred<ASwordMan>(SpawnSwordMan_Red, FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 			SwordMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+			SwordMan->FinishSpawning(FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
+
+			//ASwordMan* SwordMan = GetWorld()->SpawnActor<ASwordMan>(SpawnSwordMan_Red, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			//SwordMan->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
 
 			ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(CommanderAI->GetPawn());
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(SwordMan->GetController());
@@ -233,8 +247,12 @@ void ADefaultSpawningActor::SpawnUnit(FObjectInfo ObjectInfo, ADefaultBuilding* 
 	{
 		if (SpawningBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
 		{
-			AMutant* Mutant = GetWorld()->SpawnActor<AMutant>(SpawnMutant_Blue, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			AMutant* Mutant = GetWorld()->SpawnActorDeferred<AMutant>(SpawnMutant_Blue, FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 			Mutant->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+			Mutant->FinishSpawning(FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
+
+			//AMutant* Mutant = GetWorld()->SpawnActor<AMutant>(SpawnMutant_Blue, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			//Mutant->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
 
 			ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(CommanderController->GetPawn());
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(Mutant->GetController());
@@ -249,8 +267,12 @@ void ADefaultSpawningActor::SpawnUnit(FObjectInfo ObjectInfo, ADefaultBuilding* 
 		}
 		else if (SpawningBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
 		{
-			AMutant* Mutant = GetWorld()->SpawnActor<AMutant>(SpawnMutant_Red, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			AMutant* Mutant = GetWorld()->SpawnActorDeferred<AMutant>(SpawnMutant_Red, FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
 			Mutant->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
+			Mutant->FinishSpawning(FTransform(FRotator::ZeroRotator, UnitSpawnLocation));
+
+			//AMutant* Mutant = GetWorld()->SpawnActor<AMutant>(SpawnMutant_Red, UnitSpawnLocation, FRotator(0.0f, 0.0f, 0.0f));
+			//Mutant->ObjectInfo.ObjectOwner = ObjectInfo.ObjectOwner;
 
 			ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(CommanderAI->GetPawn());
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(Mutant->GetController());

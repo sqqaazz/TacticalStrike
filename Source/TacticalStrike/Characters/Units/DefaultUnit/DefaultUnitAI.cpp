@@ -8,6 +8,7 @@
 #include "NavigationSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Objects/Tample/DefaultTample.h"
+#include "Objects/Buildings/DefaultBuilding.h"
 #include "Objects/GridActor.h"
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
 
@@ -34,7 +35,7 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADefaultTample::StaticClass(), TampleArr);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ADefaultTample::StaticClass(), TempleArr);
 
 	GridActor = Cast<AGridActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AGridActor::StaticClass()));
 
@@ -43,32 +44,42 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 	{
 		Blackboard->SetValueAsVector(SpawnPosKey, InPawn->GetActorLocation());
 		
-		//ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(GetPawn());
-		//if (DefaultUnit != nullptr)
+		for (auto Temple : TempleArr)
+		{
+			//ADefaultTample* DefaultTemple = Cast<ADefaultTample>(Temple);
+			ADefaultBuilding* DefaultBuilding = Cast<ADefaultBuilding>(Temple);
+			ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(InPawn);
+			if (DefaultBuilding != nullptr)
+			{
+				if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Blue && DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
+				{
+					Blackboard->SetValueAsObject(ADefaultUnitAI::TargetKey, DefaultBuilding);
+				}
+				else if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Red && DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
+				{
+					Blackboard->SetValueAsObject(ADefaultUnitAI::TargetKey, DefaultBuilding);
+				}
+			}
+		}
+
+		//for (int32 i = 0; i < TempleArr.Num(); i++)
 		//{
-		//	ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(DefaultUnit->GetController());
-		//	if (DefaultUnitAI != nullptr)
+		//	ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(GetOwner());
+		//	if (DefaultUnit != nullptr)
 		//	{
 		//		if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Red)
 		//		{
-		//			//DefaultUnitAI->GetBlackboardComponent()->SetValueAsObject()
-		//		}
-		//		if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
-		//		{
 
 		//		}
 		//	}
-		//}
 
-		//for (int32 i = 0; i < TampleArr.Num(); i++)
-		//{
-		//	if (GetPawn()->ActorHasTag("BlueTeamUnit") && TampleArr[i]->ActorHasTag("RedTeamTample"))
+		//	if (GetPawn()->ActorHasTag("BlueTeamUnit") && TempleArr[i]->ActorHasTag("RedTeamTample"))
 		//	{
-		//		Blackboard->SetValueAsObject(ADefaultUnitAI::MovingObjectPosKey, TampleArr[i]);
+		//		Blackboard->SetValueAsObject(ADefaultUnitAI::MovingObjectPosKey, TempleArr[i]);
 		//	}
-		//	else if (GetPawn()->ActorHasTag("RedTeamUnit") && TampleArr[i]->ActorHasTag("BlueTeamTample"))
+		//	else if (GetPawn()->ActorHasTag("RedTeamUnit") && TempleArr[i]->ActorHasTag("BlueTeamTample"))
 		//	{
-		//		Blackboard->SetValueAsObject(ADefaultUnitAI::MovingObjectPosKey, TampleArr[i]);
+		//		Blackboard->SetValueAsObject(ADefaultUnitAI::MovingObjectPosKey, TempleArr[i]);
 		//	}
 		//}
 
@@ -83,6 +94,7 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 		else
 			return;*/
 
+
 		RunBehaviorTree(BTAsset);
 
 		GetBlackboardComponent()->SetValueAsBool(UnitActionTriggerKey, false);
@@ -93,6 +105,23 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 		GetBlackboardComponent()->SetValueAsInt(ActionCountKey, 0);
 	}
 	this->Blackboard = BlackboardComp;
+	//UE_LOG(LogTemp, Log, TEXT("UnitTurnEndstart"));
+	LifeTime = 0;
+	BrainComponent->StopLogic("Unit Turn End");
+}
+
+void ADefaultUnitAI::StartUnitTurn()
+{
+	UE_LOG(LogTemp, Log, TEXT("UnitTurnEnd"));
+	if (LifeTime > 0)
+	{
+		BrainComponent->RestartLogic();
+	}
+}
+
+void ADefaultUnitAI::EndUnitTurn()
+{
+	UnitTurnEndDelegate.Broadcast();
 }
 
 void ADefaultUnitAI::StopAI()

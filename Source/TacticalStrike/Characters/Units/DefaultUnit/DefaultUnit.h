@@ -16,6 +16,8 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnUnitHPChanged, ADefaultUnit*);
 DECLARE_MULTICAST_DELEGATE(FOnDefaultUnitAttackEndDelegate);
 
+DECLARE_MULTICAST_DELEGATE(FMovingStopDelegate);
+
 UCLASS()
 class TACTICALSTRIKE_API ADefaultUnit : public ACharacter
 {
@@ -42,6 +44,14 @@ public:
 	void Attacking();
 	void EndAttack();
 
+	void StartMoving(TArray <FIntPoint>& Path);
+	void Moving(float DeltaTime);
+	void StopMoving();
+	bool bIsMoving;
+	TArray<FIntPoint> CurPath;
+	int32 CurPathIndex;
+	FMovingStopDelegate MovingStopDelegate;
+
 	FString UnitName;
 	int32 Attack;
 	int32 Armor;
@@ -57,7 +67,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void Tick(float DeltaTime) override;
 	float DeadTimer;
 	bool DeathState;
 	FTimerHandle DeadTimerHandle;
@@ -71,6 +81,7 @@ public:
 	void Set_NiagaraComponent_ObjectSelected_Scale();
 
 	void Set_NiagaraComponent_ObjectSelected_Visibility(bool Visibility);
+
 private:
 	UUnitClickableComponent* UnitClickableComponent;
 

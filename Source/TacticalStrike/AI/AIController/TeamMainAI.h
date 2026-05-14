@@ -35,6 +35,7 @@ public:
 	static const FName OwnerCommanderAIKey;
 	static const FName TeamMainAI_bTriggerActivatedKey;
 	static const FName TeamMainAI_bSightTriggerActivatedKey;
+	static const FName TeamMainAI_TeamUnitIndexKey;
 	//static const FName UnitActionTriggerKey;
 
 	TArray<TArray<class AGridTileActor*>> GridTileArr;
@@ -62,5 +63,6 @@ protected:
 private:
 	bool bBehaviorTreeStarted;
 
+	UFUNCTION()
 	void StartAction();
 };

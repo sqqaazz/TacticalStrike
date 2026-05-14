@@ -180,6 +180,17 @@ void USpawnBuildingComponent::SpawnBuildings_Grid()
 	GridActor->ClearPreviousGrid();
 }
 
+void USpawnBuildingComponent::AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode)
+{
+	float TileSize = GridActor->TileSize;
+	CurrentBuildingCode = BuildingCode;
+	FVector BuildingLocation = FVector((TileGrid.X * TileSize) + (TileSize / 2), (TileGrid.Y * TileSize) + (TileSize / 2), 15.0f);
+	SpawnBuildingCode(CurrentBuildingCode, EObjectOwner::Red, BuildingLocation);
+	GridActor->SetTile_Building(TileGrid, DefaultBuilding, false);
+	//UE_LOG(LogTemp, Log, TEXT("[%d, %d]"), TileGrid.X, TileGrid.Y);
+	DefaultBuilding->SetEnableMat();
+}
+
 //void USpawnBuildingComponent::SpawnBuildings()
 //{
 //	if (!IsValid(Hit.GetActor()))

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/GridTileActor.h"
+#include "GameMode/TacticalStrikeGameInstance.h"
 #include "GridActor.generated.h"
 
 
@@ -16,6 +17,7 @@ public:
 	FIntPoint PreviousGrid;
 	ETileColor PreviousColor;
 };
+
 
 UCLASS()
 class TACTICALSTRIKE_API AGridActor : public AActor
@@ -75,6 +77,43 @@ public:
 	void SetUnitSpawnGrid(FIntPoint StartGrid);
 
 	TArray<TArray<class AGridTileActor*>> GridTileArr;
+
+	TArray<class AGridTileActor*> CheckAIEnegyTile();
+
+	/*void AddEdgePair(TArray<FGridEdgeHit>& Out, int X, int Y, const FString& Edge);
+
+	TArray<FGridEdgeHit> TraceGridEdges(
+		const FVector2D& StartWorld,
+		const FVector2D& EndWorld,
+		float CellSize
+	);
+
+	void DebugDrawGridTrace(
+		UWorld* World,
+		const TArray<FGridEdgeHit>& Hits,
+		float CellSize
+	);
+
+	void DrawGridEdge(
+		UWorld* World,
+		const FIntPoint& Cell,
+		const FString& Edge,
+		float CellSize,
+		FColor Color,
+		float Thickness,
+		float Duration
+	);
+
+	void DrawEdgeText(
+		UWorld* World,
+		const FVector& Position,
+		const FString& Text,
+		float Duration
+	);
+
+
+	FString ConvertEdge(const FString& Edge);*/
+
 private:
 
 	void DrawLine(FVector StartVector, FVector EndVector, float Thiccness, TArray<FVector>& Vertices, TArray<int32>& Triangles);
@@ -133,7 +172,7 @@ private:
 
 	TSet<class AGridTileActor*> EnergyTileArr;
 
-	void SetGridRange(int32 TileRow, int32 TileColumn, int32 Range);
+	void SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner);
 
 	void SetDrawSquares(TArray<AGridTileActor*> SquareGridTileArr);
 

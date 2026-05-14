@@ -63,6 +63,66 @@ enum class EObjectOwner : uint8
 	Blue UMETA(DisPlayName = "Blue")
 };
 
+UENUM(BlueprintType)
+enum class ETileOwner : uint8
+{
+	None UMETA(DisPlayName = "None"),
+	Red UMETA(DisPlayName = "Red"),
+	Blue UMETA(DisPlayName = "Blue")
+};
+
+UENUM(BlueprintType)
+enum class ETileColor : uint8
+{
+	Transparent UMETA(DisPlayName = "Transparent"),
+	Red UMETA(DisPlayName = "Red"),
+	Green UMETA(DisPlayName = "Blue"),
+	Yellow UMETA(DisPlayName = "Yellow")
+};
+
+UENUM(BlueprintType)
+enum class ETileDir : uint8
+{
+	None UMETA(DisPlayName = "None"),
+	Left UMETA(DisPlayName = "Left"),
+	Top UMETA(DisPlayName = "Top"),
+	Right UMETA(DisPlayName = "Right"),
+	Bottom UMETA(DisPlayName = "Bottom")
+};
+
+UENUM(BlueprintType)
+enum class ETileDirState : uint8
+{
+	None UMETA(DisPlayName = "None"),
+	Blank UMETA(DisPlayName = "Blank"),
+	Hiding UMETA(DisPlayName = "Hiding"),
+	Block UMETA(DisPlayName = "Block")
+};
+
+USTRUCT(BlueprintType)
+struct FTileDirStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETileDir TileDir;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETileDirState TileDirState;
+};
+
+USTRUCT(BlueprintType)
+struct FGridEdgeHit
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint Cell;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ETileDir Edge;
+};
+
 USTRUCT(BlueprintType)
 struct FObjectInfo
 {

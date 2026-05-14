@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "DataTables/BuildingDataTables.h"
+#include "Objects/GridActor.h"
+#include "Components/GridTileActor.h"
 #include "BTTask_SpawnBuilding.generated.h"
 
 
@@ -21,10 +23,19 @@ protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 
+public:
+	AGridActor* GridActor;
+
+
 private:
 	//class UAIBuildingInfoClass* AIBuildingInfoClass;
 	class UTacticalStrikeGameInstance* GameInstance;
-	FBuildingTableRow* BuildingDataTable;
+	//FBuildingTableRow* BuildingDataTable;
+	struct FBuildingTableRow* BuildingDataInfo;
+	class ACommanderAI* CommanderAI;
 
-	void SpawnBuilding();
+	TArray<class AGridTileActor*> AIEnergyTileArr;
+	void SpawnGridBuilding(int32 BuildingKey);
+
+	//void SpawnBuilding();
 };

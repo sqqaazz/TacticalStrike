@@ -39,6 +39,9 @@ ABlueTeamTample::ABlueTeamTample()
 	//SwordManStr = "Blueprint'/Game/Blueprints/Units/BP_SwordMan_Blue.BP_SwordMan_Blue_C'";
 	//MutantStr = "Blueprint'/Game/Blueprints/Units/BP_Mutant_Blue.BP_Mutant_Blue_C'";
 	//InitUnitClass(RifleManStr, SwordManStr, MutantStr);
+
+	ObjectInfo.ObjectOwner = EObjectOwner::Blue;
+	ObjectOwner = EObjectOwner::Blue;
 }
 
 void ABlueTeamTample::BeginPlay()

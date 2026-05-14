@@ -88,14 +88,13 @@ void ACommanderUnit::BeginPlay()
 		ACommanderAI* NewCommanderAI = GetWorld()->SpawnActor<ACommanderAI>(CommanderAI, GetActorLocation(), GetActorRotation());
 		if (NewCommanderAI != nullptr)
 		{
-			TeamMainAIInstance->GetBlackboardComponent()->SetValueAsObject(ATeamMainAI::OwnerCommanderAIKey, TeamMainAIInstance);
+			TeamMainAIInstance->GetBlackboardComponent()->SetValueAsObject(ATeamMainAI::OwnerCommanderAIKey, NewCommanderAI);
 			TeamMainAIInstance->ObjectInfo.ObjectOwner = EObjectOwner::Red;
 
 			NewCommanderAI->Possess(this);
 			//UE_LOG(LogTemp, Log, TEXT("AICommander"));
 		}
 	}
-	//UE_LOG(LogTemp, Log, TEXT("AICommander22222"));
 }
 // Called to bind functionality to input
 void ACommanderUnit::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

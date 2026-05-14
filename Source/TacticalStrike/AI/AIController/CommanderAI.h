@@ -67,6 +67,9 @@ public:
 	UFUNCTION()
 	void StartAITurn();
 
+	UPROPERTY()
+	class USpawnBuildingComponent* SpawnBuildingComponent;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -78,5 +81,6 @@ protected:
 private:
 	bool bBehaviorTreeStarted;
 
+	UPROPERTY()
 	class ATacticalStrikeGameStateBase* GameStateBase;
 };

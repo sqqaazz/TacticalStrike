@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "CommandSlotsWidget.h"
 #include "DataTables/UnitDataTables.h"
+#include "GameMode/TacticalStrikeGameInstance.h"
 #include "BuildWaitingWidget.generated.h"
 
 /**

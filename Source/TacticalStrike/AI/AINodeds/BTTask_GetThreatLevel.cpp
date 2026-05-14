@@ -6,16 +6,17 @@
 #include "Characters/Units/DefaultUnit/DefaultUnitAI.h"
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
 #include "AI/AIController/TeamMainAI.h"
-#include "GameMode/TacticalStrikeGameInstance.h"
+//#include "GameMode/TacticalStrikeGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "DataTables/UnitDataTables.h"
+#include "Components/GridTileActor.h"
 
 UBTTask_GetThreatLevel::UBTTask_GetThreatLevel()
 {
 	NodeName = TEXT("GetThreatLevel");
 }
 
-EBTNodeResult::Type UBTTask_GetThreatLevel ::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_GetThreatLevel::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 
 	ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(OwnerComp.GetAIOwner());
@@ -59,7 +60,7 @@ EBTNodeResult::Type UBTTask_GetThreatLevel ::ExecuteTask(UBehaviorTreeComponent&
 
 			if (bResult)
 			{
-				
+
 			}
 		}
 		else if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Red)
@@ -74,7 +75,7 @@ EBTNodeResult::Type UBTTask_GetThreatLevel ::ExecuteTask(UBehaviorTreeComponent&
 			);
 			if (bResult)
 			{
-				
+
 
 			}
 		}

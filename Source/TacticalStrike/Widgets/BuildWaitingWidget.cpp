@@ -4,7 +4,7 @@
 #include "BuildWaitingWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "GameMode/TacticalStrikeGameInstance.h"
+//#include "GameMode/TacticalStrikeGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void UBuildWaitingWidget::NativeConstruct()

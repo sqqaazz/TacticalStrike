@@ -9,6 +9,7 @@
 #include "Objects/Buildings/DefaultBuilding.h"
 #include "Components/AIBuildingInfoClass.h"
 #include "GameMode/TacticalStrikeGameStateBase.h"
+#include "Components/SpawnBuildingComponent.h"
 
 const FName ACommanderAI::ResourceKey(TEXT("ResourceKey"));
 
@@ -47,6 +48,7 @@ ACommanderAI::ACommanderAI()
 		BTAsset = BTObject.Object;
 	}
 
+	SpawnBuildingComponent = CreateDefaultSubobject<USpawnBuildingComponent>(TEXT("AI_SpawnBuildingComponent"));
 	bBehaviorTreeStarted = false;
 }
 

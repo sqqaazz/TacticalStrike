@@ -39,6 +39,8 @@ public:
 
 	UFUNCTION()
 	void SpawnBuildings_Grid();
+	UFUNCTION()
+	void AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode);
 
 	UFUNCTION()
 	void CheckEnableBuilding();

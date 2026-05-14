@@ -7,9 +7,9 @@
 #include "Components/GridTileActor.h"
 #include "DefaultUnitAI.generated.h"
 
-/**
- * 
- */
+
+DECLARE_MULTICAST_DELEGATE(FUnitTurnEndDelegate);
+
 UCLASS()
 class TACTICALSTRIKE_API ADefaultUnitAI : public AAIController
 {
@@ -43,6 +43,14 @@ public:
 
 	void GetGridField();
 
+	int32 LifeTime;
+	void StartUnitTurn();
+	UFUNCTION()
+	void EndUnitTurn();
+
+
+	FUnitTurnEndDelegate UnitTurnEndDelegate;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -53,5 +61,6 @@ protected:
 
 private:
 	UPROPERTY()
-	TArray<AActor*> TampleArr;
+	TArray<AActor*> TempleArr;
+
 };

@@ -39,6 +39,9 @@ ARedTeamTample::ARedTeamTample()
 	//SwordManStr = "Blueprint'/Game/Blueprints/Units/BP_SwordMan_Red.BP_SwordMan_Red_C'";
 	//MutantStr = "Blueprint'/Game/Blueprints/Units/BP_Mutant_Red.BP_Mutant_Red_C'";
 	//InitUnitClass(RifleManStr, SwordManStr, MutantStr);
+
+	ObjectInfo.ObjectOwner = EObjectOwner::Red;
+	ObjectOwner = EObjectOwner::Red;
 }
 
 // Called when the game starts or when spawned

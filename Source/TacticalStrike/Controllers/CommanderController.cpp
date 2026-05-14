@@ -32,7 +32,7 @@ ACommanderController::ACommanderController()
 	//	Spawn_Barracks = Spawning_Barracks.Class;
 	//}
 
-	SpawnBuildingComponent = CreateDefaultSubobject<USpawnBuildingComponent>(TEXT("SpawnBuildingComponent"));
+	SpawnBuildingComponent = CreateDefaultSubobject<USpawnBuildingComponent>(TEXT("Player_SpawnBuildingComponent"));
 
 	//마우스 커서 보이게
 	SetShowMouseCursor(true);
