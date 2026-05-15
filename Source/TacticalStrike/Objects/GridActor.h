@@ -67,6 +67,8 @@ public:
 	void SetTile_Building(FIntPoint BuildingGridPoint, class ADefaultBuilding* DefaultBuilding, bool ObjectActivated);
 	void SetTile_Unit(FIntPoint UnitGridPoint, class ADefaultUnit* DefaultUnit);
 
+	void RemoveTile_Unit(FIntPoint UnitGridPoint);
+
 	void SetTileDir(FIntPoint BuildingGridPoint);
 
 	void ViewGridTile();

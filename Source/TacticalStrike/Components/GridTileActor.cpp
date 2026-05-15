@@ -53,6 +53,15 @@ void AGridTileActor::BeginPlay()
 	//DrawSquareTile();
 }
 
+void AGridTileActor::ClearObjectInfo()
+{
+	ObjectInfo.ObjectActor = nullptr;
+	ObjectInfo.CurrentBuildTime = 0;
+	ObjectInfo.CurrentHP = 0;
+	ObjectInfo.ObjectState = EObjectState::None;
+	ObjectInfo.ObjectType = 0;
+}
+
 //void AGridTileActor::PreInitializeComponents()
 //{
 //	Super::PreInitializeComponents();

@@ -86,6 +86,8 @@ public:
 
 	TArray<FTileDirStruct> TileDirArr;
 
+	void ClearObjectInfo();
+
 	//void DrawSquare(FVector StartVector, float Size, TArray<FVector>& Vertices, TArray<int32>& Triangles);
 	//void DrawSquareTile();
 

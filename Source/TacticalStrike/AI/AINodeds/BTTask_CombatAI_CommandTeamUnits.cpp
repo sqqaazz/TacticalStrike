@@ -33,7 +33,7 @@ EBTNodeResult::Type UBTTask_CombatAI_CommandTeamUnits::ExecuteTask(UBehaviorTree
 			if (DefaultUnitAI != nullptr)
 			{
 				DefaultUnitAI->UnitTurnEndDelegate.AddUObject(this, &UBTTask_CombatAI_CommandTeamUnits::FinishUnithaviorTask);
-
+				DefaultUnitAI->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, 2);
 				DefaultUnitAI->StartUnitTurn();
 				DefaultUnitAI->LifeTime++;
 				return EBTNodeResult::InProgress;

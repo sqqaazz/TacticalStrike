@@ -42,12 +42,13 @@ EBTNodeResult::Type UBTTask_DefaultUnit_MoveToTarget::ExecuteTask(UBehaviorTreeC
 	int32 CurTileColumn = int32(FMath::Floor(CurrentLocation.Y / 100));
 
 	TArray<FIntPoint> TargetPath = FindPath(FIntPoint(CurTileRow, CurTileColumn), FIntPoint(GoalTileRow, GoalTileColumn));
-	UE_LOG(LogTemp, Log, TEXT("Location: [%d, %d]"), GoalTileRow, GoalTileColumn);
+	//UE_LOG(LogTemp, Log, TEXT("Location: [%d, %d]"), GoalTileRow, GoalTileColumn);
 
-	for (int32 i = 0; i < TargetPath.Num(); i++)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Path: [%d, %d]"), TargetPath[i].X, TargetPath[i].Y);
-	}
+	//for (int32 i = 0; i < TargetPath.Num(); i++)
+	//{
+	//	UE_LOG(LogTemp, Log, TEXT("Path: [%d, %d]"), TargetPath[i].X, TargetPath[i].Y);
+	//}
+	//OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::MainTeamAIKey);
 	StartMove(TargetPath);
 
 	return EBTNodeResult::InProgress;
@@ -168,10 +169,15 @@ TArray<FIntPoint> UBTTask_DefaultUnit_MoveToTarget::FindPath(FIntPoint StartGrid
 
 void UBTTask_DefaultUnit_MoveToTarget::StartMove(TArray<FIntPoint> Path)
 {
+	GridActor->RemoveTile_Unit(Path[0]);
+	GridActor->SetTile_Unit(Path[Path.Num() - 1], DefaultUnit);
 	DefaultUnit->StartMoving(Path);
 }
 
 void UBTTask_DefaultUnit_MoveToTarget::EndMove()
 {
+	int32 ActionCountKey = CurOwnerComp->GetBlackboardComponent()->GetValueAsInt(ADefaultUnitAI::ActionCountKey);
+	ActionCountKey--;
+	CurOwnerComp->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, ActionCountKey);
 	FinishLatentTask(*CurOwnerComp, EBTNodeResult::Succeeded);
 }

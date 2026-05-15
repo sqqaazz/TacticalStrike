@@ -608,6 +608,11 @@ void AGridActor::SetTile_Unit(FIntPoint UnitGridPoint, class ADefaultUnit* Defau
 	//UE_LOG(LogTemp, Log, TEXT("UnitType: %s"), *GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ObjectInfo.ObjectActor->GetName());
 }
 
+void AGridActor::RemoveTile_Unit(FIntPoint UnitGridPoint)
+{
+	GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ClearObjectInfo();
+}
+
 void AGridActor::ViewGridTile()
 {
 	if (ProceduralMesh_Lines->IsVisible())

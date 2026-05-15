@@ -133,12 +133,12 @@ void ADefaultUnit::StartMoving(TArray <FIntPoint>& Path)
 
 void ADefaultUnit::Moving(float DeltaTime)
 {
-	if (CurPathIndex >= CurPath.Num())
+	if (CurPathIndex >= CurPath.Num() || CurPathIndex > Speed)
 	{
 		StopMoving();
 		return;
 	}
-	FVector TargetLocation = FVector(CurPath[CurPathIndex].X, CurPath[CurPathIndex].Y, GetActorLocation().Z);
+	FVector TargetLocation = FVector(CurPath[CurPathIndex].X * 100.0f + 50.0f, CurPath[CurPathIndex].Y * 100.0f + 50.0f, GetActorLocation().Z);
 	FRotator TargetRotation = (TargetLocation - GetActorLocation()).Rotation();
 
 	FVector NewLocation = FMath::VInterpConstantTo(GetActorLocation(), TargetLocation, DeltaTime, 300.0f);
