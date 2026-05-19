@@ -28,6 +28,8 @@ public:
 
 	static const FName MainTeamAIKey;
 	static const FName UnitActionTriggerKey;
+
+	//유닛의 시야에 있는 적을 찾는 액션의 트리거 키
 	static const FName DefaultUnitAI_bSightTriggerActivatedKey;
 
 	static const FName ActionCountKey;

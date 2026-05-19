@@ -16,7 +16,8 @@ const FName ATeamMainAI::TeamMainAI_bTriggerActivatedKey(TEXT("TeamMainAI_bTrigg
 const FName ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey(TEXT("TeamMainAI_bSightTriggerActivatedKey"));
 
 //소유한 유닛 배열의 현재 인덱스를 관리하는 키
-const FName ATeamMainAI::TeamMainAI_TeamUnitIndexKey(TEXT("TeamMainAI_TeamUnitIndexKey"));;
+const FName ATeamMainAI::TeamMainAI_TeamUnitIndexKey(TEXT("TeamMainAI_TeamUnitIndexKey"));
+
 ATeamMainAI::ATeamMainAI()
 {
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBObject(TEXT("/Script/AIModule.BlackboardData'/Game/Blueprints/AI/BB_TeamMainAI.BB_TeamMainAI'"));
@@ -50,7 +51,7 @@ void ATeamMainAI::InitializeController()
 void ATeamMainAI::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	ATacticalStrikeGameStateBase* GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
+	//ATacticalStrikeGameStateBase* GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
 }
 
 void ATeamMainAI::StartAction()
@@ -58,20 +59,22 @@ void ATeamMainAI::StartAction()
 	if (!bBehaviorTreeStarted)
 	{
 		UBlackboardComponent* BlackboardComp = Blackboard.Get();
-
+		//this->Blackboard = BlackboardComp;
 		if (UseBlackboard(BBAsset, BlackboardComp))
 			RunBehaviorTree(BTAsset);
-		this->Blackboard = BlackboardComp;
+
 		GetBlackboardComponent()->SetValueAsBool(ATeamMainAI::TeamMainAI_bTriggerActivatedKey, true);
 		GetBlackboardComponent()->SetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey, true);
 
 		GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, INDEX_NONE);
 		//int32 TempUnitKey = GetBlackboardComponent()->GetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey);
 		bBehaviorTreeStarted = true;
+
+		BrainComponent->StopLogic("CombatAI Turn End");
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Log, TEXT("Clear###fffffffff#####"));
+		GetBlackboardComponent()->SetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey, true);
 		BrainComponent->RestartLogic();
 	}
 }

@@ -21,6 +21,7 @@ EBTNodeResult::Type UBTTask_CombatAI_CommandTeamUnits::ExecuteTask(UBehaviorTree
 	{
 		TArray<ADefaultUnit*> TeamUnitArr = TeamMainAI->TeamUnitArr;
 		int32 CurrentUnitIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey);
+		bool bSightTriggerActivatedKey = OwnerComp.GetBlackboardComponent()->GetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey);
 		if (CurrentUnitIndex == INDEX_NONE)
 		{
 			return EBTNodeResult::Succeeded;
@@ -32,6 +33,11 @@ EBTNodeResult::Type UBTTask_CombatAI_CommandTeamUnits::ExecuteTask(UBehaviorTree
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(DefaultUnit->GetController());
 			if (DefaultUnitAI != nullptr)
 			{
+				if (bSightTriggerActivatedKey)
+					DefaultUnitAI->GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::DefaultUnitAI_bSightTriggerActivatedKey, true);
+				else
+					DefaultUnitAI->GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::DefaultUnitAI_bSightTriggerActivatedKey, false);
+
 				DefaultUnitAI->UnitTurnEndDelegate.AddUObject(this, &UBTTask_CombatAI_CommandTeamUnits::FinishUnithaviorTask);
 				DefaultUnitAI->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, 2);
 				DefaultUnitAI->StartUnitTurn();

@@ -8,6 +8,7 @@
 #include "GameMode/TacticalStrikeGameInstance.h"
 #include "GridActor.generated.h"
 
+//DECLARE_MULTICAST_DELEGATE(FGridStateUpdateCompleteDelegate);
 
 USTRUCT(Atomic, BlueprintType)
 struct FPreviousTileStruct
@@ -81,6 +82,8 @@ public:
 	TArray<TArray<class AGridTileActor*>> GridTileArr;
 
 	TArray<class AGridTileActor*> CheckAIEnegyTile();
+
+	//FGridStateUpdateCompleteDelegate GridStateUpdateCompleteDelegate;
 
 	/*void AddEdgePair(TArray<FGridEdgeHit>& Out, int X, int Y, const FString& Edge);
 
@@ -175,6 +178,8 @@ private:
 	TSet<class AGridTileActor*> EnergyTileArr;
 
 	void SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner);
+
+	void SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner);
 
 	void SetDrawSquares(TArray<AGridTileActor*> SquareGridTileArr);
 

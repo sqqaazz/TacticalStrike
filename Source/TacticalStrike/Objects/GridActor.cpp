@@ -70,6 +70,7 @@ void AGridActor::PreInitializeComponents()
 			GridTileActor->Columns = j;
 			GridTileActor->TileSize = TileSize;
 			GridTileActor->TileColor = ETileColor::Transparent;
+			GridTileActor->ClearTile();
 			GridTileArr[i].Add(GridTileActor);
 
 			DrawSquare(FVector(i * TileSize, j * TileSize, 10.0f), TileSize, SquareVertices, SquareTriangles, SquareVertexColors);
@@ -313,6 +314,29 @@ void AGridActor::SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObj
 	}
 }
 
+void AGridActor::SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner)
+{
+	for (int32 dx = -Range; dx <= Range; dx++)
+	{
+		int32 Maxdy = Range - FMath::Abs(dx);
+
+		for (int32 dy = -Maxdy; dy <= Maxdy; dy++)
+		{
+			if (TileCheck(TileRow + dx, TileColumn + dy))
+			{
+				AGridTileActor* Tile = GridTileArr[TileRow + dx][TileColumn + dy];
+				if (Tile)
+				{
+					GridTileArr[TileRow + dx][TileColumn + dy]->IsEnergySupplying = true;
+					if (ObjectOwner == EObjectOwner::Blue)
+						GridTileArr[TileRow + dx][TileColumn + dy]->TileOwner = ETileOwner::Blue;
+					else if (ObjectOwner == EObjectOwner::Red)
+						GridTileArr[TileRow + dx][TileColumn + dy]->TileOwner = ETileOwner::Red;
+				}
+			}
+		}
+	}
+}
 
 FIntPoint AGridActor::GetGridTile(FVector ObjectLocation)
 {
@@ -384,17 +408,22 @@ void AGridActor::UpdateEnergyTile()
 			//ADefaultBuilding* DefaultBuilding = Tile->OnBuildingObject;
 			if (Tile != nullptr)
 			{
-				ADefaultBuilding* DefaultBuilding = Cast<ADefaultBuilding>(Tile->ObjectInfo.ObjectActor);
-				if (DefaultBuilding != nullptr)
+				if (Tile->ObjectInfo.ObjectActor != nullptr)
 				{
-					//UE_LOG(LogTemp, Log, TEXT("Owner: %d"), static_cast<int32>(DefaultBuilding->ObjectInfo.ObjectOwner));
+					ADefaultBuilding* DefaultBuilding = Cast<ADefaultBuilding>(Tile->ObjectInfo.ObjectActor);
+
 					if (Tile->IsBuildingCenter && DefaultBuilding->ObjectInfo.ObjectState == EObjectState::Activated)
 					{
-						//UE_LOG(LogTemp, Log, TEXT("EnergyRange: %d"), DefaultBuilding->EnergyRange);
 						if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
-							SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+						{
+							//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+							SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+						}
 						else if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
-							SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+						{
+							//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+							SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+						}
 					}
 				}
 			}
@@ -632,6 +661,7 @@ void AGridActor::UpdateTurn()
 	//UE_LOG(LogTemp, Log, TEXT("UPdate"));
 	UpdateEnergyTile();
 	DrawEnergyTile();
+	//GridStateUpdateCompleteDelegate.Broadcast();
 }
 
 TArray<class AGridTileActor*> AGridActor::CheckAIEnegyTile()

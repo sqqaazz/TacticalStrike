@@ -86,7 +86,11 @@ public:
 
 	TArray<FTileDirStruct> TileDirArr;
 
+	//타일 위의 오브젝트 정보 초기화
 	void ClearObjectInfo();
+
+	//타일 자체 초기화
+	void ClearTile();
 
 	//void DrawSquare(FVector StartVector, float Size, TArray<FVector>& Vertices, TArray<int32>& Triangles);
 	//void DrawSquareTile();

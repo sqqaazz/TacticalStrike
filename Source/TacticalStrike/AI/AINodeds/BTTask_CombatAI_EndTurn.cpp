@@ -14,7 +14,7 @@ EBTNodeResult::Type UBTTask_CombatAI_EndTurn::ExecuteTask(UBehaviorTreeComponent
 {
 	ATeamMainAI* TeamMainAI = Cast<ATeamMainAI>(OwnerComp.GetAIOwner());
 	int32 TeamUnitIndexKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey);
-	
+	bool bSightTriggerActivatedKey = OwnerComp.GetBlackboardComponent()->GetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey);
 	if (TeamMainAI != nullptr)
 	{
 		TArray<ADefaultUnit*> TeamUnitArr = TeamMainAI->TeamUnitArr;
@@ -24,19 +24,38 @@ EBTNodeResult::Type UBTTask_CombatAI_EndTurn::ExecuteTask(UBehaviorTreeComponent
 			return EBTNodeResult::Succeeded;
 		}
 
-		if (TeamUnitArr.Num() - 1 == TeamUnitIndexKey)
+		if (bSightTriggerActivatedKey)
 		{
-			TeamUnitIndexKey = 0;
-			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
-
-			TeamMainAI->BrainComponent->StopLogic("CombatAI Turn End");
-			return EBTNodeResult::Succeeded;
+			if (TeamUnitArr.Num() - 1 == TeamUnitIndexKey)
+			{
+				TeamUnitIndexKey = 0;
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
+				OwnerComp.GetBlackboardComponent()->SetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey, false);
+				return EBTNodeResult::Succeeded;
+			}
+			else
+			{
+				TeamUnitIndexKey++;
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
+				return EBTNodeResult::Succeeded;
+			}
 		}
 		else
 		{
-			TeamUnitIndexKey++;
-			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
-			return EBTNodeResult::Succeeded;
+			if (TeamUnitArr.Num() - 1 == TeamUnitIndexKey)
+			{
+				TeamUnitIndexKey = 0;
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
+
+				TeamMainAI->BrainComponent->StopLogic("CombatAI Turn End");
+				return EBTNodeResult::Succeeded;
+			}
+			else
+			{
+				TeamUnitIndexKey++;
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
+				return EBTNodeResult::Succeeded;
+			}
 		}
 	}
 
