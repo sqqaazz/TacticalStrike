@@ -29,7 +29,7 @@ private:
 	class UTacticalStrikeGameInstance* GameInstance;
 	FUnitTableRow* UnitDataInfo;
 
-	TArray<class AGridTileActor*> AIEnergyTileArr;
+	TArray<class UGridTileActor*> AIEnergyTileArr;
 
 	void SpawnUnit(uint8 UnitKey);
 };

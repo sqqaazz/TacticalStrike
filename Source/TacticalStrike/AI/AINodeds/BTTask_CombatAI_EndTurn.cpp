@@ -46,8 +46,8 @@ EBTNodeResult::Type UBTTask_CombatAI_EndTurn::ExecuteTask(UBehaviorTreeComponent
 			{
 				TeamUnitIndexKey = 0;
 				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
+				TeamMainAI->EndAction();
 
-				TeamMainAI->BrainComponent->StopLogic("CombatAI Turn End");
 				return EBTNodeResult::Succeeded;
 			}
 			else

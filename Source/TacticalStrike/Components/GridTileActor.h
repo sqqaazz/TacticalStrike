@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+//#include "GameFramework/Actor.h"
+#include "UObject/Object.h"
 #include "GameMode/TacticalStrikeGameInstance.h"
 #include "GridTileActor.generated.h"
 
@@ -55,17 +56,17 @@
 //};
 
 UCLASS()
-class TACTICALSTRIKE_API AGridTileActor : public AActor
+class TACTICALSTRIKE_API UGridTileActor : public /*AActor*/ UObject
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AGridTileActor();
+	UGridTileActor();
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	//virtual void BeginPlay() override;
 
 	//virtual void PreInitializeComponents() override;
 public:	

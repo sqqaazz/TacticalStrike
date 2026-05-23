@@ -62,17 +62,20 @@ void AGridActor::PreInitializeComponents()
 
 	for (int32 i = 0; i < Rows; i++)
 	{
+		GridTileArr[i].GridTileColumn.SetNum(Columns);
+		FGridTileRow GridTileRow;
+
 		for (int32 j = 0; j < Columns; j++)
 		{
-			AGridTileActor* GridTileActor = NewObject<AGridTileActor>();
+			UGridTileActor* GridTileActor = NewObject<UGridTileActor>(this);
 			//AGridTileActor* GridTileActor = GetWorld()->SpawnActor<AGridTileActor>(AGridTileActor::StaticClass(), FVector(i * TileSize, j * TileSize, 0.0f), FRotator::ZeroRotator);
 			GridTileActor->Rows = i;
 			GridTileActor->Columns = j;
 			GridTileActor->TileSize = TileSize;
 			GridTileActor->TileColor = ETileColor::Transparent;
 			GridTileActor->ClearTile();
-			GridTileArr[i].Add(GridTileActor);
-
+			//GridTileArr[i].Add(GridTileActor);
+			GridTileArr[i].GridTileColumn[j] = GridTileActor;
 			DrawSquare(FVector(i * TileSize, j * TileSize, 10.0f), TileSize, SquareVertices, SquareTriangles, SquareVertexColors);
 		}
 	}
@@ -282,14 +285,15 @@ void AGridActor::SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObj
 
 		if (TileCheck(Row, Col))
 		{
-			AGridTileActor* Tile = GridTileArr[Row][Col];
+			//UGridTileActor* Tile = GridTileArr[Row][Col];
+			UGridTileActor* Tile = GridTileArr[Row].GridTileColumn[Col];
 			if (Tile)
 			{
-				GridTileArr[Row][Col]->IsEnergySupplying = true;
+				GridTileArr[Row].GridTileColumn[Col]->IsEnergySupplying = true;
 				if (ObjectOwner == EObjectOwner::Blue)
-					GridTileArr[Row][Col]->TileOwner = ETileOwner::Blue;		
+					GridTileArr[Row].GridTileColumn[Col]->TileOwner = ETileOwner::Blue;
 				else if (ObjectOwner == EObjectOwner::Red)
-					GridTileArr[Row][Col]->TileOwner = ETileOwner::Red;
+					GridTileArr[Row].GridTileColumn[Col]->TileOwner = ETileOwner::Red;
 			}
 		}
 
@@ -324,14 +328,14 @@ void AGridActor::SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EOb
 		{
 			if (TileCheck(TileRow + dx, TileColumn + dy))
 			{
-				AGridTileActor* Tile = GridTileArr[TileRow + dx][TileColumn + dy];
+				UGridTileActor* Tile = GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy];
 				if (Tile)
 				{
-					GridTileArr[TileRow + dx][TileColumn + dy]->IsEnergySupplying = true;
+					GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->IsEnergySupplying = true;
 					if (ObjectOwner == EObjectOwner::Blue)
-						GridTileArr[TileRow + dx][TileColumn + dy]->TileOwner = ETileOwner::Blue;
+						GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->TileOwner = ETileOwner::Blue;
 					else if (ObjectOwner == EObjectOwner::Red)
-						GridTileArr[TileRow + dx][TileColumn + dy]->TileOwner = ETileOwner::Red;
+						GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->TileOwner = ETileOwner::Red;
 				}
 			}
 		}
@@ -388,7 +392,7 @@ void AGridActor::UpdateTileColor(int32 Row, int32 Column, ETileColor TileColor)
 	default:
 		break;
 	}
-	GridTileArr[Row][Column]->TileColor = TileColor;
+	GridTileArr[Row].GridTileColumn[Column]->TileColor = TileColor;
 }
 
 void AGridActor::UpdateEnergyTile()
@@ -397,14 +401,14 @@ void AGridActor::UpdateEnergyTile()
 	{
 		for (int32 j = 0; j < Columns; j++)
 		{
-			GridTileArr[i][j]->IsEnergySupplying = false;
+			GridTileArr[i].GridTileColumn[j]->IsEnergySupplying = false;
 		}
 	}
 	for (int32 i = 0; i < Rows; i++)
 	{
 		for (int32 j = 0; j < Columns; j++)
 		{
-			AGridTileActor* Tile = GridTileArr[i][j];
+			UGridTileActor* Tile = GridTileArr[i].GridTileColumn[j];
 			//ADefaultBuilding* DefaultBuilding = Tile->OnBuildingObject;
 			if (Tile != nullptr)
 			{
@@ -412,17 +416,20 @@ void AGridActor::UpdateEnergyTile()
 				{
 					ADefaultBuilding* DefaultBuilding = Cast<ADefaultBuilding>(Tile->ObjectInfo.ObjectActor);
 
-					if (Tile->IsBuildingCenter && DefaultBuilding->ObjectInfo.ObjectState == EObjectState::Activated)
+					if (DefaultBuilding != nullptr)
 					{
-						if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
+						if (Tile->IsBuildingCenter && DefaultBuilding->ObjectInfo.ObjectState == EObjectState::Activated)
 						{
-							//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
-							SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
-						}
-						else if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
-						{
-							//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
-							SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+							if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
+							{
+								//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+								SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+							}
+							else if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
+							{
+								//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+								SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+							}
 						}
 					}
 				}
@@ -454,7 +461,7 @@ bool AGridActor::CheckGridObject(int32 TileRow, int32 TileColumn)
 	/*if (GridTileArr[TileRow][TileColumn]->ObjectInfo.ObjectActor != nullptr)
 		UE_LOG(LogTemp, Log, TEXT("%s"), *GridTileArr[TileRow][TileColumn]->ObjectInfo.ObjectActor->GetName());*/
 
-	if (GridTileArr[TileRow][TileColumn]->ObjectInfo.ObjectActor == nullptr)
+	if (GridTileArr[TileRow].GridTileColumn[TileColumn]->ObjectInfo.ObjectActor == nullptr)
 		return true;
 	else
 		return false;
@@ -462,7 +469,7 @@ bool AGridActor::CheckGridObject(int32 TileRow, int32 TileColumn)
 
 bool AGridActor::CheckEnergySupply(int32 TileRow, int32 TileColumn)
 {
-	if (GridTileArr[TileRow][TileColumn]->IsEnergySupplying)
+	if (GridTileArr[TileRow].GridTileColumn[TileColumn]->IsEnergySupplying)
 		return true;
 	else
 		return false;
@@ -498,7 +505,7 @@ void AGridActor::DrawBuildingGrid(FIntPoint StartGridTile, int32 GridSizeX, int3
 			if (TileCheck(StartGridTile.X + i, StartGridTile.Y + j))
 			{
 				PreviousTileStruct.PreviousGrid = { StartGridTile.X + i, StartGridTile.Y + j };
-				PreviousTileStruct.PreviousColor = GridTileArr[StartGridTile.X + i][StartGridTile.Y + j]->TileColor;
+				PreviousTileStruct.PreviousColor = GridTileArr[StartGridTile.X + i].GridTileColumn[StartGridTile.Y + j]->TileColor;
 				PreviousBuildingGridArr.Add(PreviousTileStruct);
 
 				//UE_LOG(LogTemp, Log, TEXT("X: %d, Y: %d"), StartGridTile.X + i, StartGridTile.Y + j);
@@ -543,7 +550,8 @@ void AGridActor::ClearPreviousGrid()
 bool AGridActor::CheckBuildingGrid(int32 Row, int32 Column)
 {
 	
-	if (GridTileArr[Row][Column]->IsEnergySupplying == true && GridTileArr[Row][Column]->ObjectInfo.ObjectActor == nullptr)
+	if (GridTileArr[Row].GridTileColumn[Column]->IsEnergySupplying == true 
+		&& GridTileArr[Row].GridTileColumn[Column]->ObjectInfo.ObjectActor == nullptr)
 		return true;
 	else
 		return false;
@@ -551,13 +559,13 @@ bool AGridActor::CheckBuildingGrid(int32 Row, int32 Column)
 
 void AGridActor::SetTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding* DefaultBuilding, bool ObjectActivated)
 {
-	GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->ObjectInfo = DefaultBuilding->ObjectInfo;
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->ObjectInfo = DefaultBuilding->ObjectInfo;
 	//GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->OnObjectCode = DefaultBuilding->BuildingType;
 	//GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->OnBuildingObject = DefaultBuilding;
 	//GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->IsObjectActivated = ObjectActivated;
-	GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->IsBuildingCenter = true;
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->IsBuildingCenter = true;
 
-	AGridTileActor* GridTileActor = GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y];
+	UGridTileActor* GridTileActor = GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y];
 	
 	FIntPoint StartGridTile = GetStartGridTile(GridTileActor->Rows, GridTileActor->Columns,
 		DefaultBuilding->GridSizeX, DefaultBuilding->GridSizeY, DefaultBuilding->ObjectInfo.ObjectOwner);
@@ -568,7 +576,7 @@ void AGridActor::SetTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding*
 		{
 			if (TileCheck(StartGridTile.X + i, StartGridTile.Y + j))
 			{
-				GridTileArr[StartGridTile.X + i][StartGridTile.Y + j]->ObjectInfo = DefaultBuilding->ObjectInfo;
+				GridTileArr[StartGridTile.X + i].GridTileColumn[StartGridTile.Y + j]->ObjectInfo = DefaultBuilding->ObjectInfo;
 				if (ObjectActivated)
 				{
 					//SetTileDir(FIntPoint(StartGridTile.X + i, StartGridTile.Y + j));
@@ -596,10 +604,10 @@ void AGridActor::SetTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding*
 
 void AGridActor::SetTileDir(FIntPoint BuildingGridPoint)
 {
-	GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->TileDirArr[0].TileDirState = ETileDirState::Block;
-	GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->TileDirArr[1].TileDirState = ETileDirState::Block;
-	GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->TileDirArr[2].TileDirState = ETileDirState::Block;
-	GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y]->TileDirArr[3].TileDirState = ETileDirState::Block;
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[0].TileDirState = ETileDirState::Block;
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[1].TileDirState = ETileDirState::Block;
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[2].TileDirState = ETileDirState::Block;
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[3].TileDirState = ETileDirState::Block;
 
 	TArray<TPair<int32, int32>> Directions = {
 	TPair<int8, int8>(1, 0),
@@ -610,36 +618,36 @@ void AGridActor::SetTileDir(FIntPoint BuildingGridPoint)
 
 	if (TileCheck(BuildingGridPoint.X + 1, BuildingGridPoint.Y))
 	{
-		if (GridTileArr[BuildingGridPoint.X + 1][BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Bottom)].TileDirState != ETileDirState::Block)
-			GridTileArr[BuildingGridPoint.X + 1][BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Bottom)].TileDirState = ETileDirState::Hiding;
+		if (GridTileArr[BuildingGridPoint.X + 1].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Bottom)].TileDirState != ETileDirState::Block)
+			GridTileArr[BuildingGridPoint.X + 1].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Bottom)].TileDirState = ETileDirState::Hiding;
 	}
 	if (TileCheck(BuildingGridPoint.X - 1, BuildingGridPoint.Y))
 	{
-		if (GridTileArr[BuildingGridPoint.X - 1][BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Top)].TileDirState != ETileDirState::Block)
-			GridTileArr[BuildingGridPoint.X - 1][BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Top)].TileDirState = ETileDirState::Hiding;
+		if (GridTileArr[BuildingGridPoint.X - 1].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Top)].TileDirState != ETileDirState::Block)
+			GridTileArr[BuildingGridPoint.X - 1].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[static_cast<int32>(ETileDir::Top)].TileDirState = ETileDirState::Hiding;
 	}
 	if (TileCheck(BuildingGridPoint.X, BuildingGridPoint.Y + 1))
 	{
-		if (GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y + 1]->TileDirArr[static_cast<int32>(ETileDir::Left)].TileDirState != ETileDirState::Block)
-			GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y + 1]->TileDirArr[static_cast<int32>(ETileDir::Left)].TileDirState = ETileDirState::Hiding;
+		if (GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y + 1]->TileDirArr[static_cast<int32>(ETileDir::Left)].TileDirState != ETileDirState::Block)
+			GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y + 1]->TileDirArr[static_cast<int32>(ETileDir::Left)].TileDirState = ETileDirState::Hiding;
 	}
 	if (TileCheck(BuildingGridPoint.X, BuildingGridPoint.Y - 1))
 	{
-		if (GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y - 1]->TileDirArr[static_cast<int32>(ETileDir::Right)].TileDirState != ETileDirState::Block)
-			GridTileArr[BuildingGridPoint.X][BuildingGridPoint.Y - 1]->TileDirArr[static_cast<int32>(ETileDir::Right)].TileDirState = ETileDirState::Hiding;
+		if (GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y - 1]->TileDirArr[static_cast<int32>(ETileDir::Right)].TileDirState != ETileDirState::Block)
+			GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y - 1]->TileDirArr[static_cast<int32>(ETileDir::Right)].TileDirState = ETileDirState::Hiding;
 	}
 
 }
 
 void AGridActor::SetTile_Unit(FIntPoint UnitGridPoint, class ADefaultUnit* DefaultUnit)
 {
-	GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ObjectInfo = DefaultUnit->ObjectInfo;
+	GridTileArr[UnitGridPoint.X].GridTileColumn[UnitGridPoint.Y]->ObjectInfo = DefaultUnit->ObjectInfo;
 	//UE_LOG(LogTemp, Log, TEXT("UnitType: %s"), *GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ObjectInfo.ObjectActor->GetName());
 }
 
 void AGridActor::RemoveTile_Unit(FIntPoint UnitGridPoint)
 {
-	GridTileArr[UnitGridPoint.X][UnitGridPoint.Y]->ClearObjectInfo();
+	GridTileArr[UnitGridPoint.X].GridTileColumn[UnitGridPoint.Y]->ClearObjectInfo();
 }
 
 void AGridActor::ViewGridTile()
@@ -664,16 +672,16 @@ void AGridActor::UpdateTurn()
 	//GridStateUpdateCompleteDelegate.Broadcast();
 }
 
-TArray<class AGridTileActor*> AGridActor::CheckAIEnegyTile()
+TArray<class UGridTileActor*> AGridActor::CheckAIEnegyTile()
 {
-	TArray<class AGridTileActor*> AIEnergyTileArr;
+	TArray<class UGridTileActor*> AIEnergyTileArr;
 
 	for (int32 i = 0; i < Rows; i++)
 	{
 		for (int32 j = 0; j < Columns; j++)
 		{
-			if (GridTileArr[i][j]->TileOwner == ETileOwner::Red)
-				AIEnergyTileArr.Add(GridTileArr[i][j]);
+			if (GridTileArr[i].GridTileColumn[j]->TileOwner == ETileOwner::Red)
+				AIEnergyTileArr.Add(GridTileArr[i].GridTileColumn[j]);
 		}
 	}
 	return AIEnergyTileArr;

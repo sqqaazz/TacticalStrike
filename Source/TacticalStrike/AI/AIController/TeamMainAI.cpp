@@ -36,14 +36,16 @@ ATeamMainAI::ATeamMainAI()
 	
 }
 
-void ATeamMainAI::InitializeController()
+void ATeamMainAI::InitializeController(EObjectOwner ObjectOwner)
 {
 	GridActor = Cast<AGridActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AGridActor::StaticClass()));
-	ATacticalStrikeGameStateBase* GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
+	GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
 	if (GameStateBase != nullptr)
 	{
-		GameStateBase->PlayerTurnStartAfterDelegate.AddDynamic(this, &ATeamMainAI::StartAction);
-		GameStateBase->AITurnStartDelegate.AddDynamic(this, &ATeamMainAI::StartAction);
+		if (ObjectOwner == EObjectOwner::Blue)
+			GameStateBase->PlayerTurnStartAfterDelegate.AddDynamic(this, &ATeamMainAI::StartAction);
+		//else if (ObjectOwner == EObjectOwner::Red)
+		//	GameStateBase->AITurnStartDelegate.AddDynamic(this, &ATeamMainAI::StartAction);
 	}
 	StartAction();
 }
@@ -79,13 +81,21 @@ void ATeamMainAI::StartAction()
 	}
 }
 
+void ATeamMainAI::EndAction()
+{
+	BrainComponent->StopLogic("CombatAI Turn End");
+	CombatAIEndActionDelegate.Broadcast();
+
+	GameStateBase->PlayerCombatAITurnEnd(ObjectInfo.ObjectOwner);
+}
+
 void ATeamMainAI::GetGridField()
 {
-	GridTileArr = GridActor->GridTileArr;
+	//GridTileArr = GridActor->GridTileArr;
 }
 
-void ATeamMainAI::SetTempGridField(TArray<TArray<class AGridTileActor*>> GridTileArr_Temp)
-{
-
-}
+//void ATeamMainAI::SetTempGridField(TArray<TArray<class AGridTileActor*>> GridTileArr_Temp)
+//{
+//
+//}
 

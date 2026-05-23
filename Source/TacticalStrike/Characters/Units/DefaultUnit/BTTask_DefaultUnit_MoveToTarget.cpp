@@ -131,14 +131,14 @@ TArray<FIntPoint> UBTTask_DefaultUnit_MoveToTarget::FindPath(FIntPoint StartGrid
 			if (!GridActor->TileCheck(NX, NY))
 				continue;
 
-			if (GridActor->GridTileArr[NX][NY]->ObjectInfo.ObjectActor == UnitTarget)
+			if (GridActor->GridTileArr[NX].GridTileColumn[NY]->ObjectInfo.ObjectActor == UnitTarget)
 			{
 				return BuildPath(CurrentIndex);
 			}
 
 			if (!(NX == GoalGrid.X && NY == GoalGrid.Y))
 			{
-				if (GridActor->GridTileArr[NX][NY]->ObjectInfo.ObjectActor != nullptr)
+				if (GridActor->GridTileArr[NX].GridTileColumn[NY]->ObjectInfo.ObjectActor != nullptr)
 					continue;
 			}
 
@@ -169,6 +169,9 @@ TArray<FIntPoint> UBTTask_DefaultUnit_MoveToTarget::FindPath(FIntPoint StartGrid
 
 void UBTTask_DefaultUnit_MoveToTarget::StartMove(TArray<FIntPoint> Path)
 {
+	if (Path.Num() == 0)
+		return;
+
 	GridActor->RemoveTile_Unit(Path[0]);
 	GridActor->SetTile_Unit(Path[Path.Num() - 1], DefaultUnit);
 	DefaultUnit->StartMoving(Path);

@@ -68,11 +68,11 @@ void ACommanderUnit::BeginPlay()
 	Super::BeginPlay();
 
 	TeamMainAIInstance = GetWorld()->SpawnActor<ATeamMainAI>(TeamMainAI, FVector::ZeroVector, FRotator::ZeroRotator);
-	TeamMainAIInstance->InitializeController();
 
 	ACommanderController* CommanderController = Cast<ACommanderController>(GetController());
 	if (CommanderController != nullptr)
 	{
+		TeamMainAIInstance->InitializeController(EObjectOwner::Blue);
 		TeamMainAIInstance->GetBlackboardComponent()->SetValueAsObject(ATeamMainAI::OwnerCommanderAIKey, CommanderController);
 		TeamMainAIInstance->ObjectInfo.ObjectOwner = EObjectOwner::Blue;
 
@@ -83,17 +83,24 @@ void ACommanderUnit::BeginPlay()
 			Subsystem->AddMappingContext(CommanderUnitContext, 0);
 	}
 
-	if (GetController() == nullptr /* || !GetController()->IsA(ACommanderController::StaticClass()) */ )
+	ACommanderAI* CurCommanderAI = Cast<ACommanderAI>(GetController());
+	if (CurCommanderAI != nullptr /* || !GetController()->IsA(ACommanderController::StaticClass()) */ )
 	{
-		ACommanderAI* NewCommanderAI = GetWorld()->SpawnActor<ACommanderAI>(CommanderAI, GetActorLocation(), GetActorRotation());
-		if (NewCommanderAI != nullptr)
-		{
-			TeamMainAIInstance->GetBlackboardComponent()->SetValueAsObject(ATeamMainAI::OwnerCommanderAIKey, NewCommanderAI);
-			TeamMainAIInstance->ObjectInfo.ObjectOwner = EObjectOwner::Red;
 
-			NewCommanderAI->Possess(this);
-			//UE_LOG(LogTemp, Log, TEXT("AICommander"));
-		}
+		TeamMainAIInstance->InitializeController(EObjectOwner::Red);
+		TeamMainAIInstance->GetBlackboardComponent()->SetValueAsObject(ATeamMainAI::OwnerCommanderAIKey, CommanderAI);
+		TeamMainAIInstance->ObjectInfo.ObjectOwner = EObjectOwner::Red;
+
+		//ACommanderAI* NewCommanderAI = GetWorld()->SpawnActor<ACommanderAI>(CommanderAI, GetActorLocation(), GetActorRotation());
+		//if (NewCommanderAI != nullptr)
+		//{
+		//	TeamMainAIInstance->InitializeController(EObjectOwner::Red);
+		//	TeamMainAIInstance->GetBlackboardComponent()->SetValueAsObject(ATeamMainAI::OwnerCommanderAIKey, NewCommanderAI);
+		//	TeamMainAIInstance->ObjectInfo.ObjectOwner = EObjectOwner::Red;
+
+		//	NewCommanderAI->Possess(this);
+		//	//UE_LOG(LogTemp, Log, TEXT("AICommander"));
+		//}
 	}
 }
 // Called to bind functionality to input

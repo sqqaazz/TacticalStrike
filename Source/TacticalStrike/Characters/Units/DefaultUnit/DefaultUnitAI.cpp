@@ -135,5 +135,5 @@ void ADefaultUnitAI::StopAI()
 
 void ADefaultUnitAI::GetGridField()
 {
-	GridTileArr_Temp = GridActor->GridTileArr;
+	//GridTileArr_Temp = GridActor->GridTileArr;
 }

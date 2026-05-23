@@ -19,6 +19,14 @@ void ATacticalStrikeGameStateBase::PlayerTurnStart()
 	PlayerTurnStartAfterDelegate.Broadcast();
 }
 
+void ATacticalStrikeGameStateBase::PlayerCombatAITurnEnd(EObjectOwner ObjectOwner)
+{
+	if (ObjectOwner == EObjectOwner::Red)
+		return;
+
+	PlayerCombatAITurnEndDelegate.Broadcast();
+}
+
 void ATacticalStrikeGameStateBase::AITurnStart()
 {
 	AITurnStartDelegate.Broadcast();

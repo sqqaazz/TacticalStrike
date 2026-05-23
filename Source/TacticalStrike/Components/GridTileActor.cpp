@@ -7,10 +7,10 @@
 #include "ProceduralMeshComponent.h"
 
 // Sets default values
-AGridTileActor::AGridTileActor()
+UGridTileActor::UGridTileActor()
 {
 	//ProceduralMesh_Squares = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GridProceduralMesh_TileSquares"));
-	PrimaryActorTick.bCanEverTick = false;
+	//PrimaryActorTick.bCanEverTick = false;
 
 	//static ConstructorHelpers::FObjectFinder<UMaterialInstance> MATERIALINSTANCE(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Material/MI_Grid.MI_Grid'"));
 	//if (MATERIALINSTANCE.Succeeded())
@@ -43,17 +43,17 @@ AGridTileActor::AGridTileActor()
 }
 
 // Called when the game starts or when spawned
-void AGridTileActor::BeginPlay()
-{
-	Super::BeginPlay();
+//void AGridTileActor::BeginPlay()
+//{
+//	Super::BeginPlay();
+//
+//	//GridMaterialInstanceDynamic_Squares_Enable = CreateMaterialInstance(SquareColor_Enable, SquareOpacity);
+//	//GridMaterialInstanceDynamic_Squares_Disable = CreateMaterialInstance(SquareColor_Disable, SquareOpacity);
+//	//GridMaterialInstanceDynamic_Squares_Energy = CreateMaterialInstance(SquareColor_Energy, SquareOpacity);
+//	//DrawSquareTile();
+//}
 
-	//GridMaterialInstanceDynamic_Squares_Enable = CreateMaterialInstance(SquareColor_Enable, SquareOpacity);
-	//GridMaterialInstanceDynamic_Squares_Disable = CreateMaterialInstance(SquareColor_Disable, SquareOpacity);
-	//GridMaterialInstanceDynamic_Squares_Energy = CreateMaterialInstance(SquareColor_Energy, SquareOpacity);
-	//DrawSquareTile();
-}
-
-void AGridTileActor::ClearTile()
+void UGridTileActor::ClearTile()
 {
 	ObjectInfo.ObjectActor = nullptr;
 	ObjectInfo.ObjectOwner = EObjectOwner::None;
@@ -65,7 +65,7 @@ void AGridTileActor::ClearTile()
 	ObjectInfo.Actions = 0;
 }
 
-void AGridTileActor::ClearObjectInfo()
+void UGridTileActor::ClearObjectInfo()
 {
 	ObjectInfo.ObjectActor = nullptr;
 	ObjectInfo.CurrentBuildTime = 0;

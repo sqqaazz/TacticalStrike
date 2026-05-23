@@ -113,7 +113,10 @@ private:
 	class UTacticalStrikeGameInstance* GameInstance;
 	FUnitTableRow* UnitDataArray;
 
-	class ATacticalStrikeGameStateBase* GetWorldCommanderTimer;
+	class ATacticalStrikeGameStateBase* GameStateBase;
+
+	UFUNCTION()
+	void PlayerCombatAITurnEnd();
 
 	UFUNCTION()
 	void UpdateWorldTimer();

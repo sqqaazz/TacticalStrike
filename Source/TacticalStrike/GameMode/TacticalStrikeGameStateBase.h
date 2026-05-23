@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
+#include "GameMode/TacticalStrikeGameInstance.h"
 #include "TacticalStrikeGameStateBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWorldCommanderTimer);
@@ -11,6 +12,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWorldUnitSpawnTrigger);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerTurnStartDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerTurnStartAfterDelegate);
+
+DECLARE_MULTICAST_DELEGATE(FPlayerCombatAITurnEndDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAITurnStartDelegate);
 
@@ -36,9 +39,12 @@ public:
 	FPlayerTurnStartDelegate PlayerTurnStartDelegate;
 	FPlayerTurnStartAfterDelegate PlayerTurnStartAfterDelegate;
 
+	FPlayerCombatAITurnEndDelegate PlayerCombatAITurnEndDelegate;
+
 	FAITurnStartDelegate AITurnStartDelegate;
 
 	void PlayerTurnStart();
+	void PlayerCombatAITurnEnd(EObjectOwner ObjectOwner);
 	void AITurnStart();
 protected:
 	/*virtual void InProgress() override;*/

@@ -13,12 +13,20 @@
 USTRUCT(Atomic, BlueprintType)
 struct FPreviousTileStruct
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 public:
 	FIntPoint PreviousGrid;
 	ETileColor PreviousColor;
 };
 
+USTRUCT(BlueprintType)
+struct FGridTileRow
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	TArray<UGridTileActor*> GridTileColumn;
+};
 
 UCLASS()
 class TACTICALSTRIKE_API AGridActor : public AActor
@@ -79,9 +87,13 @@ public:
 
 	void SetUnitSpawnGrid(FIntPoint StartGrid);
 
-	TArray<TArray<class AGridTileActor*>> GridTileArr;
+	//UPROPERTY()
+	//TArray<TArray<class UGridTileActor*>> GridTileArr;
 
-	TArray<class AGridTileActor*> CheckAIEnegyTile();
+	UPROPERTY()
+	TArray<FGridTileRow> GridTileArr;
+
+	TArray<class UGridTileActor*> CheckAIEnegyTile();
 
 	//FGridStateUpdateCompleteDelegate GridStateUpdateCompleteDelegate;
 

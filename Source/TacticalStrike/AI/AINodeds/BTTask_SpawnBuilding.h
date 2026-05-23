@@ -34,7 +34,7 @@ private:
 	struct FBuildingTableRow* BuildingDataInfo;
 	class ACommanderAI* CommanderAI;
 
-	TArray<class AGridTileActor*> AIEnergyTileArr;
+	TArray<class UGridTileActor*> AIEnergyTileArr;
 	void SpawnGridBuilding(int32 BuildingKey);
 
 	//void SpawnBuilding();

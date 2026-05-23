@@ -9,6 +9,8 @@
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
 #include "TeamMainAI.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FCombatAIEndActionDelegate);
+
 USTRUCT(BlueprintType)
 struct FSightEnemyStruct
 {
@@ -30,7 +32,7 @@ class TACTICALSTRIKE_API ATeamMainAI : public AAIController
 public:
 	ATeamMainAI();
 
-	void InitializeController();
+	void InitializeController(EObjectOwner ObjectOwner);
 
 	static const FName OwnerCommanderAIKey;
 	static const FName TeamMainAI_bTriggerActivatedKey;
@@ -38,7 +40,7 @@ public:
 	static const FName TeamMainAI_TeamUnitIndexKey;
 	//static const FName UnitActionTriggerKey;
 
-	TArray<TArray<class AGridTileActor*>> GridTileArr;
+	//TArray<TArray<class AGridTileActor*>> GridTileArr;
 	AGridActor* GridActor;
 
 	//TArray<FSightEnemyStruct> SightEnemyArr;
@@ -48,9 +50,16 @@ public:
 	TArray<ADefaultUnit*> TeamUnitArr;
 
 	void GetGridField();
-	void SetTempGridField(TArray<TArray<class AGridTileActor*>> GridTileArr_Temp);
+	//void SetTempGridField(TArray<TArray<class AGridTileActor*>> GridTileArr_Temp);
 
 	FObjectInfo ObjectInfo;
+
+	UFUNCTION()
+	void StartAction();
+
+	void EndAction();
+
+	FCombatAIEndActionDelegate CombatAIEndActionDelegate;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
@@ -63,6 +72,5 @@ protected:
 private:
 	bool bBehaviorTreeStarted;
 
-	UFUNCTION()
-	void StartAction();
+	class ATacticalStrikeGameStateBase* GameStateBase;
 };

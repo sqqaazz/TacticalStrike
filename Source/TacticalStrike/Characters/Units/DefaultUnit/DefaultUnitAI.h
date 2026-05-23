@@ -41,7 +41,7 @@ public:
 	UPROPERTY()
 	class AGridActor* GridActor;
 
-	TArray<TArray<AGridTileActor*>> GridTileArr_Temp;
+	//TArray<TArray<AGridTileActor*>> GridTileArr_Temp;
 
 	void GetGridField();
 

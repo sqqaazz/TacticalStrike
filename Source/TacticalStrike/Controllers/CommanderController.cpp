@@ -18,6 +18,7 @@
 #include "Objects/GridActor.h"
 //#include "Characters/DefaultSpawningActor.h"
 
+
 ACommanderController::ACommanderController()
 {
 	static ConstructorHelpers::FClassFinder<UCommanderBaseWidget> CommanderWidget(TEXT("WidgetBlueprint'/Game/Blueprints/Widgets/BP_CommanderUI.BP_CommanderUI_C'"));
@@ -82,10 +83,11 @@ void ACommanderController::BeginPlay()
 	BaseWidget = CreateWidget<UCommanderBaseWidget>(this, BaseWidgetClass);
 	BaseWidget->AddToViewport();
 
-	GetWorldCommanderTimer = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
-	if (GetWorldCommanderTimer != nullptr)
+	GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
+	if (GameStateBase != nullptr)
 	{
-		GetWorldCommanderTimer->WorldCommanderTimer.AddDynamic(this, &ACommanderController::UpdateWorldTimer);
+		GameStateBase->WorldCommanderTimer.AddDynamic(this, &ACommanderController::UpdateWorldTimer);
+		GameStateBase->PlayerCombatAITurnEndDelegate.AddUObject(this, &ACommanderController::PlayerCombatAITurnEnd);
 	}
 	GridActor = Cast<AGridActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AGridActor::StaticClass()));
 	GameInstance = Cast<UTacticalStrikeGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
@@ -256,6 +258,11 @@ void ACommanderController::BuildingUnits(ESpawnBuilding BuildingType, ESpawnUnit
 		//	BaseWidget->ObjectBuildingInfo(BuildingObjectInfo, BuildingClickableComponent->UnitDataArray.Num());
 		//}
 	}
+}
+
+void ACommanderController::PlayerCombatAITurnEnd()
+{
+	
 }
 
 void ACommanderController::BuildingUpgrade(uint8 UpgradeType)
