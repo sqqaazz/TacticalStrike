@@ -110,7 +110,18 @@ void UCommanderBaseWidget::TurnControlButton_OnClicked()
 	if (GetWorldCommanderTimer != nullptr)
 	{
 		GetWorldCommanderTimer->AITurnStart();
+
+		TurnControlButton->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UCommanderBaseWidget::ControlTurnButton(bool IsActivated)
+{
+	
+	if (IsActivated)
+		TurnControlButton->SetVisibility(ESlateVisibility::Visible);
+	else
+		TurnControlButton->SetVisibility(ESlateVisibility::Hidden);
 }
 
 

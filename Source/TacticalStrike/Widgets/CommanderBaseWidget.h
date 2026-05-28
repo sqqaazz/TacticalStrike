@@ -70,4 +70,7 @@ public:
 	void UpdateObjectInfo(FObjectInfo ObjectInfo);
 
 	void ObjectBuildingInfo(FObjectInfo ObjectInfo);
+
+
+	void ControlTurnButton(bool IsActivated);
 };

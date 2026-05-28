@@ -20,7 +20,9 @@ EBTNodeResult::Type UBTTask_CombatAI_EndTurn::ExecuteTask(UBehaviorTreeComponent
 		TArray<ADefaultUnit*> TeamUnitArr = TeamMainAI->TeamUnitArr;
 		if (TeamUnitArr.Num() == 0)
 		{
-			TeamMainAI->BrainComponent->StopLogic("CombatAI Turn End");
+			//TeamMainAI->BrainComponent->StopLogic("CombatAI Turn End");
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey, false);
+			TeamMainAI->EndAction();
 			return EBTNodeResult::Succeeded;
 		}
 

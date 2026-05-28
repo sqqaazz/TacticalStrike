@@ -45,7 +45,9 @@ public:
 
 	void GetGridField();
 
+	UPROPERTY()
 	int32 LifeTime;
+
 	void StartUnitTurn();
 	UFUNCTION()
 	void EndUnitTurn();

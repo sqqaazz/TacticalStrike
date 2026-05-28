@@ -21,6 +21,7 @@ void ATacticalStrikeGameStateBase::PlayerTurnStart()
 
 void ATacticalStrikeGameStateBase::PlayerCombatAITurnEnd(EObjectOwner ObjectOwner)
 {
+	
 	if (ObjectOwner == EObjectOwner::Red)
 		return;
 

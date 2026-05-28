@@ -113,10 +113,15 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 void ADefaultUnitAI::StartUnitTurn()
 {
 	//UE_LOG(LogTemp, Log, TEXT("UnitTurnEnd"));
-	if (LifeTime > 0)
+	if (LifeTime > 1)
 	{
 		BrainComponent->RestartLogic();
 	}
+	else
+	{
+		EndUnitTurn();
+	}
+
 }
 
 void ADefaultUnitAI::EndUnitTurn()

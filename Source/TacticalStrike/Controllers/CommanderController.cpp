@@ -262,7 +262,7 @@ void ACommanderController::BuildingUnits(ESpawnBuilding BuildingType, ESpawnUnit
 
 void ACommanderController::PlayerCombatAITurnEnd()
 {
-	
+	BaseWidget->ControlTurnButton(true);
 }
 
 void ACommanderController::BuildingUpgrade(uint8 UpgradeType)

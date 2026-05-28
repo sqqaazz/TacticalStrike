@@ -99,7 +99,14 @@ TArray<FIntPoint> UBTTask_DefaultUnit_MoveToTarget::FindPath(FIntPoint StartGrid
 
 	TArray<int32> OpenSet;
 
-	FGridNode StartNode(StartGrid.X, StartGrid.Y, ETileDir::None, 0.0f, Heuristic(StartGrid.X, StartGrid.Y, GoalGrid.X, GoalGrid.Y), INDEX_NONE);
+	EObjectOwner ObjectOwner = DefaultUnit->ObjectInfo.ObjectOwner;
+	ETileDir StartTileDir = ETileDir::None;
+	if (ObjectOwner == EObjectOwner::Blue)
+		StartTileDir = ETileDir::Right;
+	else if (ObjectOwner == EObjectOwner::Red)
+		StartTileDir = ETileDir::Left;
+
+	FGridNode StartNode(StartGrid.X, StartGrid.Y, StartTileDir, 0.0f, Heuristic(StartGrid.X, StartGrid.Y, GoalGrid.X, GoalGrid.Y), INDEX_NONE);
 	int32 StartIndex = GridNodes.Add(StartNode);
 	OpenSet.Add(StartIndex);
 
@@ -179,6 +186,7 @@ void UBTTask_DefaultUnit_MoveToTarget::StartMove(TArray<FIntPoint> Path)
 
 void UBTTask_DefaultUnit_MoveToTarget::EndMove()
 {
+	GridNodes.Empty();
 	int32 ActionCountKey = CurOwnerComp->GetBlackboardComponent()->GetValueAsInt(ADefaultUnitAI::ActionCountKey);
 	ActionCountKey--;
 	CurOwnerComp->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, ActionCountKey);
