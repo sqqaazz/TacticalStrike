@@ -18,22 +18,22 @@ void UDefaultUnitAnim::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
-	if (Pawn == nullptr)
-	{
-		Pawn = TryGetPawnOwner();
-	}
-	else
-	{
-		if (!Pawn->GetVelocity().IsZero())
-		{
-			IsWalking = true;
-		}
-		else
-		{
-			IsWalking = false;
-		}
-	}
+	//if (Pawn == nullptr)
+	//{
+	//	Pawn = TryGetPawnOwner();
+	//}
+	//else
+	//{
+	//	if (!Pawn->GetVelocity().IsZero())
+	//	{
+	//		UE_LOG(LogTemp, Log, TEXT("ggggggggggg"));
+	//		IsWalking = true;
+	//	}
+	//	else
+	//	{
+	//		IsWalking = false;
+	//	}
+	//}
 }
 
 void UDefaultUnitAnim::AnimNotify_Ready()

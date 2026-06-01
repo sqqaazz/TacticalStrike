@@ -13,21 +13,21 @@ void USwordManAnim::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (Pawn == nullptr)
-	{
-		Pawn = TryGetPawnOwner();
-	}
-	else
-	{
-		if (!Pawn->GetVelocity().IsZero())
-		{
-			IsWalking = true;
-		}
-		else
-		{
-			IsWalking = false;
-		}
-	}
+	//if (Pawn == nullptr)
+	//{
+	//	Pawn = TryGetPawnOwner();
+	//}
+	//else
+	//{
+	//	if (!Pawn->GetVelocity().IsZero())
+	//	{
+	//		IsWalking = true;
+	//	}
+	//	else
+	//	{
+	//		IsWalking = false;
+	//	}
+	//}
 }
 
 void USwordManAnim::AnimNotify_Ready()

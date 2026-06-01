@@ -19,7 +19,14 @@ public:
 
 	static const FName SpawnPosKey;
 	static const FName MovingPosKey;
-	static const FName TargetKey;
+
+	//유닛의 최총 타겟을 설정하는 키
+	static const FName FinalTargetKey;
+
+	//유닛의 현재 타겟을 설정하는 키
+	static const FName CurTargetKey;
+
+
 	static const FName DistanceKey;
 
 	static const FName MovingObjectPosKey;
@@ -33,7 +40,10 @@ public:
 	static const FName DefaultUnitAI_bSightTriggerActivatedKey;
 
 	static const FName ActionCountKey;
+
+	//현재 위치에서 사거리 내의 타깃이 있는지 여부를 체크하는 키
 	static const FName InPlace_bIsTargetInRange;
+
 	static const FName Move_bIsTargetInRange;
 
 	void StopAI();

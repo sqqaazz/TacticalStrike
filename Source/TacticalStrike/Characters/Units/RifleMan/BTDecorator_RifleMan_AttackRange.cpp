@@ -16,7 +16,7 @@ bool UBTDecorator_RifleMan_AttackRange::CalculateRawConditionValue(UBehaviorTree
 	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (nullptr == ControllingPawn)
 		return false;
-	auto Target = Cast<ARifleMan>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::TargetKey));
+	auto Target = Cast<ARifleMan>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::CurTargetKey));
 	if (nullptr == Target)
 		return false;
 	//bResult = (Target->GetDistanceTo(ControllingPawn) <= 3000.0f);

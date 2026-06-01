@@ -46,7 +46,7 @@ void UBTService_DefaultUnitDetect::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			auto Object = OverlapResults[0].GetActor();
 			if (Object->ActorHasTag("RedTeamUnit") || Object->ActorHasTag("RedTeamBuilding"))
 			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::TargetKey, Object);
+				//OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::TargetKey, Object);
 				OwnerComp.GetBlackboardComponent()->SetValueAsFloat(ADefaultUnitAI::DistanceKey, Object->GetDistanceTo(ControllingPawn));
 				return;
 			}
@@ -88,7 +88,7 @@ void UBTService_DefaultUnitDetect::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 			if (Object->ActorHasTag("BlueTeamUnit") || Object->ActorHasTag("BlueTeamBuilding"))
 			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::TargetKey, Object);
+				//OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::TargetKey, Object);
 				OwnerComp.GetBlackboardComponent()->SetValueAsFloat(ADefaultUnitAI::DistanceKey, Object->GetDistanceTo(ControllingPawn));
 				return;
 			}

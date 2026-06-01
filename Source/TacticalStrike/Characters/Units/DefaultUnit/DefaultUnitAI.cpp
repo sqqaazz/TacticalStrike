@@ -14,7 +14,10 @@
 
 const FName ADefaultUnitAI::SpawnPosKey(TEXT("DefaultUnitSpawnPos"));
 const FName ADefaultUnitAI::MovingPosKey(TEXT("DefaultUnitMovingPos"));
-const FName ADefaultUnitAI::TargetKey(TEXT("DefaultUnitTarget"));
+
+const FName ADefaultUnitAI::FinalTargetKey(TEXT("DefaultUnitFinalTarget"));
+const FName ADefaultUnitAI::CurTargetKey(TEXT("DefaultUnitCurTarget"));
+
 const FName ADefaultUnitAI::DistanceKey(TEXT("DefaultUnitDistanceToTarget"));
 const FName ADefaultUnitAI::MovingObjectPosKey(TEXT("MovingObjectPosKey"));
 
@@ -53,11 +56,11 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 			{
 				if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Blue && DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
 				{
-					Blackboard->SetValueAsObject(ADefaultUnitAI::TargetKey, DefaultBuilding);
+					Blackboard->SetValueAsObject(ADefaultUnitAI::FinalTargetKey, DefaultBuilding);
 				}
 				else if (DefaultUnit->ObjectInfo.ObjectOwner == EObjectOwner::Red && DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
 				{
-					Blackboard->SetValueAsObject(ADefaultUnitAI::TargetKey, DefaultBuilding);
+					Blackboard->SetValueAsObject(ADefaultUnitAI::FinalTargetKey, DefaultBuilding);
 				}
 			}
 		}
@@ -113,7 +116,7 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 void ADefaultUnitAI::StartUnitTurn()
 {
 	//UE_LOG(LogTemp, Log, TEXT("UnitTurnEnd"));
-	if (LifeTime > 1)
+	if (LifeTime > 0)
 	{
 		BrainComponent->RestartLogic();
 	}

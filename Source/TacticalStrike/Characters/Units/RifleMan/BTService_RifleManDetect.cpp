@@ -48,7 +48,7 @@ void UBTService_RifleManDetect::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 			auto Unit = OverlapResults[0].GetActor();
 			if (Unit->ActorHasTag("RedTeamUnit"))
 			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ARifleManAI::TargetKey, Unit);
+				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ARifleManAI::CurTargetKey, Unit);
 				return;
 			}
 
@@ -89,7 +89,7 @@ void UBTService_RifleManDetect::TickNode(UBehaviorTreeComponent& OwnerComp, uint
 
 			if (Unit->ActorHasTag("BlueTeamUnit"))
 			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ARifleManAI::TargetKey, Unit);
+				OwnerComp.GetBlackboardComponent()->SetValueAsObject(ARifleManAI::CurTargetKey, Unit);
 				return;
 			}
 

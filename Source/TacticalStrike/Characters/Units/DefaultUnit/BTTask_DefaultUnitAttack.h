@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "DataTables/UnitDataTables.h"
 #include "BTTask_DefaultUnitAttack.generated.h"
 
 /**
@@ -23,4 +24,10 @@ protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 private:
 	bool IsAttacking = false;
+
+	UPROPERTY()
+	class UTacticalStrikeGameInstance* GameInstance;
+	FUnitTableRow* UnitDataInfo;
+	UPROPERTY()
+	class AGridActor* GridActor;
 };

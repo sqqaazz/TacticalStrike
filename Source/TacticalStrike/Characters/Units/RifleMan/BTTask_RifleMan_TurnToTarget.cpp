@@ -19,10 +19,10 @@ EBTNodeResult::Type UBTTask_RifleMan_TurnToTarget::ExecuteTask(UBehaviorTreeComp
 	if (nullptr == RifleMan)
 		return EBTNodeResult::Failed;
 
-	auto Target = Cast<ARifleMan>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::TargetKey));
+	auto Target = Cast<ARifleMan>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::CurTargetKey));
 	if (nullptr == Target)
 	{
-		auto DefaultTarget = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::TargetKey));
+		auto DefaultTarget = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::CurTargetKey));
 		if (nullptr == DefaultTarget)
 		{
 			return EBTNodeResult::Failed;

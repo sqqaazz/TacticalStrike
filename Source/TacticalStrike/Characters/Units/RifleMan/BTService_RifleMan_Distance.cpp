@@ -18,7 +18,7 @@ void UBTService_RifleMan_Distance::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	auto ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (nullptr == ControllingPawn)
 		return;
-	auto Target = Cast<ARifleMan>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::TargetKey));
+	auto Target = Cast<ARifleMan>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ARifleManAI::CurTargetKey));
 	if (nullptr == Target)
 		return;
 	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(ARifleManAI::DistanceKey, Target->GetDistanceTo(ControllingPawn));

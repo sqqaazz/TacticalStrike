@@ -6,6 +6,7 @@
 #include "DefaultUnitAnim.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Characters/Units/DefaultUnit/DefaultUnitAnim.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 
@@ -133,8 +134,11 @@ void ADefaultUnit::StartMoving(TArray <FIntPoint>& Path)
 
 void ADefaultUnit::Moving(float DeltaTime)
 {
+	UDefaultUnitAnim* DefaultUnitAnim = Cast<UDefaultUnitAnim>(GetMesh()->GetAnimInstance());
+
 	if (CurPathIndex >= CurPath.Num() || CurPathIndex > Speed)
 	{
+		DefaultUnitAnim->IsWalking = false;
 		StopMoving();
 		return;
 	}
@@ -147,6 +151,9 @@ void ADefaultUnit::Moving(float DeltaTime)
 	SetActorLocation(NewLocation);
 
 	float Distance = FVector::Dist2D(NewLocation, TargetLocation);
+
+	if (DefaultUnitAnim != nullptr)
+		DefaultUnitAnim->IsWalking = true;
 
 	if (Distance < 5.f)
 	{

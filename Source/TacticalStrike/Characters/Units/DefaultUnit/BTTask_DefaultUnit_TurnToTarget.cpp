@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTTask_DefaultUnit_TurnToTarget::ExecuteTask(UBehaviorTreeC
 	if (nullptr == DefaultUnit)
 		return EBTNodeResult::Failed;
 
-	auto Target = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::TargetKey));
+	auto Target = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
 	if (Target != nullptr)
 	{
 		FVector LookVector = Target->GetActorLocation() - DefaultUnit->GetActorLocation();

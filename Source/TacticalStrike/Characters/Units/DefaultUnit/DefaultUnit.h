@@ -16,7 +16,7 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnUnitHPChanged, ADefaultUnit*);
 DECLARE_MULTICAST_DELEGATE(FOnDefaultUnitAttackEndDelegate);
 
-DECLARE_MULTICAST_DELEGATE(FMovingStopDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMovingStopDelegate);
 
 UCLASS()
 class TACTICALSTRIKE_API ADefaultUnit : public ACharacter

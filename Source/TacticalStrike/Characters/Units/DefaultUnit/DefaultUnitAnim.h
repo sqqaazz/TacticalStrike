@@ -30,10 +30,10 @@ public:
 
 	void DetectEnemy();
 	void DontDetectEnemy();
-protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 	bool IsWalking;
+protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = true))
 	bool IsRunning;

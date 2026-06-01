@@ -27,10 +27,10 @@ EBTNodeResult::Type UBTTask_DefaultUnit_MoveToTarget::ExecuteTask(UBehaviorTreeC
 		return EBTNodeResult::Failed;
 
 	UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(DefaultUnit->ObjectInfo.ObjectType));
-	DefaultUnit->MovingStopDelegate.AddUObject(this, &UBTTask_DefaultUnit_MoveToTarget::EndMove);
+	DefaultUnit->MovingStopDelegate.AddUniqueDynamic(this, &UBTTask_DefaultUnit_MoveToTarget::EndMove);
 
 	//FVector MovingLocation = OwnerComp.GetBlackboardComponent()->GetValueAsVector(ADefaultUnitAI::MovingPosKey);
-	UnitTarget = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::TargetKey));
+	UnitTarget = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::FinalTargetKey));
 	if (UnitTarget == nullptr)
 		return EBTNodeResult::Failed;
 	FVector MovingLocation = UnitTarget->GetActorLocation();
@@ -42,12 +42,7 @@ EBTNodeResult::Type UBTTask_DefaultUnit_MoveToTarget::ExecuteTask(UBehaviorTreeC
 	int32 CurTileColumn = int32(FMath::Floor(CurrentLocation.Y / 100));
 
 	TArray<FIntPoint> TargetPath = FindPath(FIntPoint(CurTileRow, CurTileColumn), FIntPoint(GoalTileRow, GoalTileColumn));
-	//UE_LOG(LogTemp, Log, TEXT("Location: [%d, %d]"), GoalTileRow, GoalTileColumn);
 
-	//for (int32 i = 0; i < TargetPath.Num(); i++)
-	//{
-	//	UE_LOG(LogTemp, Log, TEXT("Path: [%d, %d]"), TargetPath[i].X, TargetPath[i].Y);
-	//}
 	//OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::MainTeamAIKey);
 	StartMove(TargetPath);
 
@@ -102,9 +97,15 @@ TArray<FIntPoint> UBTTask_DefaultUnit_MoveToTarget::FindPath(FIntPoint StartGrid
 	EObjectOwner ObjectOwner = DefaultUnit->ObjectInfo.ObjectOwner;
 	ETileDir StartTileDir = ETileDir::None;
 	if (ObjectOwner == EObjectOwner::Blue)
+	{
 		StartTileDir = ETileDir::Right;
+		//StartTileDir = ETileDir::Top;
+	}
 	else if (ObjectOwner == EObjectOwner::Red)
+	{
 		StartTileDir = ETileDir::Left;
+		//StartTileDir = ETileDir::Bottom;
+	}
 
 	FGridNode StartNode(StartGrid.X, StartGrid.Y, StartTileDir, 0.0f, Heuristic(StartGrid.X, StartGrid.Y, GoalGrid.X, GoalGrid.Y), INDEX_NONE);
 	int32 StartIndex = GridNodes.Add(StartNode);
@@ -149,7 +150,7 @@ TArray<FIntPoint> UBTTask_DefaultUnit_MoveToTarget::FindPath(FIntPoint StartGrid
 					continue;
 			}
 
-			float NewG = CurrentNode.G + GetCost(CurrentNode.TileDir, NDir);
+			float NewG = CurrentNode.G /* + GetCost(CurrentNode.TileDir, NDir)*/;
 
 			FString Key = MakeNodeKey(NX, NY, NDir);
 
@@ -178,15 +179,21 @@ void UBTTask_DefaultUnit_MoveToTarget::StartMove(TArray<FIntPoint> Path)
 {
 	if (Path.Num() == 0)
 		return;
-
+	int32 Speed = DefaultUnit->Speed;
 	GridActor->RemoveTile_Unit(Path[0]);
-	GridActor->SetTile_Unit(Path[Path.Num() - 1], DefaultUnit);
+
+	if (Path.Num() < Speed)
+		GridActor->SetTile_Unit(Path[Path.Num() - 1], DefaultUnit);
+	else
+		GridActor->SetTile_Unit(Path[Speed], DefaultUnit);
+	//UE_LOG(LogTemp, Log, TEXT("Speed: %d, %d"), Path[Speed].X, Path[Speed].Y);
 	DefaultUnit->StartMoving(Path);
 }
 
 void UBTTask_DefaultUnit_MoveToTarget::EndMove()
 {
 	GridNodes.Empty();
+	BestCost.Empty();
 	int32 ActionCountKey = CurOwnerComp->GetBlackboardComponent()->GetValueAsInt(ADefaultUnitAI::ActionCountKey);
 	ActionCountKey--;
 	CurOwnerComp->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, ActionCountKey);
