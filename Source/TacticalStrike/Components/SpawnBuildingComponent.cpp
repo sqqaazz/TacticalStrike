@@ -250,6 +250,7 @@ void USpawnBuildingComponent::IsNotEnterWidget()
 
 }
 
+
 void USpawnBuildingComponent::SpawnBuildingCode(ESpawnBuilding BuildingCode, EObjectOwner ObjectOwner, FVector BuildingLocation)
 {
 	switch (BuildingCode)
@@ -259,24 +260,28 @@ void USpawnBuildingComponent::SpawnBuildingCode(ESpawnBuilding BuildingCode, EOb
 		DefaultBuilding = GetWorld()->SpawnActor<ABuilding_Barracks>(Spawn_DefaultBuilding, BuildingLocation, FRotator(0.0f, 0.0f, 0.0f));
 		DefaultBuilding->ObjectOwner = ObjectOwner;
 		DefaultBuilding->ObjectInfo.ObjectOwner = ObjectOwner;
+		DefaultBuilding->SetBuildingCollision();
 		break;
 	case ESpawnBuilding::SynBioLab:
 		Spawn_DefaultBuilding = Building_SynBioLab;
 		DefaultBuilding = GetWorld()->SpawnActor<ABuilding_SynBioLab>(Spawn_DefaultBuilding, BuildingLocation, FRotator(0.0f, 0.0f, 0.0f));
 		DefaultBuilding->ObjectOwner = ObjectOwner;
 		DefaultBuilding->ObjectInfo.ObjectOwner = ObjectOwner;
+		DefaultBuilding->SetBuildingCollision();
 		break;
 	case ESpawnBuilding::ResourceFacility:
 		Spawn_DefaultBuilding = Building_ResourceFacility;
 		DefaultBuilding = GetWorld()->SpawnActor<ABuilding_ResourceFacility>(Spawn_DefaultBuilding, BuildingLocation, FRotator(0.0f, 0.0f, 0.0f));
 		DefaultBuilding->ObjectOwner = ObjectOwner;
 		DefaultBuilding->ObjectInfo.ObjectOwner = ObjectOwner;
+		DefaultBuilding->SetBuildingCollision();
 		break;
 	case ESpawnBuilding::EnergyRepeater:
 		Spawn_DefaultBuilding = Building_EnergyRepeater;
 		DefaultBuilding = GetWorld()->SpawnActor<ABuilding_EnergyRepeater>(Spawn_DefaultBuilding, BuildingLocation, FRotator(0.0f, 0.0f, 0.0f));
 		DefaultBuilding->ObjectOwner = ObjectOwner;
 		DefaultBuilding->ObjectInfo.ObjectOwner = ObjectOwner;
+		DefaultBuilding->SetBuildingCollision();
 		break;
 	default:
 		break;

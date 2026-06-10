@@ -21,7 +21,7 @@ protected:
 	virtual float GetHealthRatio() override;
 
 	//공격 시 판정
-	virtual void AttackCheck() override;
+	virtual void AttackCheck(AActor* TargetActor) override;
 public:
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void EquipWeapon();

@@ -23,5 +23,5 @@ protected:
 private:
 	class UProgressBar* HPProgressBar;
 
-	TWeakObjectPtr<class ADefaultBuilding> CurrentUnitStat;
+	TWeakObjectPtr<class ADefaultBuilding> CurrentBuildingStat;
 };

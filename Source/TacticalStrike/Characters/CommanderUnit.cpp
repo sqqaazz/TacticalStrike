@@ -52,7 +52,7 @@ ACommanderUnit::ACommanderUnit()
 	CameraSpringArm->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	CameraSpringArm->SetRelativeRotation(FRotator(-70.0f, 0.0f, 0.0f));
 
-	MainCamera->SetRelativeLocation(FVector(-3000.0f, 0.0f, -3000.0f));
+	MainCamera->SetRelativeLocation(FVector(-2000.0f, 0.0f, -4000.0f));
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 

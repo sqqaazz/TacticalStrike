@@ -8,7 +8,7 @@
 #include "DefaultUnitAI.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE(FUnitTurnEndDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnitTurnEndDelegate);
 
 UCLASS()
 class TACTICALSTRIKE_API ADefaultUnitAI : public AAIController

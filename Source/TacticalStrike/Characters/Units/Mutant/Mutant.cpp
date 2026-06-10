@@ -99,9 +99,9 @@ float AMutant::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageE
 	return FinalDamage;
 }
 
-void AMutant::AttackCheck()
+void AMutant::AttackCheck(AActor* TargetActor)
 {
-	Super::AttackCheck();
+	Super::AttackCheck(TargetActor);
 
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);

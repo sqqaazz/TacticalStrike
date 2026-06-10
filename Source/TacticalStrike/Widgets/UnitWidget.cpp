@@ -40,6 +40,6 @@ void UUnitWidget::UpdateHealthWidget(ADefaultUnit* ClickedDefaultUnit)
 
 void UUnitWidget::BindUnitWidget(ADefaultUnit* NewCharacterStat)
 {
-	CurrentUnitStat = NewCharacterStat;;
+	CurrentUnitStat = NewCharacterStat;
 	NewCharacterStat->OnUnitHPChanged.AddUObject(this, &UUnitWidget::UpdateHealthWidget);
 }

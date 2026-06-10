@@ -29,7 +29,7 @@ EBTNodeResult::Type UBTTask_GetThreatLevel::ExecuteTask(UBehaviorTreeComponent& 
 	FVector UnitLocation = DefaultUnit->GetActorLocation();
 	FIntPoint UnitGridLocation = (UnitLocation.X / 100, UnitLocation.Y / 100);
 
-	TArray<ADefaultUnit*> SightEnemyArr = TeamMainAI->SightEnemyArr;
+	TArray<AActor*> SightEnemyArr = TeamMainAI->SightEnemyArr;
 
 	if (SightEnemyArr.Num() == 0)
 	{

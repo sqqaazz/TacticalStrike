@@ -144,7 +144,7 @@ void UBuildingClickableComponent::ClickEvent(AActor* TouchedActor, FKey ButtonPr
 	}
 }
 
-void UBuildingClickableComponent::UpdateBuildingHP(/*ADefaultBuilding* ClickedDefaultBuilding*/)
+void UBuildingClickableComponent::UpdateBuildingHP(ADefaultBuilding* ClickedDefaultBuilding)
 {
 	//AActor* ClickedActor = Cast<AActor>(ClickedDefaultBuilding);
 	if (DefaultBuilding != nullptr && CommanderController != nullptr && GetOwner() != nullptr &&

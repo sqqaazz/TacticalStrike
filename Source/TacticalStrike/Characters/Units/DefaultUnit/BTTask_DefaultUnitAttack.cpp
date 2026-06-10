@@ -9,46 +9,80 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "AI/AIController/TeamMainAI.h"
+#include "Objects/Buildings/DefaultBuilding.h"
 
 UBTTask_DefaultUnitAttack::UBTTask_DefaultUnitAttack()
 {
-	bNotifyTick = true;
+	//bNotifyTick = true;
+	NodeName = TEXT("DefaultUnit_Attack");
 	IsAttacking = false;
 }
 
 EBTNodeResult::Type UBTTask_DefaultUnitAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+	//bCreateNodeInstance = true;
+	CurOwnerComp = &OwnerComp;
 
 	GameInstance = Cast<UTacticalStrikeGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	GridActor = Cast<AGridActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AGridActor::StaticClass()));
 
 	ATeamMainAI* TeamMainAI = Cast<ATeamMainAI>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::MainTeamAIKey));
 	ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(OwnerComp.GetAIOwner()->GetPawn());
-	ADefaultUnit* UnitTarget = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
+	AActor* Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
+	DefaultUnit->OnAttackEnd.AddUniqueDynamic(this, &UBTTask_DefaultUnitAttack::FinishUnithaviorTask);
 
-	if (DefaultUnit->Attack >= UnitTarget->CurrentHP)
+	if (Cast<ADefaultUnit>(Target) != nullptr)
 	{
-		TeamMainAI->SightEnemyArr.Remove(UnitTarget);
+		ADefaultUnit* UnitTarget = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
+
+		if (DefaultUnit->Attack >= UnitTarget->CurrentHP)
+		{
+			TeamMainAI->SightEnemyArr.Remove(UnitTarget);
+
+			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(UnitTarget->GetController());
+			ATeamMainAI* EnemyTeamMainAI = Cast<ATeamMainAI>(DefaultUnitAI->GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::MainTeamAIKey));
+			if (EnemyTeamMainAI != nullptr)
+				EnemyTeamMainAI->TeamUnitArr.Remove(UnitTarget);
+			
+		}
+	}
+	else if (Cast<ADefaultBuilding>(Target) != nullptr)
+	{
+		ADefaultBuilding* BuildingTarget = Cast<ADefaultBuilding>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
+		if (DefaultUnit->Attack >= BuildingTarget->CurrentHP)
+		{
+			TeamMainAI->SightEnemyArr.Remove(BuildingTarget);
+		}
+
 	}
 
-	DefaultUnit->Attacking();
-	IsAttacking = true;
+	DefaultUnit->Attacking(Target);
+	//IsAttacking = true;
+	//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, 0);
+	//OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
+	//DefaultUnit->OnAttackEnd.AddLambda([this]() -> void {
+	//	IsAttacking = false;
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, 0);
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
-	DefaultUnit->OnAttackEnd.AddLambda([this]() -> void {
-		IsAttacking = false;
-		});
+	//	});
 
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTask_DefaultUnitAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+
+void UBTTask_DefaultUnitAttack::FinishUnithaviorTask()
 {
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	if (!IsAttacking)
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-	}
+	CurOwnerComp->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, 0);
+	CurOwnerComp->GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
+
+	FinishLatentTask(*CurOwnerComp, EBTNodeResult::Succeeded);
 }
+
+//void UBTTask_DefaultUnitAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+//{
+//	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+//	if (!IsAttacking)
+//	{
+//		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+//	}
+//}

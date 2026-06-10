@@ -39,7 +39,7 @@ public:
 
 
 	UFUNCTION()
-	void UpdateBuildingHP(/*ADefaultBuilding* ClickedDefaultBuilding*/);
+	void UpdateBuildingHP(ADefaultBuilding* ClickedDefaultBuilding);
 	UFUNCTION()
 	void UpdateBuildingState();
 private:

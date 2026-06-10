@@ -15,17 +15,18 @@ EBTNodeResult::Type UBTTask_DefaultUnit_TurnToTarget::ExecuteTask(UBehaviorTreeC
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	auto DefaultUnit = Cast<ADefaultUnit>(OwnerComp.GetAIOwner()->GetPawn());
+	ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(OwnerComp.GetAIOwner()->GetPawn());
 	if (nullptr == DefaultUnit)
 		return EBTNodeResult::Failed;
 
-	auto Target = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
+	AActor* Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
 	if (Target != nullptr)
 	{
 		FVector LookVector = Target->GetActorLocation() - DefaultUnit->GetActorLocation();
 		LookVector.Z = 0.0f;
 		FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
-		DefaultUnit->SetActorRotation(FMath::RInterpTo(DefaultUnit->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 10.0f));
+		//DefaultUnit->SetActorRotation(FMath::RInterpTo(DefaultUnit->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 10.0f));
+		DefaultUnit->SetActorRotation(TargetRot);
 		return EBTNodeResult::Succeeded;
 	}
 	else

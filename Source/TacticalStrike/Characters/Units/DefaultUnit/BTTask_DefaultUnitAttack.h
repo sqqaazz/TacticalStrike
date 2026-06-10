@@ -21,8 +21,10 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 protected:
-	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	//virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 private:
+	class UBehaviorTreeComponent* CurOwnerComp;
+
 	bool IsAttacking = false;
 
 	UPROPERTY()
@@ -30,4 +32,7 @@ private:
 	FUnitTableRow* UnitDataInfo;
 	UPROPERTY()
 	class AGridActor* GridActor;
+
+	UFUNCTION()
+	void FinishUnithaviorTask();
 };

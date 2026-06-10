@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Units/DefaultUnit/DefaultUnitAI.h"
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
+#include "Objects/Buildings/DefaultBuilding.h"
 #include "AI/AIController/TeamMainAI.h"
 
 UBTTask_GetSightObjects::UBTTask_GetSightObjects()
@@ -38,16 +39,16 @@ EBTNodeResult::Type UBTTask_GetSightObjects::ExecuteTask(UBehaviorTreeComponent&
 
 		if (bResult)
 		{
-			for (const auto Results : OverlapResults)
+			for (const FOverlapResult Results : OverlapResults)
 			{
-				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr)
+				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr || Cast<ADefaultBuilding>(Results.GetActor()) != nullptr)
 				{
-					ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
+					//ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
 					ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(OwnerComp.GetAIOwner());
 					ATeamMainAI* TeamMainAI = Cast<ATeamMainAI>(DefaultUnitAI->GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::MainTeamAIKey));
 					if (TeamMainAI != nullptr)
 					{
-						TeamMainAI->SightEnemyArr.AddUnique(TargetActor);
+						TeamMainAI->SightEnemyArr.AddUnique(Results.GetActor());
 					}
 				}
 			}
@@ -65,17 +66,17 @@ EBTNodeResult::Type UBTTask_GetSightObjects::ExecuteTask(UBehaviorTreeComponent&
 		);
 		if (bResult)
 		{
-			for (const auto Results : OverlapResults)
+			for (const FOverlapResult Results : OverlapResults)
 			{
-				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr)
+				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr || Cast<ADefaultBuilding>(Results.GetActor()) != nullptr)
 				{
-					ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
+					//ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
 					ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(OwnerComp.GetAIOwner());
 					ATeamMainAI* TeamMainAI = Cast<ATeamMainAI>(DefaultUnitAI->GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::MainTeamAIKey));
 
 					if (TeamMainAI != nullptr)
 					{
-						TeamMainAI->SightEnemyArr.AddUnique(TargetActor);
+						TeamMainAI->SightEnemyArr.AddUnique(Results.GetActor());
 					}
 				}
 			}

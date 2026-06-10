@@ -56,7 +56,7 @@ void ABuilding_Barracks::SetBasicMat()
 	DefaultBuildingMesh->SetMaterial(0, DefaultBuildingMat);
 	DefaultBuildingMesh->SetMaterial(1, LeftDoorMat);
 	DefaultBuildingMesh->SetMaterial(2, RightDoorMat);
-	DefaultBuildingMesh->SetCollisionProfileName(TEXT("Buildings"));
+	//DefaultBuildingMesh->SetCollisionProfileName(TEXT("Buildings"));
 }
 
 void ABuilding_Barracks::GetBuildingMaterial()

@@ -61,7 +61,7 @@ void UObjectInfoWidget::SetBuildingInfo(FObjectInfo ObjectInfo)
 			int32 BuildTime = BuildingDataInfo->BuildTime;
 			UMaterial* BuildingMaterial = GameInstance->GetMaterial(static_cast<ESpawnObject>(ObjectInfo.ObjectType));
 
-			BuildingInfoWidget->SetBuildingInfo(BuildingName, BuildingMaterial, Attack, Armor, DefaultHP, DefaultHP);
+			BuildingInfoWidget->SetBuildingInfo(BuildingName, BuildingMaterial, Attack, Armor, DefaultHP, CurrentHP);
 		}
 		BuildingInfoWidget->SetVisibility(ESlateVisibility::Visible);
 		BuildingInfoWidget->SetBuildingInfoState(ObjectInfo);
@@ -125,10 +125,11 @@ void UObjectInfoWidget::UpdateBuildingInfo(FObjectInfo ObjectInfo)
 			int32 Attack = BuildingDataInfo->Attack;
 			int32 Armor = BuildingDataInfo->Armor;
 			int32 DefaultHP = BuildingDataInfo->MaxHP;
+			int32 CurrentHP = ObjectInfo.CurrentHP;
 			int32 CurrentBuildTime = ObjectInfo.CurrentBuildTime;
 			UMaterial* BuildingMaterial = GameInstance->GetMaterial(static_cast<ESpawnObject>(ObjectInfo.ObjectType));
 
-			BuildingInfoWidget->SetBuildingInfo(BuildingName, BuildingMaterial, Attack, Armor, DefaultHP, CurrentBuildTime);
+			BuildingInfoWidget->SetBuildingInfo(BuildingName, BuildingMaterial, Attack, Armor, DefaultHP, CurrentHP);
 		}
 		BuildingInfoWidget->SetVisibility(ESlateVisibility::Visible);
 		BuildingInfoWidget->SetBuildingInfoState(ObjectInfo);

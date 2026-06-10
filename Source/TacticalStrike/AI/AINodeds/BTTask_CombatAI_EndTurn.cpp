@@ -30,7 +30,7 @@ EBTNodeResult::Type UBTTask_CombatAI_EndTurn::ExecuteTask(UBehaviorTreeComponent
 		{
 			if (TeamUnitArr.Num() - 1 == TeamUnitIndexKey)
 			{
-				TeamUnitIndexKey = 0;
+				TeamUnitIndexKey = -1;
 				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool(ATeamMainAI::TeamMainAI_bSightTriggerActivatedKey, false);
 				return EBTNodeResult::Succeeded;
@@ -46,7 +46,7 @@ EBTNodeResult::Type UBTTask_CombatAI_EndTurn::ExecuteTask(UBehaviorTreeComponent
 		{
 			if (TeamUnitArr.Num() - 1 == TeamUnitIndexKey)
 			{
-				TeamUnitIndexKey = 0;
+				TeamUnitIndexKey = -1;
 				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ATeamMainAI::TeamMainAI_TeamUnitIndexKey, TeamUnitIndexKey);
 				TeamMainAI->EndAction();
 

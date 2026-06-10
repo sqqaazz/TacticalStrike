@@ -58,6 +58,7 @@ void ATeamMainAI::OnPossess(APawn* InPawn)
 
 void ATeamMainAI::StartAction()
 {
+	//UE_LOG(LogTemp, Log, TEXT("%d"), (int32)ObjectInfo.ObjectOwner);
 	if (!bBehaviorTreeStarted)
 	{
 		UBlackboardComponent* BlackboardComp = Blackboard.Get();

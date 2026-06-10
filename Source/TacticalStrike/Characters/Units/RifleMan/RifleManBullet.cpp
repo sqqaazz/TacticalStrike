@@ -7,7 +7,7 @@
 ARifleManBullet::ARifleManBullet()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	//메시와 콜리전 할당
 	BulletCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RifleManBulletCollision"));
 	BulletMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RifleManBulletMesh"));
@@ -48,7 +48,7 @@ ARifleManBullet::ARifleManBullet()
 	BulletCollision->SetRelativeScale3D(FVector(0.4f, 0.4f, 0.4f));
 
 	//히트 이벤트 델리게이트 설정
-	BulletCollision->OnComponentBeginOverlap.AddDynamic(this, &ARifleManBullet::OnOverlapBegin);
+	//BulletCollision->OnComponentBeginOverlap.AddDynamic(this, &ARifleManBullet::OnOverlapBegin);
 
 	//탄환 트레일 이펙트 설정
 	//TrailStart = BulletMesh->GetAllSocketNames()[0];
@@ -62,59 +62,71 @@ void ARifleManBullet::BeginPlay()
 	//BulletTrail->BeginTrails(TrailStart, TrailEnd, ETrailWidthMode::ETrailWidthMode_FromFirst, 10.0f);
 }
 
-/*
+
 void ARifleManBullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	float Distance = FVector::Dist2D(GetActorLocation(), TargetActor->GetActorLocation());
+	//UE_LOG(LogTemp, Log, TEXT("%f"),Distance);
+	if (Distance < 20.0f)
+		DamageToTarget();
+	else if (Distance > 3000.0f)
+		DamageToTarget();
 }
-*/
+
 void ARifleManBullet::FireInDirection(const FVector& ShootDirection)
 {
 	//발사시 움직임 설정
 	BulletMovement->Velocity = ShootDirection * BulletMovement->InitialSpeed;
 }
 
-//피격 이벤트 설정
-void ARifleManBullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
-	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ARifleManBullet::DamageToTarget()
 {
-	if (OtherActor && (OtherActor != this) && OtherComp)
-	{
-		if (this->ActorHasTag("RedTeamProjectile"))
-		{
-			if (OtherActor->ActorHasTag("BlueTeamUnit") || OtherActor->ActorHasTag("BlueTeamBuilding"))
-			{
-				///FDamageEvent DamageEvent;
-				//OtherActor->TakeDamage(20.0f, DamageEvent, nullptr, this);
-
-				UGameplayStatics::ApplyDamage(OtherActor, 20.0f, nullptr, nullptr, NULL);
-				Destroy();
-			}
-		}
-		else if (this->ActorHasTag("BlueTeamProjectile"))
-		{
-			if (OtherActor->ActorHasTag("RedTeamUnit") || OtherActor->ActorHasTag("RedTeamBuilding"))
-			{
-				////FDamageEvent DamageEvent;
-				//OtherActor->TakeDamage(20.0f, DamageEvent, nullptr, this);
-				UGameplayStatics::ApplyDamage(OtherActor, 20.0f, nullptr, nullptr, NULL);
-				Destroy();
-			}
-		}
-
-		//if (OtherActor->ActorHasTag("RedTeamUnit") || OtherActor->ActorHasTag("BlueTeamUnit"))
-		//{
-
-		//	if ((OtherActor->ActorHasTag("RedTeamUnit") || OtherActor->ActorHasTag("RedTeamBuilding")) && this->ActorHasTag("RedTeamProjectile"))
-		//		return;
-		//	if ((OtherActor->ActorHasTag("BlueTeamUnit") || OtherActor->ActorHasTag("BlueTeamBuilding")) && this->ActorHasTag("BlueTeamProjectile"))
-		//		return;
-		//	FDamageEvent DamageEvent;
-		//	OtherActor->TakeDamage(20.0f, DamageEvent, nullptr, this);
-		//	UE_LOG(LogTemp, Log, TEXT("Name: %s"), *OtherActor->GetName());
-		//	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, FString::Printf(TEXT("2")));
-		//	Destroy();
-		//}
-	}
+	UGameplayStatics::ApplyDamage(TargetActor, (float)Damage, nullptr, nullptr, NULL);
+	Destroy();
 }
+
+//피격 이벤트 설정
+//void ARifleManBullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,
+//	class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//	if (OtherActor && (OtherActor != this) && OtherComp)
+//	{
+//		if (this->ActorHasTag("RedTeamProjectile"))
+//		{
+//			if (OtherActor->ActorHasTag("BlueTeamUnit") || OtherActor->ActorHasTag("BlueTeamBuilding"))
+//			{
+//				///FDamageEvent DamageEvent;
+//				//OtherActor->TakeDamage(20.0f, DamageEvent, nullptr, this);
+//
+//				UGameplayStatics::ApplyDamage(OtherActor, 20.0f, nullptr, nullptr, NULL);
+//				Destroy();
+//			}
+//		}
+//		else if (this->ActorHasTag("BlueTeamProjectile"))
+//		{
+//			if (OtherActor->ActorHasTag("RedTeamUnit") || OtherActor->ActorHasTag("RedTeamBuilding"))
+//			{
+//				////FDamageEvent DamageEvent;
+//				//OtherActor->TakeDamage(20.0f, DamageEvent, nullptr, this);
+//				UGameplayStatics::ApplyDamage(OtherActor, 20.0f, nullptr, nullptr, NULL);
+//				Destroy();
+//			}
+//		}
+//
+//		//if (OtherActor->ActorHasTag("RedTeamUnit") || OtherActor->ActorHasTag("BlueTeamUnit"))
+//		//{
+//
+//		//	if ((OtherActor->ActorHasTag("RedTeamUnit") || OtherActor->ActorHasTag("RedTeamBuilding")) && this->ActorHasTag("RedTeamProjectile"))
+//		//		return;
+//		//	if ((OtherActor->ActorHasTag("BlueTeamUnit") || OtherActor->ActorHasTag("BlueTeamBuilding")) && this->ActorHasTag("BlueTeamProjectile"))
+//		//		return;
+//		//	FDamageEvent DamageEvent;
+//		//	OtherActor->TakeDamage(20.0f, DamageEvent, nullptr, this);
+//		//	UE_LOG(LogTemp, Log, TEXT("Name: %s"), *OtherActor->GetName());
+//		//	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, FString::Printf(TEXT("2")));
+//		//	Destroy();
+//		//}
+//	}
+//}

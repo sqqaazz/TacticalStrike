@@ -124,9 +124,9 @@ float ARifleMan::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 	return FinalDamage;
 }
 
-void ARifleMan::AttackCheck()
+void ARifleMan::AttackCheck(AActor* TargetActor)
 {
-	Super::AttackCheck();
+	Super::AttackCheck(TargetActor);
 
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, FString::Printf(TEXT("aaa")));
 	if (RifleMan_Bullet)
@@ -144,6 +144,8 @@ void ARifleMan::AttackCheck()
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = this;
 			ARifleManBullet* SpawnBullet = World->SpawnActor<ARifleManBullet>(RifleMan_Bullet, MuzzleLocation, MuzzleRotation, SpawnParams);
+			SpawnBullet->Damage = UnitDataInfo->Attack;
+			SpawnBullet->TargetActor = TargetActor;
 			if (SpawnBullet)
 			{
 				if (this->ActorHasTag("BlueTeamUnit"))

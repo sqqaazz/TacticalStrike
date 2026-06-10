@@ -51,7 +51,8 @@ void UDefaultUnitAnim::AnimNotify_Attack()
 	auto DefaultUnit = Cast<ADefaultUnit>(TryGetPawnOwner());
 	if (DefaultUnit != nullptr)
 	{
-		DefaultUnit->AttackCheck();
+		//DefaultUnit->AttackCheck();
+		DefaultUnit->CheckAttackTarget();
 	}
 }
 

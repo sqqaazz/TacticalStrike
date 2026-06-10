@@ -25,7 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual float GetHealthRatio() override;
 
-	virtual void AttackCheck() override;
+	virtual void AttackCheck(AActor* TargetActor) override;
 public:
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

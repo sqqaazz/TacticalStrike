@@ -28,6 +28,7 @@ EBTNodeResult::Type UBTTask_CombatAI_CommandTeamUnits::ExecuteTask(UBehaviorTree
 		}
 
 		ADefaultUnit* DefaultUnit = TeamUnitArr[CurrentUnitIndex];
+		//UE_LOG(LogTemp, Log, TEXT("%s"), *DefaultUnit->GetName());
 		if (DefaultUnit != nullptr)
 		{
 			ADefaultUnitAI* DefaultUnitAI = Cast<ADefaultUnitAI>(DefaultUnit->GetController());
@@ -38,7 +39,7 @@ EBTNodeResult::Type UBTTask_CombatAI_CommandTeamUnits::ExecuteTask(UBehaviorTree
 				else
 					DefaultUnitAI->GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::DefaultUnitAI_bSightTriggerActivatedKey, false);
 
-				DefaultUnitAI->UnitTurnEndDelegate.AddUObject(this, &UBTTask_CombatAI_CommandTeamUnits::FinishUnithaviorTask);
+				DefaultUnitAI->UnitTurnEndDelegate.AddUniqueDynamic(this, &UBTTask_CombatAI_CommandTeamUnits::FinishUnithaviorTask);
 				DefaultUnitAI->GetBlackboardComponent()->SetValueAsInt(ADefaultUnitAI::ActionCountKey, 2);
 				DefaultUnitAI->StartUnitTurn();
 				DefaultUnitAI->LifeTime++;

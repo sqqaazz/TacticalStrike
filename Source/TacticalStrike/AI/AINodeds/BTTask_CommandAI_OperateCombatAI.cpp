@@ -13,11 +13,11 @@ UBTTask_CommandAI_OperateCombatAI::UBTTask_CommandAI_OperateCombatAI()
 EBTNodeResult::Type UBTTask_CommandAI_OperateCombatAI::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	CurOwnerComp = &OwnerComp;
-
 	ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(OwnerComp.GetAIOwner()->GetPawn());
+
 	if (CommanderUnit != nullptr)
 	{
-		CommanderUnit->TeamMainAIInstance->CombatAIEndActionDelegate.AddUObject(this, &UBTTask_CommandAI_OperateCombatAI::FinishCombatAIhaviorTask);
+		CommanderUnit->TeamMainAIInstance->CombatAIEndActionDelegate.AddUniqueDynamic(this, &UBTTask_CommandAI_OperateCombatAI::FinishCombatAIhaviorTask);
 		CommanderUnit->TeamMainAIInstance->StartAction();
 		return EBTNodeResult::InProgress;
 	}

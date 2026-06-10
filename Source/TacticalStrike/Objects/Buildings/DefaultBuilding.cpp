@@ -50,8 +50,8 @@ ADefaultBuilding::ADefaultBuilding()
 	HPBarWidget->SetupAttachment(RootScene);
 	NiagaraComponent_ObjectSelected->SetupAttachment(RootScene);
 	//HPBarWidget->SetRelativeLocation(GetActorLocation());
-	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 400.0f));
-	HPBarWidget->SetWidgetSpace(EWidgetSpace::World);
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
 	//HPBarWidget->SetVisibility(false);
 
@@ -76,7 +76,6 @@ void ADefaultBuilding::PreInitializeComponents()
 		DefaultHP = BuildingDataInfo->MaxHP;
 		CurrentHP = DefaultHP;
 		BuildTime = BuildingDataInfo->BuildTime;
-		//UE_LOG(LogTemp, Log, TEXT("ddddddddccccccccc: %d"), EnergyRange);
 
 		ObjectInfo.BuildTime = BuildingDataInfo->BuildTime;
 		ObjectInfo.CurrentBuildTime = 0;
@@ -118,14 +117,27 @@ void ADefaultBuilding::BeginPlay()
 	auto BuildingWidget = Cast<UObjectHealthWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != BuildingWidget)
 	{
-		if (ObjectState == EObjectState::Activated)
-		{
-			BuildingWidget->BindBuildingWidget(this);
-		}
-		else
-		{
-		}
+		BuildingWidget->BindBuildingWidget(this);
 	}
+}
+
+float ADefaultBuilding::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	CurrentHP = FMath::Clamp(int32(CurrentHP - (FinalDamage - Armor)), 0, DefaultHP);
+	ObjectInfo.CurrentHP = CurrentHP;
+	//UE_LOG(LogTemp, Log, TEXT("%d"), CurrentHP);
+	OnBuildingHPChanged.Broadcast(this);
+	//OnBuildingHPChanged.Broadcast(this);
+	return FinalDamage;
+}
+
+float ADefaultBuilding::GetHealthRatio()
+{
+	//Super::GetHealthRatio();
+
+	return (DefaultHP < KINDA_SMALL_NUMBER) ? 0.0f : (float(CurrentHP) / float(DefaultHP));
 }
 
 void ADefaultBuilding::SetEnableMat()
@@ -141,7 +153,7 @@ void ADefaultBuilding::SetDisableMat()
 void ADefaultBuilding::SetBasicMat()
 {
 	DefaultBuildingMesh->SetMaterial(0, DefaultBuildingMat);
-	DefaultBuildingMesh->SetCollisionProfileName(TEXT("Buildings"));
+	//DefaultBuildingMesh->SetCollisionProfileName(TEXT("Buildings"));
 }
 
 void ADefaultBuilding::SetBuildingCustomDepth(bool Result)
@@ -203,6 +215,14 @@ void ADefaultBuilding::ActivateBuilding()
 		}
 	}
 
+}
+
+void ADefaultBuilding::SetBuildingCollision()
+{
+	if (ObjectInfo.ObjectOwner == EObjectOwner::Blue)
+		DefaultBuildingMesh->SetCollisionProfileName(TEXT("BlueTeamBuilding"));
+	else if (ObjectInfo.ObjectOwner == EObjectOwner::Red)
+		DefaultBuildingMesh->SetCollisionProfileName(TEXT("RedTeamBuilding"));
 }
 
 void ADefaultBuilding::Set_NiagaraComponent_ObjectSelected_Scale()

@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Units/DefaultUnit/DefaultUnitAI.h"
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
+#include "Objects/Buildings/DefaultBuilding.h"
 #include "AI/AIController/TeamMainAI.h"
 
 UBTService_GetSightObjects::UBTService_GetSightObjects()
@@ -45,11 +46,11 @@ void UBTService_GetSightObjects::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 			//	return Results1.GetActor()->GetDistanceTo(DefaultUnit) < Results2.GetActor()->GetDistanceTo(DefaultUnit);
 			//});
 
-			for (auto Results : OverlapResults)
+			for (const FOverlapResult Results : OverlapResults)
 			{
-				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr)
+				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr || Cast<ADefaultBuilding>(Results.GetActor()) != nullptr)
 				{
-					ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
+					//ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
 					//int32 ResultsX = TargetActor->GetActorLocation().X / 100;
 					//int32 ResultsY = TargetActor->GetActorLocation().Y / 100;
 
@@ -57,7 +58,7 @@ void UBTService_GetSightObjects::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 					//FSightEnemyStruct SightEnemyStruct = { FIntPoint[ResultsX, ResultsY], TargetActor->ObjectInfo };
 					if (TeamMainAI != nullptr)
 					{
-						TeamMainAI->SightEnemyArr.AddUnique(TargetActor);
+						TeamMainAI->SightEnemyArr.AddUnique(Results.GetActor());
 					}
 				}
 			}
@@ -84,11 +85,11 @@ void UBTService_GetSightObjects::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		);
 		if (bResult)
 		{
-			for (auto Results : OverlapResults)
+			for (const FOverlapResult Results : OverlapResults)
 			{
-				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr)
+				if (Cast<ADefaultUnit>(Results.GetActor()) != nullptr || Cast<ADefaultBuilding>(Results.GetActor()) != nullptr)
 				{
-					ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
+					//ADefaultUnit* TargetActor = Cast<ADefaultUnit>(Results.GetActor());
 					//int32 ResultsX = TargetActor->GetActorLocation().X / 100;
 					//int32 ResultsY = TargetActor->GetActorLocation().Y / 100;
 
@@ -96,7 +97,7 @@ void UBTService_GetSightObjects::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 					//FSightEnemyStruct SightEnemyStruct = { FIntPoint[ResultsX, ResultsY], TargetActor->ObjectInfo };
 					if (TeamMainAI != nullptr)
 					{
-						TeamMainAI->SightEnemyArr.AddUnique(TargetActor);
+						TeamMainAI->SightEnemyArr.AddUnique(Results.GetActor());
 					}
 				}
 			}

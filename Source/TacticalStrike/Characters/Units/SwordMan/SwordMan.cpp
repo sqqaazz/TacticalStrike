@@ -115,9 +115,9 @@ float ASwordMan::TakeDamage(float DamageAmount, struct FDamageEvent const& Damag
 	return FinalDamage;
 }
 
-void ASwordMan::AttackCheck()
+void ASwordMan::AttackCheck(AActor* TargetActor)
 {
-	Super::AttackCheck();
+	Super::AttackCheck(TargetActor);
 	
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);

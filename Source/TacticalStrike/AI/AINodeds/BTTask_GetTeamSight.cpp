@@ -32,7 +32,7 @@ EBTNodeResult::Type UBTTask_GetTeamSight::ExecuteTask(UBehaviorTreeComponent& Ow
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Units: %d"), TeamUnitArr.Num());
+	//UE_LOG(LogTemp, Log, TEXT("Units: %d"), TeamUnitArr.Num());
 	return EBTNodeResult::Succeeded;
 
 }

@@ -14,7 +14,7 @@
 #include "DefaultUnit.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnUnitHPChanged, ADefaultUnit*);
-DECLARE_MULTICAST_DELEGATE(FOnDefaultUnitAttackEndDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDefaultUnitAttackEndDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FMovingStopDelegate);
 
@@ -37,12 +37,14 @@ public:
 	virtual float GetHealthRatio();
 
 	//공격 데미지 판정
-	virtual void AttackCheck();
-
+	virtual void AttackCheck(AActor* TargetActor);
+	void CheckAttackTarget();
 	uint8 UnitType;
 
-	void Attacking();
+	void Attacking(AActor* TargetActor);
 	void EndAttack();
+
+	AActor* TempTargetActor;
 
 	void StartMoving(TArray <FIntPoint>& Path);
 	void Moving(float DeltaTime);

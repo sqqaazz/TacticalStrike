@@ -64,6 +64,7 @@ ADefaultUnit::ADefaultUnit()
 	SetActorRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
 
 	bIsMoving = false;
+	TempTargetActor = nullptr;
 }
 
 void ADefaultUnit::BeginPlay()
@@ -101,13 +102,19 @@ float ADefaultUnit::GetHealthRatio()
 	return 0.7f;
 }
 
-void ADefaultUnit::AttackCheck()
+void ADefaultUnit::AttackCheck(AActor* TargetActor)
 {
 
 }
 
-void ADefaultUnit::Attacking()
+void ADefaultUnit::CheckAttackTarget()
 {
+	AttackCheck(TempTargetActor);
+}
+
+void ADefaultUnit::Attacking(AActor* TargetActor)
+{
+	TempTargetActor = TargetActor;
 	auto AnimInstance = Cast<UDefaultUnitAnim>(GetMesh()->GetAnimInstance());
 	if (nullptr != AnimInstance)
 	{
@@ -145,7 +152,7 @@ void ADefaultUnit::Moving(float DeltaTime)
 	FVector TargetLocation = FVector(CurPath[CurPathIndex].X * 100.0f + 50.0f, CurPath[CurPathIndex].Y * 100.0f + 50.0f, GetActorLocation().Z);
 	FRotator TargetRotation = (TargetLocation - GetActorLocation()).Rotation();
 
-	FVector NewLocation = FMath::VInterpConstantTo(GetActorLocation(), TargetLocation, DeltaTime, 300.0f);
+	FVector NewLocation = FMath::VInterpConstantTo(GetActorLocation(), TargetLocation, DeltaTime, 600.0f);
 
 	SetActorRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaTime, 10.f));
 	SetActorLocation(NewLocation);
@@ -155,7 +162,7 @@ void ADefaultUnit::Moving(float DeltaTime)
 	if (DefaultUnitAnim != nullptr)
 		DefaultUnitAnim->IsWalking = true;
 
-	if (Distance < 5.f)
+	if (Distance < 5.0f)
 	{
 		SetActorLocation(TargetLocation);
 		CurPathIndex++;

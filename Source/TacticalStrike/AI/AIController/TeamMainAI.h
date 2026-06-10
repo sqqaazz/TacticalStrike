@@ -9,7 +9,7 @@
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
 #include "TeamMainAI.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FCombatAIEndActionDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCombatAIEndActionDelegate);
 
 USTRUCT(BlueprintType)
 struct FSightEnemyStruct
@@ -45,7 +45,7 @@ public:
 
 	//TArray<FSightEnemyStruct> SightEnemyArr;
 	UPROPERTY()
-	TArray<ADefaultUnit*> SightEnemyArr;
+	TArray<AActor*> SightEnemyArr;
 	UPROPERTY()
 	TArray<ADefaultUnit*> TeamUnitArr;
 

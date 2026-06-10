@@ -10,7 +10,7 @@
 #include "DefaultBuilding.generated.h"
 
 //DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuildingHPChanged, ADefaultBuilding*);
-DECLARE_MULTICAST_DELEGATE(FOnBuildingHPChanged);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnBuildingHPChanged, ADefaultBuilding*);
 enum class EBuildingOwner : uint8
 {
 	None UMETA(DisPlayName = "None"),
@@ -63,7 +63,14 @@ protected:
 
 	class AGridActor* GridActor;
 public:	
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser) override;
+
+
 	FOnBuildingHPChanged OnBuildingHPChanged;
+
+	float GetHealthRatio();
 
 	virtual void SetEnableMat();
 	virtual void SetDisableMat();
@@ -81,6 +88,8 @@ public:
 	void Set_NiagaraComponent_ObjectSelected_Visibility(bool Visibility);
 
 	void ActivateBuilding();
+
+	void SetBuildingCollision();
 private:
 	USceneComponent* RootScene;
 

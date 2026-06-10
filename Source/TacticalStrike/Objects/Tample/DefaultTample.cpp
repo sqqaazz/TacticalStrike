@@ -86,15 +86,15 @@ void ADefaultTample::PostInitializeComponents()
 	}
 }
 
-float ADefaultTample::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	class AController* EventInstigator, AActor* DamageCauser)
-{
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	CurrentHP = FMath::Clamp(int32(CurrentHP - (FinalDamage - Armor)), 0, DefaultHP);
-	OnBuildingHPChanged.Broadcast();
-	//OnBuildingHPChanged.Broadcast(this);
-	return FinalDamage;
-}
+//float ADefaultTample::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+//	class AController* EventInstigator, AActor* DamageCauser)
+//{
+//	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+//	CurrentHP = FMath::Clamp(int32(CurrentHP - (FinalDamage - Armor)), 0, DefaultHP);
+//	OnBuildingHPChanged.Broadcast();
+//	//OnBuildingHPChanged.Broadcast(this);
+//	return FinalDamage;
+//}
 
 //유닛 카운트 장소에서 유닛 체크 후 필드에 스폰
 //void ADefaultTample::GetUnitArray()

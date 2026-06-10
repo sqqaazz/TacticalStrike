@@ -9,15 +9,15 @@ void UObjectHealthWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	HPProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("HPProgressbar")));
-	//UpdateHealthWidget(nullptr);
+	UpdateHealthWidget(nullptr);
 }
 //HP비율 업데이트
-void UObjectHealthWidget::UpdateHealthWidget(ADefaultBuilding* ClickedDefaultUnit)
+void UObjectHealthWidget::UpdateHealthWidget(ADefaultBuilding* ClickedDefaultBuilding)
 {
-
-	/*if (nullptr != HPProgressBar && CurrentUnitStat.IsValid())
+	//UE_LOG(LogTemp, Log, TEXT("ssssssddddd"));
+	if (nullptr != HPProgressBar && CurrentBuildingStat.IsValid())
 	{
-		float HPRatio = CurrentUnitStat->GetHealthRatio();
+		float HPRatio = CurrentBuildingStat->GetHealthRatio();
 		HPProgressBar->SetPercent(HPRatio);
 
 		if (HPRatio < 0.3f)
@@ -27,11 +27,11 @@ void UObjectHealthWidget::UpdateHealthWidget(ADefaultBuilding* ClickedDefaultUni
 		else
 			HPProgressBar->SetFillColorAndOpacity(FColor::Green);
 
-	}*/
+	}
 }
 
 void UObjectHealthWidget::BindBuildingWidget(ADefaultBuilding* NewBuildingStat)
 {
-	CurrentUnitStat = NewBuildingStat;
-	//NewBuildingStat->OnBuildingHPChanged.AddUObject(this, &UObjectHealthWidget::UpdateHealthWidget);
+	CurrentBuildingStat = NewBuildingStat;
+	NewBuildingStat->OnBuildingHPChanged.AddUObject(this, &UObjectHealthWidget::UpdateHealthWidget);
 }

@@ -602,6 +602,28 @@ void AGridActor::SetTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding*
 	}
 }
 
+void AGridActor::RemoveTile_Building(FIntPoint BuildingGridPoint, ADefaultBuilding* DefaultBuilding)
+{
+	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->IsBuildingCenter = false;
+
+	UGridTileActor* GridTileActor = GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y];
+
+	FIntPoint StartGridTile = GetStartGridTile(GridTileActor->Rows, GridTileActor->Columns,
+		DefaultBuilding->GridSizeX, DefaultBuilding->GridSizeY, DefaultBuilding->ObjectInfo.ObjectOwner);
+
+	for (int32 i = 0; i < DefaultBuilding->GridSizeX; i++)
+	{
+		for (int32 j = 0; j < DefaultBuilding->GridSizeY; j++)
+		{
+			if (TileCheck(StartGridTile.X + i, StartGridTile.Y + j))
+			{
+				GridTileArr[StartGridTile.X + i].GridTileColumn[StartGridTile.Y + j]->ClearObjectInfo();
+	
+			}
+		}
+	}
+}
+
 void AGridActor::SetTileDir(FIntPoint BuildingGridPoint)
 {
 	GridTileArr[BuildingGridPoint.X].GridTileColumn[BuildingGridPoint.Y]->TileDirArr[0].TileDirState = ETileDirState::Block;

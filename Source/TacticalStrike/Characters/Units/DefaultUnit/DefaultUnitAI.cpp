@@ -11,6 +11,7 @@
 #include "Objects/Buildings/DefaultBuilding.h"
 #include "Objects/GridActor.h"
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
+#include "AI/AIController/TeamMainAI.h"
 
 const FName ADefaultUnitAI::SpawnPosKey(TEXT("DefaultUnitSpawnPos"));
 const FName ADefaultUnitAI::MovingPosKey(TEXT("DefaultUnitMovingPos"));
@@ -135,6 +136,17 @@ void ADefaultUnitAI::EndUnitTurn()
 void ADefaultUnitAI::StopAI()
 {
 	auto BehaviorTreeComponent = Cast<UBehaviorTreeComponent>(BrainComponent);
+
+	APawn* DefaultUnitPawn = GetPawn();
+	if (DefaultUnitPawn != nullptr)
+	{
+		int32 PawnRow = FMath::FloorToInt(DefaultUnitPawn->GetActorLocation().X / 100.0f);
+		int32 PawnColumn = FMath::FloorToInt(DefaultUnitPawn->GetActorLocation().Y / 100.0f);
+
+		GridActor->RemoveTile_Unit(FIntPoint(PawnRow, PawnColumn));
+	}
+	UnitTurnEndDelegate.Broadcast();
+
 	if (BehaviorTreeComponent != nullptr)
 	{
 		BehaviorTreeComponent->StopTree(EBTStopMode::Safe);

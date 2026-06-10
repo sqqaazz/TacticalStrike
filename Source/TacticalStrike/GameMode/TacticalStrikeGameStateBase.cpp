@@ -14,9 +14,26 @@ ATacticalStrikeGameStateBase::ATacticalStrikeGameStateBase()
 
 void ATacticalStrikeGameStateBase::PlayerTurnStart()
 {
+	//UE_LOG(LogTemp, Log, TEXT("ddddccccccxxxxxaae"));
 	Turn++;
 	PlayerTurnStartDelegate.Broadcast();
 	PlayerTurnStartAfterDelegate.Broadcast();
+
+	//CooldownTime = 3;
+	//GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ATacticalStrikeGameStateBase::PlayerTurnStart_EndTimer, 1.0f, true);
+}
+
+void ATacticalStrikeGameStateBase::PlayerTurnStart_EndTimer()
+{
+	--CooldownTime;
+	if (CooldownTime < 1)
+	{
+		Turn++;
+		PlayerTurnStartDelegate.Broadcast();
+		PlayerTurnStartAfterDelegate.Broadcast();
+		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
+	}
+
 }
 
 void ATacticalStrikeGameStateBase::PlayerCombatAITurnEnd(EObjectOwner ObjectOwner)

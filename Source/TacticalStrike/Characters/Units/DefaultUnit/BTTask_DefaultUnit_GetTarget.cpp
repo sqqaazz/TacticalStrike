@@ -24,30 +24,37 @@ EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComp
 	ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(OwnerComp.GetAIOwner()->GetPawn());
 	UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(DefaultUnit->ObjectInfo.ObjectType));
 
-	TArray<ADefaultUnit*> SightEnemyArr = TeamMainAI->SightEnemyArr;
+	TArray<AActor*> SightEnemyArr = TeamMainAI->SightEnemyArr;
 	AActor* UnitFinalTarget = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::FinalTargetKey));
 
 	if (UnitFinalTarget == nullptr || TeamMainAI == nullptr || DefaultUnit == nullptr)
 		return EBTNodeResult::Failed;
-	
+	//UE_LOG(LogTemp, Log, TEXT("vtttttttttccccc"));
 	if (SightEnemyArr.IsEmpty())
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
 		return EBTNodeResult::Succeeded;
 	}
+	float UnitRange = UnitDataInfo->Range;
 
-	for (ADefaultUnit* SightEnemy : SightEnemyArr)
+	for (AActor* SightEnemy : SightEnemyArr)
 	{
-		float UnitRange = UnitDataInfo->Range;
 		if (UnitRange < DefaultUnit->GetDistanceTo(SightEnemy))
 			continue;
 
-		if (DefaultUnit->GetDistanceTo(SightEnemy) < DefaultUnit->GetDistanceTo(UnitFinalTarget))
+		if (DefaultUnit->GetDistanceTo(SightEnemy) <= DefaultUnit->GetDistanceTo(UnitFinalTarget))
 			UnitFinalTarget = SightEnemy;
 
+		//UE_LOG(LogTemp, Log, TEXT("%f"), DefaultUnit->GetDistanceTo(SightEnemy));
+
 	}
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, true);
-	OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
+	if (DefaultUnit->GetDistanceTo(UnitFinalTarget) < UnitRange)
+	{
+		//UE_LOG(LogTemp, Log, TEXT("%f"), DefaultUnit->GetDistanceTo(UnitFinalTarget));
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
+	}
+
 	return EBTNodeResult::Succeeded;
 }

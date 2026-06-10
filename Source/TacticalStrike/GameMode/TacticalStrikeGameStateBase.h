@@ -27,11 +27,11 @@ public:
 	
 	int32 Turn;
 
-	//int32 CooldownTime;
+	int32 CooldownTime;
 
 	//void StartTimer();
 	//void AdvanceTimer();
-	//FTimerHandle CountdownTimerHandle;
+	FTimerHandle CountdownTimerHandle;
 
 	FWorldCommanderTimer WorldCommanderTimer;
 	FWorldUnitSpawnTrigger WorldUnitSpawnTrigger;
@@ -44,6 +44,7 @@ public:
 	FAITurnStartDelegate AITurnStartDelegate;
 
 	void PlayerTurnStart();
+	void PlayerTurnStart_EndTimer();
 	void PlayerCombatAITurnEnd(EObjectOwner ObjectOwner);
 	void AITurnStart();
 protected:
