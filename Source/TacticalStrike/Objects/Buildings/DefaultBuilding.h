@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DataTables/BuildingDataTables.h"
 #include "GameMode/TacticalStrikeGameInstance.h"
+#include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Objects/GridActor.h"
 #include "DefaultBuilding.generated.h"
 
@@ -52,6 +53,10 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* DefaultBuildingMesh;
 
+	
+	UPROPERTY(VisibleAnywhere)
+	UGeometryCollectionComponent* DefaultBuildingFracture;
+
 	UMaterialInterface* DefaultBuildingMat;
 
 	UMaterialInterface* BuildEnableMat;
@@ -90,16 +95,29 @@ public:
 	void ActivateBuilding();
 
 	void SetBuildingCollision();
+
+	void ExplodeBuilding();
+	void DestroyBuilding();
 private:
 	USceneComponent* RootScene;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class UWidgetComponent* HPBarWidget;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class UNiagaraComponent* NiagaraComponent_ObjectSelected;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class UNiagaraSystem* NiagaraSystem_ObjectSelected;
+
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* NiagaraComponent_Explosion;
+
+	UPROPERTY(VisibleAnywhere)
+	class UParticleSystem* ParticleSysystem_Fire;
+	UPROPERTY(VisibleAnywhere)
+	class UParticleSystemComponent* ParticleComponent_Fire;
+
+	FTimerHandle DestroyTimerHandle;
 
 	class ATacticalStrikeGameStateBase* TacticalStrikeGameStateBase;
 

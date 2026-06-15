@@ -10,6 +10,9 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "GameMode/TacticalStrikeGameStateBase.h"
+#include "Field/FieldSystemObjects.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 ADefaultBuilding::ADefaultBuilding()
@@ -18,6 +21,8 @@ ADefaultBuilding::ADefaultBuilding()
 	ClickableComponent = CreateDefaultSubobject<UBuildingClickableComponent>(TEXT("DefaultBuilding_ClickableComponent"));
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("DefaultBuilding_HpBarWidget"));
 	NiagaraComponent_ObjectSelected = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara_DefaultBuilding_ObjectSelected"));
+	NiagaraComponent_Explosion = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara_DefaultBuilding_Explosion"));
+	ParticleComponent_Fire = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particle_DefaultBuilding_Fire"));
 
 	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene_DefaultBuilding"));
 
@@ -27,7 +32,10 @@ ADefaultBuilding::ADefaultBuilding()
 	DefaultBuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh_DefaultBuilding"));
 	DefaultBuildingMat = CreateDefaultSubobject<UMaterialInterface>(TEXT("Material_DefaultBuilding"));
 
+	DefaultBuildingFracture = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("FractureMesh_DefaultBuilding"));
+
 	DefaultBuildingMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	//DefaultBuildingFracture->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FClassFinder<UObjectHealthWidget> HealthUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/Widgets/BP_ObjectHealthWidget.BP_ObjectHealthWidget_C'"));
 	if (HealthUI.Succeeded())
@@ -39,27 +47,53 @@ ADefaultBuilding::ADefaultBuilding()
 	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> Selected(TEXT("/Script/Niagara.NiagaraSystem'/Game/VFX/Niagara/Niagara_ObjectSelected.Niagara_ObjectSelected'"));
 	if (Selected.Succeeded())
 	{
-		NiagaraSystem_ObjectSelected = Selected.Object;
-		NiagaraComponent_ObjectSelected->SetAsset(NiagaraSystem_ObjectSelected);
+		//NiagaraSystem_ObjectSelected = Selected.Object;
+		NiagaraComponent_ObjectSelected->SetAsset(Selected.Object);
 		NiagaraComponent_ObjectSelected->bAutoActivate = true;
 	}
 	
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> BuildingExplosion(TEXT("/Script/Niagara.NiagaraSystem'/Game/BlinkAndDashVFX/VFX_Niagara/NS_Blink_Fire.NS_Blink_Fire'"));
+	if (BuildingExplosion.Succeeded())
+	{
+		NiagaraComponent_Explosion->SetAsset(BuildingExplosion.Object);
+		NiagaraComponent_Explosion->bAutoActivate = false;
+	}
+	
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> BuildingFire(TEXT("/Script/Engine.ParticleSystem'/Game/StarterContent/Particles/P_Fire.P_Fire'"));
+	if (BuildingFire.Succeeded())
+	{
+		ParticleComponent_Fire->SetTemplate(BuildingFire.Object);
+	}
 
 	RootComponent = RootScene;
+	DefaultBuildingFracture->SetupAttachment(RootScene);
 	DefaultBuildingMesh->SetupAttachment(RootScene);
 	HPBarWidget->SetupAttachment(RootScene);
 	NiagaraComponent_ObjectSelected->SetupAttachment(RootScene);
+	ParticleComponent_Fire->SetupAttachment(RootScene);
+	NiagaraComponent_Explosion->SetupAttachment(RootScene);
 	//HPBarWidget->SetRelativeLocation(GetActorLocation());
+
+	NiagaraComponent_Explosion->SetAutoDestroy(true);
+
+	DefaultBuildingFracture->SetVisibility(false);
+	//DefaultBuildingFracture->SetRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
+
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
 
 	//HPBarWidget->SetVisibility(false);
 
-	NiagaraComponent_ObjectSelected->bAutoActivate = true;
+	//NiagaraComponent_ObjectSelected->bAutoActivate = true;
 
 	CurrentBuildTime = 0;
 	//ObjectOwner = EObjectOwner::None;
 	ObjectState = EObjectState::DeActivated;
+
+	NiagaraComponent_Explosion->SetRelativeScale3D(FVector(0.8f));
+	NiagaraComponent_Explosion->SetCustomTimeDilation(0.4f);
+
+	ParticleComponent_Fire->SetRelativeScale3D(FVector(2.0f, 2.0f, 1.0f));
 }
 
 void ADefaultBuilding::PreInitializeComponents()
@@ -111,14 +145,22 @@ void ADefaultBuilding::BeginPlay()
 	this->Tags.Add("Building");
 	DefaultBuildingMesh->SetCollisionProfileName(TEXT("Building"));
 
+	DefaultBuildingFracture->SetEnableGravity(false);
+	DefaultBuildingFracture->SetEnableDamageFromCollision(false);
+
 	Set_NiagaraComponent_ObjectSelected_Scale();
 	Set_NiagaraComponent_ObjectSelected_Visibility(false);
+
+	ParticleComponent_Fire->DeactivateSystem();
 
 	auto BuildingWidget = Cast<UObjectHealthWidget>(HPBarWidget->GetUserWidgetObject());
 	if (nullptr != BuildingWidget)
 	{
 		BuildingWidget->BindBuildingWidget(this);
 	}
+
+
+	//UE_LOG(LogTemp, Warning,TEXT("Parent = %s"),*GetNameSafe(DefaultBuildingFracture->GetAttachParent()));
 }
 
 float ADefaultBuilding::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -129,6 +171,10 @@ float ADefaultBuilding::TakeDamage(float DamageAmount, struct FDamageEvent const
 	ObjectInfo.CurrentHP = CurrentHP;
 	//UE_LOG(LogTemp, Log, TEXT("%d"), CurrentHP);
 	OnBuildingHPChanged.Broadcast(this);
+
+	if (CurrentHP < (DefaultHP - 10))
+		ExplodeBuilding();
+
 	//OnBuildingHPChanged.Broadcast(this);
 	return FinalDamage;
 }
@@ -172,10 +218,11 @@ void ADefaultBuilding::SetBuildingScale()
 	float DefaultScaleX = (float(GridSizeX) * 100.0f) / OriginalSize.X;
 	float DefaultScaleY = (float(GridSizeY) * 100.0f) / OriginalSize.Y;
 	float AspectRatioZ = OriginalSize.Z / ((OriginalSize.X + OriginalSize.Y) * 0.5f);
-	float DefaultScaleZ = ((DefaultScaleX + DefaultScaleY) * 0.5f) * AspectRatioZ;
+	float DefaultScaleZ = ((DefaultScaleX + DefaultScaleY) * 0.8f) * AspectRatioZ;
 
-	SetActorScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 0.8f));
+	SetActorScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 1.5f));
 	//DefaultBuildingMesh->SetRelativeScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 0.8f));
+
 }
 
 void ADefaultBuilding::BuildBuilding()
@@ -223,6 +270,61 @@ void ADefaultBuilding::SetBuildingCollision()
 		DefaultBuildingMesh->SetCollisionProfileName(TEXT("BlueTeamBuilding"));
 	else if (ObjectInfo.ObjectOwner == EObjectOwner::Red)
 		DefaultBuildingMesh->SetCollisionProfileName(TEXT("RedTeamBuilding"));
+}
+
+void ADefaultBuilding::ExplodeBuilding()
+{
+
+	DefaultBuildingMesh->SetVisibility(false);
+	DefaultBuildingMesh->SetCollisionProfileName(TEXT("NoCollision"));
+
+	FVector ActorExtent = DefaultBuildingMesh->Bounds.BoxExtent;
+	FVector ActorCenter = DefaultBuildingMesh->Bounds.Origin;
+	FVector MinBox = FVector(ActorCenter.X - ActorExtent.X, ActorCenter.Y - ActorExtent.Y, ActorCenter.Z - ActorExtent.Z);
+	FVector MaxBox = FVector(ActorCenter.X + ActorExtent.X, ActorCenter.Y + ActorExtent.Y, ActorCenter.Z - ActorExtent.Z + (ActorExtent.Z * 2.0f * 0.3f));
+	FBox AnchorBox(MinBox, MaxBox);
+
+	DefaultBuildingFracture->SetVisibility(true);
+	DefaultBuildingFracture->SetAnchoredByBox(AnchorBox, true);
+
+	FVector Center = DefaultBuildingFracture->GetComponentLocation();
+	URadialFalloff* DamageField = NewObject<URadialFalloff>();
+
+	DamageField->Magnitude = 100000.f;
+	DamageField->MinRange = 0.f;
+	DamageField->MaxRange = 1.f;
+	DamageField->Radius = 200.f;
+	DamageField->Position = Center;
+
+	DefaultBuildingFracture->ApplyPhysicsField(true, EGeometryCollectionPhysicsTypeEnum::Chaos_ExternalClusterStrain, nullptr, DamageField);
+
+	URadialVector* ExplosionForce = NewObject<URadialVector>();
+
+	//ÆÄ±« ½Ã °¡ÇÏ´Â Èû
+	ExplosionForce->Magnitude = 700.f;
+
+	ExplosionForce->Position = Center;
+
+	DefaultBuildingFracture->ApplyPhysicsField(true, EGeometryCollectionPhysicsTypeEnum::Chaos_LinearVelocity, nullptr, ExplosionForce);
+
+	//ParticleComponent_Fire->ActivateSystem();
+	//NiagaraComponent_Explosion
+	DestroyBuilding();
+}
+
+void ADefaultBuilding::DestroyBuilding()
+{
+	NiagaraComponent_Explosion->Activate();
+	ParticleComponent_Fire->ActivateSystem();
+
+	int32 TileRow = int32(GetActorLocation().X / 100.0f);
+	int32 TileColumn = int32(GetActorLocation().Y / 100.0f);
+
+	GridActor->RemoveTile_Building(FIntPoint(TileRow, TileColumn), this);
+
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, FTimerDelegate::CreateLambda([this]() -> void {
+		Destroy();
+	}), 5.0f, false);
 }
 
 void ADefaultBuilding::Set_NiagaraComponent_ObjectSelected_Scale()

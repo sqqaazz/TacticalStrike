@@ -104,6 +104,7 @@ void UObjectInfoWidget::SetUnitInfo(uint8 UnitType)
 			int32 Attack = UnitDataInfo->Attack;
 			int32 Armor = UnitDataInfo->Armor;
 			int32 DefaultHP = UnitDataInfo->MaxHP;
+			
 			UMaterial* UnitMaterial = GameInstance->GetMaterial(static_cast<ESpawnObject>(UnitType));
 
 			UnitInfoWidget->SetUnitInfo(UnitName, UnitMaterial, Attack, Armor, DefaultHP, DefaultHP);

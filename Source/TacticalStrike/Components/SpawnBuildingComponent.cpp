@@ -170,7 +170,7 @@ void USpawnBuildingComponent::SpawnBuildings_Grid()
 	//UE_LOG(LogTemp, Log, TEXT("%d, %d"), TileRow, TileColumn);
 	float TileSize = GridActor->TileSize;
 
-	FVector BuildingLocation = FVector((TileRow * TileSize) + (TileSize / 2), (TileColumn * TileSize) + (TileSize / 2), 15.0f);
+	FVector BuildingLocation = FVector((TileRow * TileSize) + (TileSize / 2), (TileColumn * TileSize) + (TileSize / 2), 50.0f);
 
 	SpawnBuildingCode(CurrentBuildingCode, EObjectOwner::Blue, BuildingLocation);
 	GridActor->SetTile_Building(FIntPoint(TileRow, TileColumn), DefaultBuilding, false);
@@ -184,7 +184,7 @@ void USpawnBuildingComponent::AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnB
 {
 	float TileSize = GridActor->TileSize;
 	CurrentBuildingCode = BuildingCode;
-	FVector BuildingLocation = FVector((TileGrid.X * TileSize) + (TileSize / 2), (TileGrid.Y * TileSize) + (TileSize / 2), 15.0f);
+	FVector BuildingLocation = FVector((TileGrid.X * TileSize) + (TileSize / 2), (TileGrid.Y * TileSize) + (TileSize / 2), 50.0f);
 	SpawnBuildingCode(CurrentBuildingCode, EObjectOwner::Red, BuildingLocation);
 	GridActor->SetTile_Building(TileGrid, DefaultBuilding, false);
 	//UE_LOG(LogTemp, Log, TEXT("[%d, %d]"), TileGrid.X, TileGrid.Y);

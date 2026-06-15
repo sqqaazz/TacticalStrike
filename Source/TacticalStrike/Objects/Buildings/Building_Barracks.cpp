@@ -17,12 +17,18 @@ ABuilding_Barracks::ABuilding_Barracks()
 	if (BuildingBarracks.Succeeded())
 		DefaultBuildingMesh->SetStaticMesh(BuildingBarracks.Object);
 
+	static ConstructorHelpers::FObjectFinder<UGeometryCollection> BuildingBarracksFracture
+	(TEXT("/Script/GeometryCollectionEngine.GeometryCollection'/Game/3DModels/StaticMesh/Buildings/Barracks/rts-military-building-1/SM_MERGED_Barracks_build_19_SM_MERGED_Barracks_build_19/GC_SM_MERGED_Barracks_build_19.GC_SM_MERGED_Barracks_build_19'"));
+	if (BuildingBarracksFracture.Succeeded())
+		DefaultBuildingFracture->SetRestCollection(BuildingBarracksFracture.Object);
+	
 	if (GameInstance != nullptr)
 		DefaultBuildingMat = GameInstance->BasicMat_Barracks;
 
 
 	//DefaultBuildingMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 150.0f));
 	DefaultBuildingMesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+	DefaultBuildingFracture->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 	//DefaultBuildingMesh->SetRelativeScale3D(FVector(7.0f, 7.0f, 7.0f));
 	//BarracksMesh->SetCollisionProfileName(TEXT("NoCollision"));
 

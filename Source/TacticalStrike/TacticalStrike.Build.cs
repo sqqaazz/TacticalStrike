@@ -8,7 +8,7 @@ public class TacticalStrike : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "NavigationSystem", "AIModule", "GameplayTasks", "LevelSequence", "MovieScene", "ProceduralMeshComponent", "EnhancedInput", "Niagara" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "NavigationSystem", "AIModule", "GameplayTasks", "LevelSequence", "MovieScene", "ProceduralMeshComponent", "EnhancedInput", "Niagara", "Chaos", "ChaosSolverEngine", "FieldSystemEngine", "GeometryCollectionEngine" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 
