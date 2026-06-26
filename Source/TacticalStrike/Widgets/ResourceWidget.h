@@ -16,7 +16,7 @@ class TACTICALSTRIKE_API UResourceWidget : public UUserWidget
 	
 protected:
 	virtual void NativeConstruct() override;
-	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void UpdateResourceState();
 

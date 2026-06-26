@@ -79,6 +79,7 @@ void ARifleMan::BeginPlay()
 		Attack = UnitDataInfo->Attack;
 		Armor = UnitDataInfo->Armor;
 		MaxHP = UnitDataInfo->MaxHP;
+		Tech = UnitDataInfo->Tech;
 		Speed = UnitDataInfo->Speed;
 		CurrentHP = MaxHP;
 

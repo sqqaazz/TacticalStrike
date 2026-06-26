@@ -8,6 +8,7 @@
 #include "GameMode/TacticalStrikeGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "DataTables/UnitDataTables.h"
+#include "DataTables/BuildingDataTables.h"
 #include "Components/TextBlock.h"
 
 //UCommandWidget::UCommandWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -178,9 +179,9 @@ void UCommandWidget::SpawnRifleMan()
 	if (GetCommanderController != nullptr && GameInstance != nullptr)
 	{
 		FUnitTableRow* UnitData = GameInstance->GetUnitTable(1);
-		if (GetCommanderController->Mineral + GetCommanderController->ChangeMineral > UnitData->Cost)
+		if (GetCommanderController->TargetMineral > UnitData->Cost)
 		{
-			GetCommanderController->ChangeMineral -= UnitData->Cost;
+			GetCommanderController->SetResource(-UnitData->Cost);
 			GetCommanderController->BuildingUnits(ESpawnBuilding::Barracks, ESpawnUnit::RifleMan);
 		}
 		else
@@ -193,9 +194,9 @@ void UCommandWidget::SpawnSwordMan()
 	if (GetCommanderController != nullptr && GameInstance != nullptr)
 	{
 		FUnitTableRow* UnitData = GameInstance->GetUnitTable(2);
-		if (GetCommanderController->Mineral + GetCommanderController->ChangeMineral > UnitData->Cost)
+		if (GetCommanderController->TargetMineral > UnitData->Cost)
 		{
-			GetCommanderController->ChangeMineral -= UnitData->Cost;
+			GetCommanderController->SetResource(-UnitData->Cost);
 			GetCommanderController->BuildingUnits(ESpawnBuilding::Barracks, ESpawnUnit::SwordMan);
 		}
 		else
@@ -208,9 +209,9 @@ void UCommandWidget::SpawnMutant()
 	if (GetCommanderController != nullptr && GameInstance != nullptr)
 	{
 		FUnitTableRow* UnitData = GameInstance->GetUnitTable(3);
-		if (GetCommanderController->Mineral + GetCommanderController->ChangeMineral > UnitData->Cost)
+		if (GetCommanderController->TargetMineral > UnitData->Cost)
 		{
-			GetCommanderController->ChangeMineral -= UnitData->Cost;
+			GetCommanderController->SetResource(-UnitData->Cost);
 			GetCommanderController->BuildingUnits(ESpawnBuilding::SynBioLab, ESpawnUnit::Mutant);
 		}
 		else
@@ -229,33 +230,72 @@ void UCommandWidget::ResearchResourceProduction()
 
 void UCommandWidget::Button_Barracks_OnClicked()
 {
-	//Button_Barracks->SetVisibility(ESlateVisibility::Collapsed);
-	//GetCommanderController = Cast<ACommanderController>(Cast<APlayerController>(GetOwningPlayerPawn()->GetController()));
-	if (GetCommanderController != nullptr)
-		GetCommanderController->IsBuilding(ESpawnBuilding::Barracks);
-		SetBuildingSlots();
+	if (GetCommanderController != nullptr && GameInstance != nullptr)
+	{
+		FBuildingTableRow* BuildingData = GameInstance->GetBuildingTable(static_cast<int32>(ESpawnBuilding::Barracks));
+		if (GetCommanderController->TargetMineral > BuildingData->Cost)
+		{
+			GetCommanderController->SetResource(-BuildingData->Cost);
+			GetCommanderController->IsBuilding(ESpawnBuilding::Barracks);
+			SetBuildingSlots();
+		}
+		else
+			NotEnoughMessage();
+	}
 
 }
 
 void UCommandWidget::Button_SynBioLab_OnClicked()
 {
-	if (GetCommanderController != nullptr)
-		GetCommanderController->IsBuilding(ESpawnBuilding::SynBioLab);
-	SetBuildingSlots();
+	if (GetCommanderController != nullptr && GameInstance != nullptr)
+	{
+		FBuildingTableRow* BuildingData = GameInstance->GetBuildingTable(static_cast<int32>(ESpawnBuilding::SynBioLab));
+		if (GetCommanderController->TargetMineral > BuildingData->Cost)
+		{
+			GetCommanderController->SetResource(-BuildingData->Cost);
+			GetCommanderController->IsBuilding(ESpawnBuilding::SynBioLab);
+			SetBuildingSlots();
+		}
+		else
+			NotEnoughMessage();
+	}
 }
 
 void UCommandWidget::Button_EnergyRepeater_OnClicked()
 {
-	if (GetCommanderController != nullptr)
-		GetCommanderController->IsBuilding(ESpawnBuilding::EnergyRepeater);
-	SetBuildingSlots();
+	if (GetCommanderController != nullptr && GameInstance != nullptr)
+	{
+		FBuildingTableRow* BuildingData = GameInstance->GetBuildingTable(static_cast<int32>(ESpawnBuilding::EnergyRepeater));
+		if (GetCommanderController->TargetMineral > BuildingData->Cost)
+		{
+			GetCommanderController->SetResource(-BuildingData->Cost);
+			GetCommanderController->IsBuilding(ESpawnBuilding::EnergyRepeater);
+			SetBuildingSlots();
+		}
+		else
+			NotEnoughMessage();
+	}
 }
 
 void UCommandWidget::Button_ResourceFacility_OnClicked()
 {
-	if (GetCommanderController != nullptr)
-		GetCommanderController->IsBuilding(ESpawnBuilding::ResourceFacility);
-	SetBuildingSlots();
+	if (GetCommanderController != nullptr && GameInstance != nullptr)
+	{
+		FBuildingTableRow* BuildingData = GameInstance->GetBuildingTable(static_cast<int32>(ESpawnBuilding::ResourceFacility));
+		if (GetCommanderController->TargetMineral > BuildingData->Cost)
+		{
+			GetCommanderController->SetResource(-BuildingData->Cost);
+			GetCommanderController->IsBuilding(ESpawnBuilding::ResourceFacility);
+			SetBuildingSlots();
+		}
+		else
+			NotEnoughMessage();
+	}
+
+
+	//if (GetCommanderController != nullptr)
+	//	GetCommanderController->IsBuilding(ESpawnBuilding::ResourceFacility);
+	//SetBuildingSlots();
 }
 
 void UCommandWidget::Button_StopBuilding_OnClicked()

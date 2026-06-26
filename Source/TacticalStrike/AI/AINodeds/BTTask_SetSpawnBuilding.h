@@ -4,21 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_SetAIResource.generated.h"
+#include "Objects/GridActor.h"
+#include "Components/GridTileActor.h"
+#include "BTTask_SetSpawnBuilding.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TACTICALSTRIKE_API UBTTask_SetAIResource : public UBTTaskNode
+class TACTICALSTRIKE_API UBTTask_SetSpawnBuilding : public UBTTaskNode
 {
 	GENERATED_BODY()
 	
 public:
-	UBTTask_SetAIResource();
+	UBTTask_SetSpawnBuilding();
 
+	AGridActor* GridActor;
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-private:
-	//TArray<AActor*> CrystalArray;
+
 };

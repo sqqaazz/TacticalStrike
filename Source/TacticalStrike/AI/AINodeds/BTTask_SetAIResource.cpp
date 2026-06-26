@@ -16,26 +16,26 @@ EBTNodeResult::Type UBTTask_SetAIResource::ExecuteTask(UBehaviorTreeComponent& O
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABuilding_Crystal::StaticClass(), CrystalArray);
+	//UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABuilding_Crystal::StaticClass(), CrystalArray);
 
-	uint8 GettingResourceAmount = 0;
+	//uint8 GettingResourceAmount = 0;
 
-	if (CrystalArray.Num() != 0)
-	{
-		for (uint8 i = 0; i < CrystalArray.Num(); i++)
-		{
-			if (CrystalArray[i]->ActorHasTag("RedTeamBuildings"))
-				GettingResourceAmount += 10;
-		}
-		GettingResourceAmount += 30;
-	}
-	else
-		GettingResourceAmount = 30;
+	//if (CrystalArray.Num() != 0)
+	//{
+	//	for (uint8 i = 0; i < CrystalArray.Num(); i++)
+	//	{
+	//		if (CrystalArray[i]->ActorHasTag("RedTeamBuildings"))
+	//			GettingResourceAmount += 10;
+	//	}
+	//	GettingResourceAmount += 30;
+	//}
+	//else
+	//	GettingResourceAmount = 30;
 
 	uint32 CurrentResourceAmount = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
-	uint32 NewResourceAmount = CurrentResourceAmount + GettingResourceAmount;
-	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::ResourceKey, NewResourceAmount);
-	//UE_LOG(LogTemp, Log, TEXT("%d"), NewResourceAmount);
+	//uint32 NewResourceAmount = CurrentResourceAmount + GettingResourceAmount;
+	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::ResourceKey, CurrentResourceAmount + 30);
+	UE_LOG(LogTemp, Log, TEXT("%d"), CurrentResourceAmount + 30);
 	return EBTNodeResult::Succeeded;
 
 }

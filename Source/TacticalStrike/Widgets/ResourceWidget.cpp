@@ -14,18 +14,18 @@ void UResourceWidget::NativeConstruct()
 	PlayerController = Cast<ACommanderController>(GetOwningPlayer());
 }
 
-//void UResourceWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-//{
-//	Super::NativeTick(MyGeometry, InDeltaTime);
-//
-//	FString SetMineralCount;
-//
-//	if (MineralText != nullptr && PlayerController != nullptr)
-//	{
-//		SetMineralCount = FString::Printf(TEXT("%d"), FMath::RoundToInt(PlayerController->Mineral));
-//		MineralText->SetText(FText::FromString(SetMineralCount));
-//	}
-//}
+void UResourceWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	FString SetMineralCount;
+
+	if (MineralText != nullptr && PlayerController != nullptr)
+	{
+		SetMineralCount = FString::Printf(TEXT("%d"), PlayerController->Mineral);
+		MineralText->SetText(FText::FromString(SetMineralCount));
+	}
+}
 
 void UResourceWidget::UpdateResourceState()
 {

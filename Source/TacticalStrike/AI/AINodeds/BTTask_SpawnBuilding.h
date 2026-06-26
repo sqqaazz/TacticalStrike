@@ -35,7 +35,7 @@ private:
 	class ACommanderAI* CommanderAI;
 
 	TArray<class UGridTileActor*> AIEnergyTileArr;
-	void SpawnGridBuilding(int32 BuildingKey);
+	void SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeComponent& OwnerComp);
 
 	//void SpawnBuilding();
 };

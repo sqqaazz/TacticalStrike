@@ -9,6 +9,7 @@
 //#include "AIBuildingInfoClass.h"
 #include "Objects/Buildings/DefaultBuilding.h"
 #include "Components/BuildingClickableComponent.h"
+#include "DataTables/UnitDataTables.h"
 
 UBTTask_SpawnUnit::UBTTask_SpawnUnit()
 {
@@ -22,23 +23,31 @@ EBTNodeResult::Type UBTTask_SpawnUnit::ExecuteTask(UBehaviorTreeComponent& Owner
 	GameInstance = Cast<UTacticalStrikeGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	GridActor = Cast<AGridActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AGridActor::StaticClass()));
 
-	uint8 TempUnitTypeKey = static_cast<uint8>(ESpawnUnit::RifleMan);
-	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, TempUnitTypeKey);
+	//uint8 TempUnitTypeKey = static_cast<uint8>(ESpawnUnit::RifleMan);
+	//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, TempUnitTypeKey);
 
 	uint8 UnitTypeKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::UnitTypeKey);
+	bIsProductionBuildingDeActivated = false;
 
 	AIEnergyTileArr = GridActor->CheckAIEnegyTile();
 
-	SpawnUnit(UnitTypeKey);
+	SpawnUnit(UnitTypeKey, OwnerComp);
 
 	return EBTNodeResult::Succeeded;
 }
 
-void UBTTask_SpawnUnit::SpawnUnit(uint8 UnitKey)
+void UBTTask_SpawnUnit::SpawnUnit(uint8 UnitKey, UBehaviorTreeComponent& OwnerComp)
 {
 	UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(UnitKey));
 	if (UnitDataInfo == nullptr)
 		return;
+
+	int32 AIResource = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
+	if (AIResource < UnitDataInfo->Cost)
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));
+		return;
+	}
 
 	for (auto EnergyTile : AIEnergyTileArr)
 	{
@@ -61,15 +70,33 @@ void UBTTask_SpawnUnit::SpawnUnit(uint8 UnitKey)
 
 						BuildingComponent->UnitDataArray.Emplace(UnitObjectInfo);
 
+						FUnitTableRow* UnitDataTable = GameInstance->GetUnitTable(UnitKey);
+						int32 ResourceKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
+						OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::ResourceKey, ResourceKey - UnitDataTable->Cost);
+						OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Successed));
+						return;
 					}
 				}
 				else
 				{
-
+					continue;
 				}
 			}
-			return;
 		}
+		else if (EnergyTile->ObjectInfo.ObjectState == EObjectState::DeActivated && EnergyTile->ObjectInfo.ObjectType == uint8(UnitDataInfo->ProductionBuilding))
+		{
+			
+			bIsProductionBuildingDeActivated = true;
+		}
+	}
+	if (bIsProductionBuildingDeActivated)
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Waited_Building));
+	}
+	else
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::BuildingTypeKey, UnitDataInfo->ProductionBuilding);
+		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Building));
 	}
 }
 

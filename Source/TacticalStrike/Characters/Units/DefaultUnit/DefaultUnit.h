@@ -59,6 +59,7 @@ public:
 	int32 Armor;
 	int32 MaxHP;
 	int32 CurrentHP;
+	int32 Tech;
 	int32 Speed;
 	int32 BuildTime;
 	int32 CurrentBuildTime;

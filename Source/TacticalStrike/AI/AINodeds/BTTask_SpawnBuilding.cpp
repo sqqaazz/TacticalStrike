@@ -7,6 +7,7 @@
 #include "GameMode/TacticalStrikeGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SpawnBuildingComponent.h"
+#include "DataTables/BuildingDataTables.h"
 //#include "AIBuildingInfoClass.h"
 
 UBTTask_SpawnBuilding::UBTTask_SpawnBuilding()
@@ -27,20 +28,27 @@ EBTNodeResult::Type UBTTask_SpawnBuilding::ExecuteTask(UBehaviorTreeComponent& O
 
 	AIEnergyTileArr = GridActor->CheckAIEnegyTile();
 	//UE_LOG(LogTemp, Log, TEXT("EnegyTile: %d"), AIEnergyTileArr.Num());
-	int TempBuildingTypeKey = static_cast<int32>(ESpawnBuilding::Barracks);
-
-	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::BuildingTypeKey, TempBuildingTypeKey);
+	//int TempBuildingTypeKey = static_cast<int32>(ESpawnBuilding::Barracks);
+	//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::BuildingTypeKey, TempBuildingTypeKey);
 
 	int32 BuildingTypeKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::BuildingTypeKey);
 
-	SpawnGridBuilding(BuildingTypeKey);
+	SpawnGridBuilding(BuildingTypeKey, OwnerComp);
 
 	return EBTNodeResult::Succeeded;
 }
 
-void UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey)
+void UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeComponent& OwnerComp)
 {
 	BuildingDataInfo = GameInstance->GetBuildingTable(static_cast<int32>(BuildingKey));
+
+	int32 AIResource = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
+	if (AIResource < BuildingDataInfo->Cost)
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));
+		return;
+	}
+
 	ESpawnBuilding SpawnBuilding = static_cast<ESpawnBuilding>(BuildingKey);
 	for (auto EnergyTile : AIEnergyTileArr)
 	{
@@ -55,9 +63,16 @@ void UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey)
 		if (IsEnableBuilding)
 		{
 			CommanderAI->SpawnBuildingComponent->AI_SpawnBuildings_Grid(FIntPoint(EnergyTile->Rows, EnergyTile->Columns), SpawnBuilding);
+
+			FBuildingTableRow* BuildingDataTable = GameInstance->GetBuildingTable(BuildingKey);
+			int32 ResourceKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
+			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::ResourceKey, ResourceKey - BuildingDataTable->Cost);
+			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Successed));
 			return;
 		}
 	}
+
+	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Territory));
 }
 
 //EBTNodeResult::Type UBTTask_SpawnBuilding::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

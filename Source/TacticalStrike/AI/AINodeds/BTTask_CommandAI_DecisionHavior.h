@@ -4,21 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTask_SetAIResource.generated.h"
+#include "BTTask_CommandAI_DecisionHavior.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TACTICALSTRIKE_API UBTTask_SetAIResource : public UBTTaskNode
+class TACTICALSTRIKE_API UBTTask_CommandAI_DecisionHavior : public UBTTaskNode
 {
 	GENERATED_BODY()
 	
 public:
-	UBTTask_SetAIResource();
+	UBTTask_CommandAI_DecisionHavior();
 
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-private:
-	//TArray<AActor*> CrystalArray;
+
 };

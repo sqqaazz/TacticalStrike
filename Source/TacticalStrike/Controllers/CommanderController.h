@@ -36,15 +36,23 @@ public:
 	//대기열 마침
 	void ResearchComplete(uint8 ResearchType, FString Team);
 
-	UPROPERTY()
-	float Mineral;
-	UPROPERTY()
-	float Gas;
+	UPROPERTY(EditAnywhere)
+	int32 Mineral;
+	UPROPERTY(EditAnywhere)
+	int32 Gas;
 
+	UPROPERTY(EditAnywhere)
 	float ChangeMineral;
+	UPROPERTY(EditAnywhere)
 	float ChangeGas;
 
-	void SetResource(uint32 MineralCost, uint32 GasCost, float DeltaTime);
+	UPROPERTY(EditAnywhere)
+	int32 TargetMineral;
+
+	void SetResource(int32 MineralCost);
+
+	UPROPERTY(EditAnywhere)
+	bool bIsResourceChanged;
 
 	class UBuildingClickableComponent* BuildingClickableComponent;
 	class USpawnBuildingComponent* SpawnBuildingComponent;

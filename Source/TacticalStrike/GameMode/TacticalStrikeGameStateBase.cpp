@@ -14,7 +14,6 @@ ATacticalStrikeGameStateBase::ATacticalStrikeGameStateBase()
 
 void ATacticalStrikeGameStateBase::PlayerTurnStart()
 {
-	//UE_LOG(LogTemp, Log, TEXT("ddddccccccxxxxxaae"));
 	Turn++;
 	PlayerTurnStartDelegate.Broadcast();
 	PlayerTurnStartAfterDelegate.Broadcast();

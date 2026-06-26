@@ -42,12 +42,15 @@ ACommanderController::ACommanderController()
 	//bEnableMouseOverEvents = true;
 
 	Mineral = 10000;
+	TargetMineral = Mineral;
 	Gas = 0;
 	ChangeMineral = 0;
 	ChangeGas = 0;
 
 	Building = false;
 	EnterWidgetState = false;
+
+	bIsResourceChanged = false;
 
 	//FInputModeGameOnly GameOnly;
 	//this->SetInputMode(GameOnly);
@@ -96,6 +99,28 @@ void ACommanderController::BeginPlay()
 void ACommanderController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//UE_LOG(LogTemp, Log, TEXT("%f"), ChangeMineral);
+	if (bIsResourceChanged)
+	{
+		float MineralChangeWeight = DeltaTime * 50 * FMath::Clamp(FMath::Abs(ChangeMineral) / 20, 1.0f, 500.0f);
+		if (ChangeMineral > 0)
+		{
+			Mineral += FMath::RoundToInt(MineralChangeWeight);
+			ChangeMineral -= MineralChangeWeight;
+		}
+		else if (ChangeMineral < 0)
+		{
+			Mineral -= FMath::RoundToInt(MineralChangeWeight);
+			ChangeMineral += MineralChangeWeight;
+		}
+
+		if (FMath::Abs(TargetMineral - Mineral) < 5)
+		{
+			Mineral = TargetMineral;
+			ChangeMineral = 0;
+			bIsResourceChanged = false;
+		}
+	}
 
 	//FHitResult GridHitResult;
 	//GetHitResultUnderCursor(ECC_Visibility, false, GridHitResult);
@@ -146,9 +171,18 @@ void ACommanderController::UpdateTurn()
 }
 
 //자원 관리 함수
-void ACommanderController::SetResource(uint32 MineralChange, uint32 GasChange, float DeltaTime)
+void ACommanderController::SetResource(int32 MineralCost)
 {
-	if (FMath::RoundToInt(ChangeMineral) != 0)
+	TargetMineral += MineralCost;
+	ChangeMineral += float(MineralCost);
+
+	bIsResourceChanged = true;
+
+
+
+
+
+	/*if (FMath::RoundToInt(ChangeMineral) != 0)
 	{
 		float MineralChangeWeight = DeltaTime * 50 * FMath::Clamp(FMath::Abs(ChangeMineral) / 20, 1.0f, 500.0f);
 		if (ChangeMineral > 0)
@@ -161,7 +195,7 @@ void ACommanderController::SetResource(uint32 MineralChange, uint32 GasChange, f
 			Mineral = FMath::Clamp(Mineral - MineralChangeWeight, Mineral + ChangeMineral, Mineral);
 			ChangeMineral += MineralChangeWeight;
 		}
-	}
+	}*/
 }
 
 void ACommanderController::OnClickedEvent()
@@ -262,6 +296,7 @@ void ACommanderController::BuildingUnits(ESpawnBuilding BuildingType, ESpawnUnit
 
 void ACommanderController::PlayerCombatAITurnEnd()
 {
+	SetResource(30);
 	BaseWidget->ControlTurnButton(true);
 }
 

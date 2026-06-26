@@ -6,12 +6,15 @@
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/CommanderUnit.h"
-#include "Objects/Buildings/DefaultBuilding.h"
 #include "Components/AIBuildingInfoClass.h"
 #include "GameMode/TacticalStrikeGameStateBase.h"
 #include "Components/SpawnBuildingComponent.h"
 
 const FName ACommanderAI::ResourceKey(TEXT("ResourceKey"));
+
+const FName ACommanderAI::bIsAICommandingKey(TEXT("bIsAICommandingKey"));
+const FName ACommanderAI::AIHaviorKey(TEXT("AIHaviorKey"));
+const FName ACommanderAI::PreviousAIHaviorStateKey(TEXT("PreviousAIHaviorStateKey"));
 
 const FName ACommanderAI::UnitTypeKey(TEXT("UnitTypeKey"));
 
@@ -96,17 +99,18 @@ void ACommanderAI::StartAITurn()
 			RunBehaviorTree(BTAsset);
 		this->Blackboard = BlackboardComp;
 
-		GetBlackboardComponent()->SetValueAsFloat(BuildWeightKey, 0.5f);
-		GetBlackboardComponent()->SetValueAsFloat(UnitWeightKey, 0.5f);
-		GetBlackboardComponent()->SetValueAsFloat(ResourceWeightKey, 0.5f);
+		//GetBlackboardComponent()->SetValueAsFloat(BuildWeightKey, 0.5f);
+		//GetBlackboardComponent()->SetValueAsFloat(UnitWeightKey, 0.5f);
+		//GetBlackboardComponent()->SetValueAsFloat(ResourceWeightKey, 0.5f);
 		GetBlackboardComponent()->SetValueAsInt(ResourceKey, 1000);
 		GetBlackboardComponent()->SetValueAsInt(UpgradeTypeKey, 221);
-
+		GetBlackboardComponent()->SetValueAsBool(bIsAICommandingKey, false);
+		GetBlackboardComponent()->SetValueAsInt(AIHaviorKey, static_cast<uint8>(EAIBehaviorCode::Havior_Idle));
 		bBehaviorTreeStarted = true;
 	}
 	else
 	{
-
+		GetBlackboardComponent()->SetValueAsBool(bIsAICommandingKey, false);
 		BrainComponent->RestartLogic();
 	}
 }

@@ -31,5 +31,6 @@ private:
 
 	TArray<class UGridTileActor*> AIEnergyTileArr;
 
-	void SpawnUnit(uint8 UnitKey);
+	void SpawnUnit(uint8 UnitKey, UBehaviorTreeComponent& OwnerComp);
+	bool bIsProductionBuildingDeActivated;
 };

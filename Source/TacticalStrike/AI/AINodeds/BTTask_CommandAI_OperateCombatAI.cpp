@@ -4,6 +4,7 @@
 #include "AI/AINodeds/BTTask_CommandAI_OperateCombatAI.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/CommanderUnit.h"
+#include "AI/AIController/CommanderAI.h"
 
 UBTTask_CommandAI_OperateCombatAI::UBTTask_CommandAI_OperateCombatAI()
 {
@@ -27,5 +28,6 @@ EBTNodeResult::Type UBTTask_CommandAI_OperateCombatAI::ExecuteTask(UBehaviorTree
 
 void UBTTask_CommandAI_OperateCombatAI::FinishCombatAIhaviorTask()
 {
+	CurOwnerComp->GetBlackboardComponent()->SetValueAsBool(ACommanderAI::bIsAICommandingKey, true);
 	FinishLatentTask(*CurOwnerComp, EBTNodeResult::Succeeded);
 }
