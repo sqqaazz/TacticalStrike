@@ -1,0 +1,75 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "AI/AINodeds/BTTask_SetUnitType.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "AI/AIController/CommanderAI.h"
+//#include "UnitDataTables.h"
+#include "GameMode/TacticalStrikeGameInstance.h"
+#include "GameMode/TacticalStrikeGameStateBase.h"
+#include "Kismet/GameplayStatics.h"
+
+
+UBTTask_SetUnitType::UBTTask_SetUnitType()
+{
+	NodeName = TEXT("SetUnitType");
+}
+
+EBTNodeResult::Type UBTTask_SetUnitType::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+
+	GameInstance = Cast<UTacticalStrikeGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
+	ACommanderAI* CommanderAI = Cast<ACommanderAI>(OwnerComp.GetAIOwner());
+
+	int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
+	FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
+
+	if (static_cast<int8>(HaviorStateSequenceQueue.SpawnObjectType) != INDEX_NONE)
+	{
+
+	}
+
+	if (GameInstance != nullptr)
+		UnitDataTable = GameInstance->GetAllUnitTable();
+
+	UnitDataTable.Sort([](const FUnitTableRow& Results1, const FUnitTableRow& Results2) {
+		return Results1.Tech < Results2.Tech;
+	});
+
+	int32 Turn = GameStateBase->Turn;
+	float MaxRand = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 100.0f), FVector2D(0.0f, UnitDataTable.Num() - 1), Turn);
+	float RandomValue = FMath::RandRange(0.0f, MaxRand);
+
+	for (uint8 i = 0; i < UnitDataTable.Num(); i++)
+	{
+		if (RandomValue < i + 1)
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, UnitDataTable[i]->UnitType);
+			break;
+		}
+		else
+			continue;
+	}
+
+
+	//float TimeWeight = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(ACommanderAI::TimeWeightKey);
+	//float RandomValue = FMath::Clamp(FMath::RandRange(0.0f, float(UnitDataTable.Num())) * TimeWeight, 0.0f, float(UnitDataTable.Num()));
+	//for (uint8 i = 0; i < UnitDataTable.Num(); i++)
+	//{
+	//	if (RandomValue < 0.1f)
+	//	{
+	//		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, UnitDataTable[i]->UnitType);
+	//		break;
+	//	}
+	//	if (i > RandomValue)
+	//	{
+	//		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, UnitDataTable[i]->UnitType);
+	//		break;
+	//	}
+	//}
+
+
+	return EBTNodeResult::Succeeded;
+}
