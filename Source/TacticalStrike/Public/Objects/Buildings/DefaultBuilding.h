@@ -80,6 +80,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	class UWidgetComponent* HPBarWidget;
+
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* RootScene;
 public:	
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -112,7 +115,7 @@ public:
 	void ExplodeBuilding();
 	void DestroyBuilding();
 private:
-	USceneComponent* RootScene;
+	//USceneComponent* RootScene;
 
 	UPROPERTY(VisibleAnywhere)
 	class UNiagaraComponent* NiagaraComponent_ObjectSelected;

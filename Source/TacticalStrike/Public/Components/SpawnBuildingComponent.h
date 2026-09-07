@@ -38,9 +38,9 @@ public:
 	void SpawnBuildings();*/
 
 	UFUNCTION()
-	void SpawnBuildings_Grid();
+	ADefaultBuilding* SpawnBuildings_Grid();
 	UFUNCTION()
-	void AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode);
+	ADefaultBuilding* AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode);
 	UFUNCTION()
 	void Neutral_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode);
 
@@ -81,6 +81,8 @@ private:
 	UPROPERTY()
 	TSubclassOf<class ABuilding_SynBioLab> Building_SynBioLab;
 	UPROPERTY()
+	TSubclassOf<class ABuilding_GatheringResource> Building_ResourceGathering;
+	UPROPERTY()
 	TSubclassOf<class ABuilding_ResourceFacility> Building_ResourceFacility;
 	UPROPERTY()
 	TSubclassOf<class ABuilding_EnergyRepeater> Building_EnergyRepeater;
@@ -89,7 +91,7 @@ private:
 	//Tick상태 제어
 	bool TickIsActived;
 
-
+	UPROPERTY()
 	class AGridActor* GridActor;
 
 	struct FBuildingTableRow* BuildingDataInfo;
@@ -99,4 +101,7 @@ private:
 
 	int32 BuildingGridSizeX;
 	int32 BuildingGridSizeY;
+
+	UPROPERTY()
+	TArray<ABuilding_Crystal*> PrevCrystalArr;
 };

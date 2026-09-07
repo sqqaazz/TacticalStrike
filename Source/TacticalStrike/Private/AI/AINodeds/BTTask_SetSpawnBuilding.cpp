@@ -29,48 +29,72 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 	FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
 
 	UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(HaviorStateSequenceQueue.SpawnObjectType));
-	AIEnergyTileArr = GridActor->CheckAIEnegyTile();
+	//AIEnergyTileArr = GridActor->CheckAIEnegyTile();
 	
 	ADefaultBuilding* CurSpawnBuilding = nullptr;
 	
 	int8 CurUnitDataArryNum = 5;
 
-	for (const UGridTileActor* EnergyTile : AIEnergyTileArr)
+	for (const TWeakObjectPtr<ADefaultBuilding> Building : CommanderAI->AIBuildingsArr)
 	{
-		if (EnergyTile->ObjectInfo.ObjectType == uint8(UnitDataInfo->ProductionBuilding))
+		if (Building->ObjectInfo.ObjectType == uint8(UnitDataInfo->ProductionBuilding))
 		{
 			UBuildingClickableComponent* BuildingComponent = Cast<UBuildingClickableComponent>
-				(EnergyTile->ObjectInfo.ObjectActor->GetComponentByClass(UBuildingClickableComponent::StaticClass()));
+				(Building->ObjectInfo.ObjectActor->GetComponentByClass(UBuildingClickableComponent::StaticClass()));
 
-			if (EnergyTile->ObjectInfo.ObjectState == EObjectState::Activated)
+			if (Building->ObjectInfo.ObjectState == EObjectState::Activated)
 			{
 				if (BuildingComponent->UnitDataArray.Num() < CurUnitDataArryNum)
 				{
-					CurSpawnBuilding = Cast<ADefaultBuilding>(EnergyTile->ObjectInfo.ObjectActor);
+					CurSpawnBuilding = Cast<ADefaultBuilding>(Building->ObjectInfo.ObjectActor);
 					CurUnitDataArryNum = BuildingComponent->UnitDataArray.Num();
 					continue;
 				}
 				else
 					continue;
 			}
-			//else if (EnergyTile->ObjectInfo.ObjectState == EObjectState::DeActivated)
-			//{
-			//	ADefaultBuilding* SpawnBuilding = Cast<ADefaultBuilding>(EnergyTile->ObjectInfo.ObjectActor);
-			//	if (SpawnBuilding->ObjectInfo.CurrentBuildTime >= 0)
-			//	{
-			//		
-			//	}
-			//}
 		}
-		//if (EnergyTile->ObjectInfo.ObjectState == EObjectState::Activated && EnergyTile->ObjectInfo.ObjectType == uint8(UnitDataInfo->ProductionBuilding))
-		//{
-		//	UBuildingClickableComponent* BuildingComponent = Cast<UBuildingClickableComponent>
-		//		(EnergyTile->ObjectInfo.ObjectActor->GetComponentByClass(UBuildingClickableComponent::StaticClass()));
-		//	if (BuildingComponent->UnitDataArray.Num() < 5)
-		//	{
-		//	}
-		//}
 	}
+
+
+	//for (const UGridTileActor* EnergyTile : AIEnergyTileArr)
+	//{
+	//	if (EnergyTile->ObjectInfo.ObjectType == uint8(UnitDataInfo->ProductionBuilding))
+	//	{
+	//		UBuildingClickableComponent* BuildingComponent = Cast<UBuildingClickableComponent>
+	//			(EnergyTile->ObjectInfo.ObjectActor->GetComponentByClass(UBuildingClickableComponent::StaticClass()));
+
+	//		if (EnergyTile->ObjectInfo.ObjectState == EObjectState::Activated)
+	//		{
+	//			if (BuildingComponent->UnitDataArray.Num() < CurUnitDataArryNum)
+	//			{
+	//				CurSpawnBuilding = Cast<ADefaultBuilding>(EnergyTile->ObjectInfo.ObjectActor);
+	//				CurUnitDataArryNum = BuildingComponent->UnitDataArray.Num();
+	//				continue;
+	//			}
+	//			else
+	//				continue;
+	//		}
+	//		//else if (EnergyTile->ObjectInfo.ObjectState == EObjectState::DeActivated)
+	//		//{
+	//		//	ADefaultBuilding* SpawnBuilding = Cast<ADefaultBuilding>(EnergyTile->ObjectInfo.ObjectActor);
+	//		//	if (SpawnBuilding->ObjectInfo.CurrentBuildTime >= 0)
+	//		//	{
+	//		//		
+	//		//	}
+	//		//}
+	//	}
+	//	//if (EnergyTile->ObjectInfo.ObjectState == EObjectState::Activated && EnergyTile->ObjectInfo.ObjectType == uint8(UnitDataInfo->ProductionBuilding))
+	//	//{
+	//	//	UBuildingClickableComponent* BuildingComponent = Cast<UBuildingClickableComponent>
+	//	//		(EnergyTile->ObjectInfo.ObjectActor->GetComponentByClass(UBuildingClickableComponent::StaticClass()));
+	//	//	if (BuildingComponent->UnitDataArray.Num() < 5)
+	//	//	{
+	//	//	}
+	//	//}
+	//}
+
+	//세팅된 유닛을 스폰시킬 건물 중 대기열이 가장 짧은 건물을 찾아 활성 상태일 경우 세팅, 찾지 못하였을 경우 명령 상태를 '스폰 건물 대기'로 변경
 	if (CurSpawnBuilding != nullptr)
 	{
 		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Waiting;

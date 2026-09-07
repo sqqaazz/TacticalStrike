@@ -25,7 +25,11 @@ EBTNodeResult::Type UBTTask_CommandAI_DecisionHavior::ExecuteTask(UBehaviorTreeC
 		if (i == INDEX_NONE)
 			continue;
 
-		if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting)
+		if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::None)
+		{
+			continue;
+		}
+		else if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting)
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, i);
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(CommanderAI->HaviorStateSequenceQueue[i].HaviorCode));

@@ -33,6 +33,10 @@ EBTNodeResult::Type UBTTask_FinishAIHavior::ExecuteTask(UBehaviorTreeComponent& 
 	{
 		return EBTNodeResult::Succeeded;
 	}
+	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_SpawnUnit)
+	{
+		return EBTNodeResult::Succeeded;
+	}
 
 	//CommanderAI->HaviorStateSequenceQueue.RemoveAt(AIHaviorSequenceIndex);
 	//if (AIHaviorSequenceIndex == CommanderAI->HaviorStateSequenceQueue.Num())

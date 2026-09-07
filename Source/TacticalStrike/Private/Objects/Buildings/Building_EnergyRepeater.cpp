@@ -21,3 +21,11 @@ void ABuilding_EnergyRepeater::BeginPlay()
 
 	DefaultBuildingMesh->SetRelativeScale3D(FVector(0.4f, 0.4f, 0.15f));
 }
+
+void ABuilding_EnergyRepeater::ShowGridRange(int32 TileRow, int32 TileColumn, bool IsShowed)
+{
+	int32 ActorTileRow = int32(FMath::Floor(GetActorLocation().X / 100));
+	int32 ActorTileColumn = int32(FMath::Floor(GetActorLocation().Y / 100));
+
+	GridActor->DrawTempEnergyTile(ActorTileRow, ActorTileColumn, this, IsShowed);
+}

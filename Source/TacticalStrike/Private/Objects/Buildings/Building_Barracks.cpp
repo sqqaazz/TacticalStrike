@@ -29,6 +29,8 @@ ABuilding_Barracks::ABuilding_Barracks()
 	//DefaultBuildingMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 150.0f));
 	DefaultBuildingMesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
 	DefaultBuildingFracture->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+	
+	
 	//DefaultBuildingMesh->SetRelativeScale3D(FVector(7.0f, 7.0f, 7.0f));
 	//BarracksMesh->SetCollisionProfileName(TEXT("NoCollision"));
 

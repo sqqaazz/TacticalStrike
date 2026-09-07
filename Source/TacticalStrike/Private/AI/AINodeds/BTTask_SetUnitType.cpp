@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTTask_SetUnitType::ExecuteTask(UBehaviorTreeComponent& Own
 	int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
 	FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
 
-	if (static_cast<int8>(HaviorStateSequenceQueue.SpawnObjectType) != INDEX_NONE)
+	if (static_cast<int8>(HaviorStateSequenceQueue.SpawnObjectType) != INDEX_NONE && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
 	{
 
 	}
@@ -41,11 +41,12 @@ EBTNodeResult::Type UBTTask_SetUnitType::ExecuteTask(UBehaviorTreeComponent& Own
 	int32 Turn = GameStateBase->Turn;
 	float MaxRand = FMath::GetMappedRangeValueClamped(FVector2D(0.0f, 100.0f), FVector2D(0.0f, UnitDataTable.Num() - 1), Turn);
 	float RandomValue = FMath::RandRange(0.0f, MaxRand);
-
+	//UE_LOG(LogTemp, Log, TEXT("RandomValue: %f"), RandomValue);
 	for (uint8 i = 0; i < UnitDataTable.Num(); i++)
 	{
 		if (RandomValue < i + 1)
 		{
+			//UE_LOG(LogTemp, Log, TEXT("i: %d, UnitTyype: %d"), i, UnitDataTable[i]->UnitType);
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, UnitDataTable[i]->UnitType);
 			break;
 		}

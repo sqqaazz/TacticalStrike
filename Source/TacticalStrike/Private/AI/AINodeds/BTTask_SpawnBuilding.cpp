@@ -33,12 +33,25 @@ EBTNodeResult::Type UBTTask_SpawnBuilding::ExecuteTask(UBehaviorTreeComponent& O
 
 	int32 BuildingTypeKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::BuildingTypeKey);
 
-	SpawnGridBuilding(BuildingTypeKey, OwnerComp);
+	if (SpawnGridBuilding(BuildingTypeKey, OwnerComp))
+	{
+		int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
+		FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
+
+		if (HaviorStateSequenceQueue.HaviorCode == EAIBehaviorCode::Havior_SpawnBuilding_Unit && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState == EAIBehaviorState::Waited_SpawnUnit;
+		}
+	}
+	else
+	{
+
+	}
 
 	return EBTNodeResult::Succeeded;
 }
 
-void UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeComponent& OwnerComp)
+bool UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeComponent& OwnerComp)
 {
 	BuildingDataInfo = GameInstance->GetBuildingTable(static_cast<int32>(BuildingKey));
 
@@ -46,7 +59,7 @@ void UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeCo
 	if (AIResource < BuildingDataInfo->Cost)
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));
-		return;
+		return false;
 	}
 
 	ESpawnBuilding SpawnBuilding = static_cast<ESpawnBuilding>(BuildingKey);
@@ -62,17 +75,22 @@ void UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeCo
 		//UE_LOG(LogTemp, Log, TEXT("Grid: [%d, %d]"), BuildingStartGrid.X, BuildingStartGrid.Y);
 		if (IsEnableBuilding)
 		{
-			CommanderAI->SpawnBuildingComponent->AI_SpawnBuildings_Grid(FIntPoint(EnergyTile->Rows, EnergyTile->Columns), SpawnBuilding);
+			//CommanderAI->SpawnBuildingComponent->AI_SpawnBuildings_Grid(FIntPoint(EnergyTile->Rows, EnergyTile->Columns), SpawnBuilding);
+			CommanderAI->AIBuildingsArr.Add
+			(CommanderAI->SpawnBuildingComponent->AI_SpawnBuildings_Grid(FIntPoint(EnergyTile->Rows, EnergyTile->Columns), SpawnBuilding));
 
 			FBuildingTableRow* BuildingDataTable = GameInstance->GetBuildingTable(BuildingKey);
 			int32 ResourceKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::ResourceKey, ResourceKey - BuildingDataTable->Cost);
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Successed));
-			return;
+
+			return true;
 		}
 	}
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Territory));
+
+	return false;
 }
 
 //EBTNodeResult::Type UBTTask_SpawnBuilding::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

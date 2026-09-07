@@ -16,6 +16,8 @@
 #include "Widgets/ResearchWidget.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Objects/GridActor.h"
+#include "Objects/Buildings/Building_Crystal.h"
+#include "Objects/Buildings/Building_GatheringResource.h"
 //#include "Characters/DefaultSpawningActor.h"
 
 
@@ -178,10 +180,6 @@ void ACommanderController::SetResource(int32 MineralCost)
 
 	bIsResourceChanged = true;
 
-
-
-
-
 	/*if (FMath::RoundToInt(ChangeMineral) != 0)
 	{
 		float MineralChangeWeight = DeltaTime * 50 * FMath::Clamp(FMath::Abs(ChangeMineral) / 20, 1.0f, 500.0f);
@@ -196,6 +194,31 @@ void ACommanderController::SetResource(int32 MineralCost)
 			ChangeMineral += MineralChangeWeight;
 		}
 	}*/
+}
+
+int32 ACommanderController::ChangePlayerResource()
+{
+	TSet<ABuilding_Crystal*> GatheringCrystalArr;
+
+	for (const TWeakObjectPtr<ADefaultBuilding> PlayerBuilding : PlayerBuildingsArr)
+	{
+		if (PlayerBuilding->ObjectInfo.ObjectType == static_cast<uint8>(ESpawnObject::ResourceGathering) &&
+			PlayerBuilding->ObjectInfo.ObjectState == EObjectState::Activated)
+		{
+			ABuilding_GatheringResource* ResourceGathering = Cast<ABuilding_GatheringResource>(PlayerBuilding);
+			if (ResourceGathering != nullptr)
+			{
+				TArray<ABuilding_Crystal*> CrystalArr = ResourceGathering->GetRangeCrystal();
+
+				for (ABuilding_Crystal* Crystal : CrystalArr)
+				{
+					GatheringCrystalArr.Add(Crystal);
+				}
+			}
+		}
+	}
+
+	return 30 + (GatheringCrystalArr.Num() * 5);
 }
 
 void ACommanderController::OnClickedEvent()
@@ -252,7 +275,9 @@ void ACommanderController::OnClickedEvent()
 	{
 		if (!SpawnBuildingComponent->IsEnableBuilding)
 			return;
-		SpawnBuildingComponent->SpawnBuildings_Grid();
+
+		PlayerBuildingsArr.Add(SpawnBuildingComponent->SpawnBuildings_Grid());
+		//SpawnBuildingComponent->SpawnBuildings_Grid();
 		IsNotBuilding();
 		FObjectInfo ObjectInfo(0, 0, EObjectState::None, 0, 0, EObjectOwner::None, 0, nullptr);
 		BaseWidget->SetWidgetState(ObjectInfo);
@@ -296,7 +321,8 @@ void ACommanderController::BuildingUnits(ESpawnBuilding BuildingType, ESpawnUnit
 
 void ACommanderController::PlayerCombatAITurnEnd()
 {
-	SetResource(30);
+	SetResource(ChangePlayerResource());
+
 	BaseWidget->ControlTurnButton(true);
 }
 

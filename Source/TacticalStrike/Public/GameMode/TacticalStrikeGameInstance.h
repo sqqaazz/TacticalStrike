@@ -27,6 +27,7 @@ enum class ESpawnBuilding : uint8
 	None = 0 UMETA(DisPlayName = "None"),
 	Barracks = 101 UMETA(DisPlayName = "Barracks"),
 	SynBioLab = 102 UMETA(DisPlayName = "SynBioLab"),
+	ResourceGathering = 104 UMETA(DisPlayName = "ResourceGathering"),
 	EnergyRepeater = 121 UMETA(DisPlayName = "EnergyRepeater"),
 	Crystal = 131 UMETA(DisPlayName = "Crystal"),
 	ResourceFacility = 202 UMETA(DisPlayName = "ResourceFacility")
@@ -41,6 +42,7 @@ enum class ESpawnObject : uint8
 	Mutant = 3 UMETA(DisPlayName = "Mutant"),
 	Barracks = 101 UMETA(DisPlayName = "Barracks"),
 	SynBioLab = 102 UMETA(DisPlayName = "SynBioLab"),
+	ResourceGathering = 104 UMETA(DisPlayName = "ResourceGathering"),
 	EnergyRepeater = 121 UMETA(DisPlayName = "EnergyRepeater"),
 	Crystal = 131 UMETA(DisPlayName = "Crystal"),
 	Tample = 201 UMETA(DisPlayName = "Tample"),
@@ -196,6 +198,7 @@ public:
 	UMaterial* Texture_ResourceFacility;
 	UMaterial* Texture_Tample;
 	UMaterial* Texture_EnergyRepeater;
+	UMaterial* Texture_ResourceGathering;
 	//업그레이드 이미지
 	UTexture2D* Texture_ResourceUpgrade;
 
@@ -214,6 +217,7 @@ public:
 	UMaterialInterface* BasicMat_SynBioLab;
 	UMaterialInterface* BasicMat_ResourceFacility;
 	UMaterialInterface* BasicMat_EnergyRepeater;
+	UMaterialInterface* BasicMat_ResourceGathering;
 
 	//건물 위치 지정 머티리얼
 	UMaterialInterface* BuildEnableMat;

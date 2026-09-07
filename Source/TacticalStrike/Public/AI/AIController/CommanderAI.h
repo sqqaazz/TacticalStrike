@@ -43,7 +43,8 @@ enum class EAIBehaviorState : uint8
 	Failed_Lack_Building = 4 UMETA(DisPlayName = "Failed_Lack_Building"),
 	Failed_Lack_Territory = 5 UMETA(DisPlayName = "Failed_Lack_Territory"),
 	Waited_Building = 6 UMETA(DisPlayName = "Waited_Building"),
-	TurnEnd = 7 UMETA(DisPlayName = "TurnEnd")
+	Waited_SpawnUnit = 7 UMETA(DisPlayName = "Waited_SpawnUnit"),
+	TurnEnd = 8 UMETA(DisPlayName = "TurnEnd")
 };
 
 USTRUCT(BlueprintType)
@@ -130,6 +131,9 @@ public:
 
 	UPROPERTY()
 	TArray<FHaviorStateSequence> HaviorStateSequenceQueue;
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<ADefaultBuilding>> AIBuildingsArr;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

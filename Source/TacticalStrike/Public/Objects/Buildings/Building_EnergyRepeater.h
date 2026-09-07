@@ -17,6 +17,7 @@ class TACTICALSTRIKE_API ABuilding_EnergyRepeater : public ADefaultBuilding
 public:
 	ABuilding_EnergyRepeater();
 
+	void ShowGridRange(int32 TileRow, int32 TileColumn, bool IsShowed);
 protected:
 	virtual void BeginPlay() override;
 };

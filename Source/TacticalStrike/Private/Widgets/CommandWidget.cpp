@@ -112,10 +112,13 @@ void UCommandWidget::SetUpgradeBuildSlots()
 
 	BuildingSlotsArray[0]->SetSlotImageMat(GameInstance->GetMaterial(ESpawnObject::ResourceFacility));
 	BuildingSlotsArray[3]->SetSlotImageMat(GameInstance->GetMaterial(ESpawnObject::EnergyRepeater));
+	BuildingSlotsArray[5]->SetSlotImageMat(GameInstance->GetMaterial(ESpawnObject::ResourceGathering));
 	BuildingSlotsArray[0]->BuildingButton->OnClicked.AddDynamic(this, &UCommandWidget::Button_ResourceFacility_OnClicked);
 	BuildingSlotsArray[3]->BuildingButton->OnClicked.AddDynamic(this, &UCommandWidget::Button_EnergyRepeater_OnClicked);
-	BuildingSlotsArray[0]->SetObjectType(202);
-	BuildingSlotsArray[3]->SetObjectType(121);
+	BuildingSlotsArray[5]->BuildingButton->OnClicked.AddDynamic(this, &UCommandWidget::Button_ResourceGathering_OnClicked);
+	BuildingSlotsArray[0]->SetObjectType(static_cast<int8>(ESpawnObject::ResourceFacility));
+	BuildingSlotsArray[3]->SetObjectType(static_cast<int8>(ESpawnObject::EnergyRepeater));
+	BuildingSlotsArray[5]->SetObjectType(static_cast<int8>(ESpawnObject::ResourceGathering));
 }
 
 //°Ç¼³ Áß
@@ -270,6 +273,22 @@ void UCommandWidget::Button_EnergyRepeater_OnClicked()
 		{
 			GetCommanderController->SetResource(-BuildingData->Cost);
 			GetCommanderController->IsBuilding(ESpawnBuilding::EnergyRepeater);
+			SetBuildingSlots();
+		}
+		else
+			NotEnoughMessage();
+	}
+}
+
+void UCommandWidget::Button_ResourceGathering_OnClicked()
+{
+	if (GetCommanderController != nullptr && GameInstance != nullptr)
+	{
+		FBuildingTableRow* BuildingData = GameInstance->GetBuildingTable(static_cast<int32>(ESpawnBuilding::ResourceGathering));
+		if (GetCommanderController->TargetMineral > BuildingData->Cost)
+		{
+			GetCommanderController->SetResource(-BuildingData->Cost);
+			GetCommanderController->IsBuilding(ESpawnBuilding::ResourceGathering);
 			SetBuildingSlots();
 		}
 		else

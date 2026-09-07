@@ -39,7 +39,7 @@ void USpawnResourceComponent::ArrangementResourceField()
 
 	while (SpawnResourceCount > 0)
 	{
-		int32 Count = FMath::RandRange(12, 15);
+		int32 Count = FMath::RandRange(10, 15);
 
         if (SpawnResourceCount < Count)
             Count = SpawnResourceCount;
@@ -158,7 +158,7 @@ void USpawnResourceComponent::MakeBlockedTile_BuildingTile()
 
                         if (!TileCheck(Pos))
                             continue;
-
+                        UE_LOG(LogTemp, Log, TEXT("X:%d, Y:%d"), Pos.X, Pos.Y);
                         Blocked.Add(Pos);
                     }
                 }

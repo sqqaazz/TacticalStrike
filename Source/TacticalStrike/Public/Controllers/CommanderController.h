@@ -51,6 +51,8 @@ public:
 
 	void SetResource(int32 MineralCost);
 
+	int32 ChangePlayerResource();
+
 	UPROPERTY(EditAnywhere)
 	bool bIsResourceChanged;
 
@@ -131,5 +133,9 @@ private:
 	UFUNCTION()
 	void UpdateTurn();
 
+	UPROPERTY()
 	class AGridActor* GridActor;
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<ADefaultBuilding>> PlayerBuildingsArr;
 };

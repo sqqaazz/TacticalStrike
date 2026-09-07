@@ -78,6 +78,9 @@ UTacticalStrikeGameInstance::UTacticalStrikeGameInstance()
 	static ConstructorHelpers::FObjectFinder<UMaterial> EnergyRepeaterTexture(TEXT("/Script/Engine.Material'/Game/2DTextures/BuildingTexture/M_EnergyRepeater_RenderTarget.M_EnergyRepeater_RenderTarget'"));
 	if (EnergyRepeaterTexture.Succeeded())
 		Texture_EnergyRepeater = EnergyRepeaterTexture.Object;
+	static ConstructorHelpers::FObjectFinder<UMaterial> ResourceGatheringTexture(TEXT("/Script/Engine.Material'/Game/2DTextures/BuildingTexture/ResourceGathering_RenderTarget2D_Tex_Mat.ResourceGathering_RenderTarget2D_Tex_Mat'"));
+	if (ResourceGatheringTexture.Succeeded())
+		Texture_ResourceGathering = ResourceGatheringTexture.Object;
 	
 
 	//업그레이드 이미지
@@ -149,6 +152,9 @@ UTacticalStrikeGameInstance::UTacticalStrikeGameInstance()
 	static ConstructorHelpers::FObjectFinder<UMaterialInstance> Basic_Material_EnergyRepeater(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/HoverVehicles/Materials/LampPole/MAT_LampPole.MAT_LampPole'"));
 	if (Basic_Material_EnergyRepeater.Succeeded())
 		BasicMat_EnergyRepeater = Basic_Material_EnergyRepeater.Object;
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> Basic_Material_ResourceGathering(TEXT("/Script/Engine.Material'/Game/3DModels/Buildings/MRowaBuildings/smeltery/source/Placeable.Placeable'"));
+	if (Basic_Material_ResourceGathering.Succeeded())
+		BasicMat_ResourceGathering = Basic_Material_ResourceGathering.Object;
 
 	//건물 메쉬
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> Building_ResourceFacility(TEXT("StaticMesh'/Game/3DModels/Buildings/MRowaBuildings/coal-power-station/source/CoalPowerStation/CoalPowerStation_Merge_CoalPowerStation_MainDoor.CoalPowerStation_Merge_CoalPowerStation_MainDoor'"));
@@ -207,6 +213,8 @@ UMaterial* UTacticalStrikeGameInstance::GetMaterial(ESpawnObject SpawnObject)
 		return Texture_Barracks;
 	case ESpawnObject::SynBioLab:
 		return Texture_SynBioLab;
+	case ESpawnObject::ResourceGathering:
+		return Texture_ResourceGathering;
 	case ESpawnObject::EnergyRepeater:
 		return Texture_EnergyRepeater;
 	case ESpawnObject::Tample:

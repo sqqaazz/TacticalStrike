@@ -16,6 +16,8 @@ class TACTICALSTRIKE_API ABuilding_Crystal : public ADefaultBuilding
 public:
 	ABuilding_Crystal();
 
+	void SetGatheringMat(bool IsRange);
+
 protected:
 	virtual void BeginPlay() override;
 

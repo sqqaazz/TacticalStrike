@@ -105,6 +105,8 @@ private:
 	void Button_ResourceFacility_OnClicked();
 	UFUNCTION()
 	void Button_EnergyRepeater_OnClicked();
+	UFUNCTION()
+	void Button_ResourceGathering_OnClicked();
 
 	UFUNCTION()
 	void Button_StopBuilding_OnClicked();

@@ -10,6 +10,7 @@
 #include "Objects/Buildings/DefaultBuilding.h"
 #include "Objects/Buildings/Building_Barracks.h"
 #include "Objects/Buildings/Building_SynBioLab.h"
+#include "Objects/Buildings/Building_GatheringResource.h"
 #include "Objects/Buildings/Building_ResourceFacility.h"
 #include "Objects/Buildings/Building_EnergyRepeater.h"
 #include "Objects/Buildings/Building_Crystal.h"
@@ -30,6 +31,9 @@ USpawnBuildingComponent::USpawnBuildingComponent()
 	static ConstructorHelpers::FClassFinder<ABuilding_EnergyRepeater> Spawning_EnergyRepeater(TEXT("/Script/CoreUObject.Class'/Script/TacticalStrike.Building_EnergyRepeater'"));
 	if (Spawning_EnergyRepeater.Succeeded())
 		Building_EnergyRepeater = Spawning_EnergyRepeater.Class;
+	static ConstructorHelpers::FClassFinder<ABuilding_GatheringResource> Spawning_ResourceGathering(TEXT("/Script/CoreUObject.Class'/Script/TacticalStrike.Building_GatheringResource'"));
+	if (Spawning_ResourceGathering.Succeeded())
+		Building_ResourceGathering = Spawning_ResourceGathering.Class;
 	static ConstructorHelpers::FClassFinder<ABuilding_Crystal> Spawning_Crystal(TEXT("/Script/CoreUObject.Class'/Script/TacticalStrike.Building_Crystal'"));
 	if (Spawning_Crystal.Succeeded())
 		Building_Crystal = Spawning_Crystal.Class;
@@ -131,8 +135,43 @@ void USpawnBuildingComponent::CheckTraceResult_Grid(FVector MouseLocation, FVect
 			FIntPoint BuildingStartGrid = GridActor->GetStartGridTile(TileRow, TileColumn, BuildingGridSizeX, BuildingGridSizeY, DefaultBuilding->ObjectOwner)	;
 			GridActor->DrawBuildingGrid(BuildingStartGrid, BuildingGridSizeX, BuildingGridSizeY);
 			IsEnableBuilding = GridActor->CheckEnableBuilding(BuildingStartGrid, BuildingGridSizeX, BuildingGridSizeY);
-			//DefaultBuilding->SetActorLocation(FVector((TileRow * TileSize) + (TileSize / 2), (TileColumn * TileSize) + (TileSize / 2), 10.0f));
-			//DefaultBuilding->SetEnableMat();
+
+			if (IsEnableBuilding)
+			{
+				DefaultBuilding->SetEnableMat();
+			}
+			else
+			{
+				DefaultBuilding->SetDisableMat();
+			}
+
+			DefaultBuilding->SetActorLocation(FVector((TileRow * TileSize) + (TileSize / 2), (TileColumn * TileSize) + (TileSize / 2), 10.0f));
+
+
+			if (DefaultBuilding->ObjectInfo.ObjectType == static_cast<uint8>(ESpawnObject::ResourceGathering))
+			{
+				ABuilding_GatheringResource* ResourceGathering = Cast<ABuilding_GatheringResource>(DefaultBuilding);
+				if (ResourceGathering != nullptr)
+				{
+					ResourceGathering->ChangeRangeCrystal();
+				}
+			}
+			else if (DefaultBuilding->ObjectInfo.ObjectType == static_cast<uint8>(ESpawnObject::EnergyRepeater))
+			{
+				ABuilding_EnergyRepeater* EnergyReapeater = Cast<ABuilding_EnergyRepeater>(DefaultBuilding);
+				//UE_LOG(LogTemp, Log, TEXT("%d, %d"), TileRow, TileColumn);
+				if (EnergyReapeater != nullptr)
+				{
+					if (IsEnableBuilding)
+					{
+						EnergyReapeater->ShowGridRange(TileRow, TileColumn, true);
+					}
+					else
+					{
+						EnergyReapeater->ShowGridRange(TileRow, TileColumn, false);
+					}
+				}
+			}
 		}
 	}
 }
@@ -166,7 +205,7 @@ void USpawnBuildingComponent::CheckEnableBuilding()
 {
 }
 
-void USpawnBuildingComponent::SpawnBuildings_Grid()
+ADefaultBuilding* USpawnBuildingComponent::SpawnBuildings_Grid()
 {
 	//UStaticMeshComponent* MeshComponent = DefaultBuilding->FindComponentByClass<UStaticMeshComponent>();
 	//if (MeshComponent != nullptr)
@@ -179,15 +218,26 @@ void USpawnBuildingComponent::SpawnBuildings_Grid()
 
 	FVector BuildingLocation = FVector((TileRow * TileSize) + (TileSize / 2), (TileColumn * TileSize) + (TileSize / 2), 50.0f);
 
-	SpawnBuildingCode(CurrentBuildingCode, EObjectOwner::Blue, BuildingLocation);
+	//SpawnBuildingCode(CurrentBuildingCode, EObjectOwner::Blue, BuildingLocation);
 	GridActor->SetTile_Building(FIntPoint(TileRow, TileColumn), DefaultBuilding, false);
 	DefaultBuilding->SetEnableMat();
+
 	//DefaultBuilding->SetActorLocation(FVector((TileRow * TileSize) + (TileSize / 2), (TileColumn * TileSize) + (TileSize / 2), 15.0f));
 
+	if (DefaultBuilding->ObjectInfo.ObjectType == static_cast<uint8>(ESpawnObject::EnergyRepeater))
+	{
+		ABuilding_EnergyRepeater* EnergyReapeater = Cast<ABuilding_EnergyRepeater>(DefaultBuilding);
+		if (EnergyReapeater != nullptr)
+		{
+			EnergyReapeater->ShowGridRange(TileRow, TileColumn, false);
+		}
+	}
 	GridActor->ClearPreviousGrid();
+
+	return DefaultBuilding;
 }
 
-void USpawnBuildingComponent::AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode)
+ADefaultBuilding* USpawnBuildingComponent::AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode)
 {
 	float TileSize = GridActor->TileSize;
 	CurrentBuildingCode = BuildingCode;
@@ -196,6 +246,8 @@ void USpawnBuildingComponent::AI_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnB
 	GridActor->SetTile_Building(TileGrid, DefaultBuilding, false);
 	//UE_LOG(LogTemp, Log, TEXT("[%d, %d]"), TileGrid.X, TileGrid.Y);
 	DefaultBuilding->SetEnableMat();
+
+	return DefaultBuilding;
 }
 
 void USpawnBuildingComponent::Neutral_SpawnBuildings_Grid(FIntPoint TileGrid, ESpawnBuilding BuildingCode)
@@ -288,6 +340,13 @@ void USpawnBuildingComponent::SpawnBuildingCode(ESpawnBuilding BuildingCode, EOb
 	case ESpawnBuilding::SynBioLab:
 		Spawn_DefaultBuilding = Building_SynBioLab;
 		DefaultBuilding = GetWorld()->SpawnActor<ABuilding_SynBioLab>(Spawn_DefaultBuilding, BuildingLocation, FRotator(0.0f, 0.0f, 0.0f));
+		//DefaultBuilding->ObjectOwner = ObjectOwner;
+		//DefaultBuilding->ObjectInfo.ObjectOwner = ObjectOwner;
+		//DefaultBuilding->SetBuildingCollision();
+		break;
+	case ESpawnBuilding::ResourceGathering:
+		Spawn_DefaultBuilding = Building_ResourceGathering;
+		DefaultBuilding = GetWorld()->SpawnActor<ABuilding_GatheringResource>(Spawn_DefaultBuilding, BuildingLocation, FRotator(0.0f, 0.0f, 0.0f));
 		//DefaultBuilding->ObjectOwner = ObjectOwner;
 		//DefaultBuilding->ObjectInfo.ObjectOwner = ObjectOwner;
 		//DefaultBuilding->SetBuildingCollision();

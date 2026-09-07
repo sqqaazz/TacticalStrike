@@ -35,7 +35,7 @@ ADefaultBuilding::ADefaultBuilding()
 	DefaultBuildingFracture = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("FractureMesh_DefaultBuilding"));
 
 	DefaultBuildingMesh->SetCollisionProfileName(TEXT("NoCollision"));
-	//DefaultBuildingFracture->SetCollisionProfileName(TEXT("NoCollision"));
+	DefaultBuildingFracture->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FClassFinder<UObjectHealthWidget> HealthUI(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/Widgets/BP_ObjectHealthWidget.BP_ObjectHealthWidget_C'"));
 	if (HealthUI.Succeeded())
@@ -72,12 +72,10 @@ ADefaultBuilding::ADefaultBuilding()
 	NiagaraComponent_ObjectSelected->SetupAttachment(RootScene);
 	ParticleComponent_Fire->SetupAttachment(RootScene);
 	NiagaraComponent_Explosion->SetupAttachment(RootScene);
-	//HPBarWidget->SetRelativeLocation(GetActorLocation());
 
 	NiagaraComponent_Explosion->SetAutoDestroy(true);
-
+	//DefaultBuildingMesh->SetVisibility(true);
 	DefaultBuildingFracture->SetVisibility(false);
-	//DefaultBuildingFracture->SetRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
 
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -217,11 +215,11 @@ void ADefaultBuilding::SetBuildingScale()
 		return;
 	float DefaultScaleX = (float(GridSizeX) * 100.0f) / OriginalSize.X;
 	float DefaultScaleY = (float(GridSizeY) * 100.0f) / OriginalSize.Y;
-	float AspectRatioZ = OriginalSize.Z / ((OriginalSize.X + OriginalSize.Y) * 0.5f);
+	float AspectRatioZ = OriginalSize.Z / ((OriginalSize.X + OriginalSize.Y) * 1.0f);
 	float DefaultScaleZ = ((DefaultScaleX + DefaultScaleY) * 0.8f) * AspectRatioZ;
 
-	SetActorScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 1.5f));
-	//DefaultBuildingMesh->SetRelativeScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 0.8f));
+	//SetActorScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 0.8f));
+	DefaultBuildingMesh->SetRelativeScale3D(FVector(DefaultScaleX * 0.8f, DefaultScaleY * 0.8f, DefaultScaleZ * 0.8f));
 
 }
 

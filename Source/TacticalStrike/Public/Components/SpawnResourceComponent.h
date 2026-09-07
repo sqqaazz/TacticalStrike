@@ -21,6 +21,10 @@ protected:
 public:	
 	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//TArray<class ABuilding_Crystal> CrystalArray;
+
+	UPROPERTY()
+	TSet<FIntPoint> Occupied;
 private:
 	UPROPERTY()
 	class AGridActor* GridActor;
@@ -35,8 +39,6 @@ private:
 	UPROPERTY()
 	int32 Radius;
 
-	UPROPERTY()
-	TSet<FIntPoint> Occupied;
 	UPROPERTY()
 	TSet<FIntPoint> Blocked;
 

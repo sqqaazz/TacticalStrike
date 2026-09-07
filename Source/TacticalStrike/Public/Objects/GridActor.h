@@ -100,6 +100,10 @@ public:
 
 	TArray<class UGridTileActor*> CheckAIEnegyTile();
 
+	void DrawTempEnergyTile(int32 TempTileRow, int32 TempTileColumn, ADefaultBuilding* EnergyBuilding, bool IsDrawing);
+	UPROPERTY()
+	TArray<FIntPoint> CurTempEnergyTileArr;
+
 	//FGridStateUpdateCompleteDelegate GridStateUpdateCompleteDelegate;
 
 	/*void AddEdgePair(TArray<FGridEdgeHit>& Out, int X, int Y, const FString& Edge);
@@ -136,6 +140,8 @@ public:
 
 	FString ConvertEdge(const FString& Edge);*/
 
+	UPROPERTY()
+	class USpawnResourceComponent* SpawnResourceComponent;
 private:
 
 	void DrawLine(FVector StartVector, FVector EndVector, float Thiccness, TArray<FVector>& Vertices, TArray<int32>& Triangles);
@@ -192,7 +198,7 @@ private:
 
 	void SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner);
 
-	void SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner);
+	TArray<FIntPoint> SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner, bool IsTempTile);
 
 	void SetDrawSquares(TArray<AGridTileActor*> SquareGridTileArr);
 
@@ -202,7 +208,4 @@ private:
 	//bool CheckContiguousSubarray(TArray<FVector> Arr1, TArray<FVector> Arr2);
 
 	class ATacticalStrikeGameStateBase* TacticalStrikeGameState;
-
-	UPROPERTY()
-	class USpawnResourceComponent* SpawnResourceComponent;
 };

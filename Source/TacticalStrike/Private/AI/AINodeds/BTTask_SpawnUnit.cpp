@@ -36,7 +36,7 @@ EBTNodeResult::Type UBTTask_SpawnUnit::ExecuteTask(UBehaviorTreeComponent& Owner
 		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Waited_Building;
 		return EBTNodeResult::Succeeded;
 	}
-
+	//UE_LOG(LogTemp, Log, TEXT("Resource: %d"), AIResource);
 	if (AIResource < UnitDataInfo->Cost)
 	{
 		//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));

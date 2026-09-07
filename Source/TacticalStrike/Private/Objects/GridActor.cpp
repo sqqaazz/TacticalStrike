@@ -320,8 +320,10 @@ void AGridActor::SetGridRange(int32 TileRow, int32 TileColumn, int32 Range, EObj
 	}
 }
 
-void AGridActor::SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner)
+TArray<FIntPoint> AGridActor::SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EObjectOwner ObjectOwner,bool IsTempTile)
 {
+	TArray<FIntPoint> RangeEnergyTileArr;
+
 	for (int32 dx = -Range; dx <= Range; dx++)
 	{
 		int32 Maxdy = Range - FMath::Abs(dx);
@@ -333,15 +335,22 @@ void AGridActor::SetEnergyTile(int32 TileRow, int32 TileColumn, int32 Range, EOb
 				UGridTileActor* Tile = GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy];
 				if (Tile)
 				{
-					GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->IsEnergySupplying = true;
-					if (ObjectOwner == EObjectOwner::Blue)
-						GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->TileOwner = ETileOwner::Blue;
-					else if (ObjectOwner == EObjectOwner::Red)
-						GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->TileOwner = ETileOwner::Red;
+					RangeEnergyTileArr.Add(FIntPoint(TileRow + dx, TileColumn + dy));
+
+					if (IsTempTile)
+					{
+						GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->IsEnergySupplying = true;
+						if (ObjectOwner == EObjectOwner::Blue)
+							GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->TileOwner = ETileOwner::Blue;
+						else if (ObjectOwner == EObjectOwner::Red)
+							GridTileArr[TileRow + dx].GridTileColumn[TileColumn + dy]->TileOwner = ETileOwner::Red;
+					}
 				}
 			}
 		}
 	}
+
+	return RangeEnergyTileArr;
 }
 
 FIntPoint AGridActor::GetGridTile(FVector ObjectLocation)
@@ -364,6 +373,9 @@ void AGridActor::UpdateTileColor(int32 Row, int32 Column, ETileColor TileColor)
 {
 	int32 TileIndex = Row * Columns + Column;
 	int32 VertexOffset = TileIndex * 4;
+
+	//UE_LOG(LogTemp, Log, TEXT("%d"), static_cast<int32>(TileColor));
+	//ETileColor::
 	switch (TileColor)
 	{
 	case ETileColor::Transparent:
@@ -425,12 +437,12 @@ void AGridActor::UpdateEnergyTile()
 							if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Red)
 							{
 								//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
-								SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red);
+								SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Red, true);
 							}
 							else if (DefaultBuilding->ObjectInfo.ObjectOwner == EObjectOwner::Blue)
 							{
 								//SetGridRange(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
-								SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue);
+								SetEnergyTile(i, j, DefaultBuilding->EnergyRange, EObjectOwner::Blue, true);
 							}
 						}
 					}
@@ -455,6 +467,36 @@ void AGridActor::DrawEnergyTile()
 	}
 	ProceduralMesh_Squares->UpdateMeshSection_LinearColor(0, SquareVertices, SquareNormals, SquareUV0, SquareVertexColors, {}, false);
 }
+
+void AGridActor::DrawTempEnergyTile(int32 TempTileRow, int32 TempTileColumn, ADefaultBuilding* EnergyBuilding, bool IsDrawing)
+{
+	for (FIntPoint CurTempEnergyTile : CurTempEnergyTileArr)
+	{
+		UpdateTileColor(CurTempEnergyTile.X, CurTempEnergyTile.Y, ETileColor::Transparent);
+	}
+
+	CurTempEnergyTileArr.Empty();
+
+	if (!IsDrawing)
+	{
+		ProceduralMesh_Squares->UpdateMeshSection_LinearColor(0, SquareVertices, SquareNormals, SquareUV0, SquareVertexColors, {}, false);
+		return;
+	}
+	
+	TArray<FIntPoint> TempEnergyTileArr = SetEnergyTile(TempTileRow, TempTileColumn, EnergyBuilding->EnergyRange, EObjectOwner::None, false);
+
+	for (FIntPoint TempEnergyTile : TempEnergyTileArr)
+	{
+		if (GridTileArr[TempEnergyTile.X].GridTileColumn[TempEnergyTile.Y]->IsEnergySupplying == false)
+		{
+			//UE_LOG(LogTemp, Log, TEXT("Energy: %d, %d"), TempEnergyTile.X, TempEnergyTile.Y);
+			CurTempEnergyTileArr.Add(TempEnergyTile);
+			UpdateTileColor(TempEnergyTile.X, TempEnergyTile.Y, ETileColor::Yellow);
+		}
+	}
+	ProceduralMesh_Squares->UpdateMeshSection_LinearColor(0, SquareVertices, SquareNormals, SquareUV0, SquareVertexColors, {}, false);
+}
+
 
 bool AGridActor::CheckGridObject(int32 TileRow, int32 TileColumn)
 {

@@ -63,7 +63,7 @@ void ADefaultTample::BeginPlay()
 	//	}
 	//	SetBuildingScale();
 	//	//SetActorScale3D(FVector(10.0f, 10.0f, 10.0f));
-	SetActorScale3D(FVector(0.7f, 0.7f, 0.7f));
+	//SetActorScale3D(FVector(0.7f, 0.7f, 0.7f));
 	//DefaultBuildingMesh->SetCollisionProfileName(TEXT("Building"));
 	ObjectInfo.ObjectState = EObjectState::Activated;
 	ObjectState = EObjectState::Activated;

@@ -26,6 +26,18 @@ void ABuilding_Crystal::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DefaultBuildingMesh->SetRelativeScale3D(FVector(2.0f));
+	DefaultBuildingMesh->SetRelativeScale3D(FVector(20.0f));
 	HPBarWidget->SetVisibility(false);
+}
+
+void ABuilding_Crystal::SetGatheringMat(bool IsRange)
+{
+	if (IsRange)
+	{
+		DefaultBuildingMesh->SetMaterial(0, BuildEnableMat);
+	}
+	else
+	{
+		DefaultBuildingMesh->SetMaterial(0, DefaultBuildingMat);
+	}
 }
