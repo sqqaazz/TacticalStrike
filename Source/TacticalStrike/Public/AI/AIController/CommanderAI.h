@@ -42,8 +42,8 @@ enum class EAIBehaviorState : uint8
 	Failed_Lack_Resource = 3 UMETA(DisPlayName = "Failed_Lack_Resource"),
 	Failed_Lack_Building = 4 UMETA(DisPlayName = "Failed_Lack_Building"),
 	Failed_Lack_Territory = 5 UMETA(DisPlayName = "Failed_Lack_Territory"),
-	Waited_Building = 6 UMETA(DisPlayName = "Waited_Building"),
-	Waited_SpawnUnit = 7 UMETA(DisPlayName = "Waited_SpawnUnit"),
+	Waiting_Building = 6 UMETA(DisPlayName = "Waiting_Building"),
+	Waiting_Territory = 7 UMETA(DisPlayName = "Waiting_Territory"),
 	TurnEnd = 8 UMETA(DisPlayName = "TurnEnd")
 };
 
@@ -64,7 +64,18 @@ struct FHaviorStateSequence
 	UPROPERTY()
 	TWeakObjectPtr<ADefaultBuilding> SpawnBuilding;
 	
+	UPROPERTY()
+	bool IsHaviorChecked;
 };
+
+//USTRUCT(BlueprintType)
+//struct FPreviousAIHaviorState
+//{
+//	UPROPERTY()
+//	int8 AIHaviorSequenceIndex;
+//
+//}
+
 
 UCLASS()
 class TACTICALSTRIKE_API ACommanderAI : public AAIController
@@ -131,6 +142,13 @@ public:
 
 	UPROPERTY()
 	TArray<FHaviorStateSequence> HaviorStateSequenceQueue;
+
+	UPROPERTY()
+	int8 AIHaviorSequenceIndex;
+
+	//UPROPERTY()
+	//TArray<int8> PreviousAIHaviorStack;
+
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<ADefaultBuilding>> AIBuildingsArr;

@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_FinishAIHavior::ExecuteTask(UBehaviorTreeComponent& 
 
 	if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Successed)
 	{
-		CommanderAI->HaviorStateSequenceQueue.RemoveAt(AIHaviorSequenceIndex);
+		//CommanderAI->HaviorStateSequenceQueue.RemoveAt(AIHaviorSequenceIndex);
 		return EBTNodeResult::Succeeded;
 	}
 	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
@@ -29,11 +29,16 @@ EBTNodeResult::Type UBTTask_FinishAIHavior::ExecuteTask(UBehaviorTreeComponent& 
 		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, CommanderAI->HaviorStateSequenceQueue.Num() - 1);
 		return EBTNodeResult::Succeeded;
 	}
-	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
+	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Building)
+	{
+		//CommanderAI->PreviousAIHaviorStack.Add(AIHaviorSequenceIndex);
+		return EBTNodeResult::Succeeded;
+	}
+	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waiting_Building)
 	{
 		return EBTNodeResult::Succeeded;
 	}
-	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_SpawnUnit)
+	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waiting_Territory)
 	{
 		return EBTNodeResult::Succeeded;
 	}

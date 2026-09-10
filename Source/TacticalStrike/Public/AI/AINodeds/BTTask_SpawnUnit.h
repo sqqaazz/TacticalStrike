@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "DataTables/UnitDataTables.h"
+//#include "DataTables/UnitDataTables.h"
 #include "Objects/GridActor.h"
 #include "Components/GridTileActor.h"
 #include "BTTask_SpawnUnit.generated.h"
@@ -30,7 +30,8 @@ private:
 	UPROPERTY()
 	class UTacticalStrikeGameInstance* GameInstance;
 
-	FUnitTableRow* UnitDataInfo;
+
+	struct FUnitTableRow* UnitDataInfo;
 
 	UPROPERTY()
 	TArray<class UGridTileActor*> AIEnergyTileArr;

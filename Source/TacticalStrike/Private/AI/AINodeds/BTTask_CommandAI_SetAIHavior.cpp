@@ -5,6 +5,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/AIController/TeamMainAI.h"
 #include "Characters/CommanderUnit.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameMode/TacticalStrikeGameInstance.h"
 #include "Characters/Units/DefaultUnit/DefaultUnit.h"
 
 UBTTask_CommandAI_SetAIHavior::UBTTask_CommandAI_SetAIHavior()
@@ -15,6 +17,9 @@ UBTTask_CommandAI_SetAIHavior::UBTTask_CommandAI_SetAIHavior()
 EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
+
+	GameInstance = Cast<UTacticalStrikeGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
 	ACommanderUnit* CommanderUnit = Cast<ACommanderUnit>(OwnerComp.GetAIOwner()->GetPawn());
 	ACommanderAI* CommanderAI = Cast<ACommanderAI>(OwnerComp.GetAIOwner());
 	ATeamMainAI* TeamMainAI = Cast<ATeamMainAI>(CommanderUnit->TeamMainAIInstance);
@@ -39,7 +44,11 @@ EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComp
 	//	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<uint8>(EAIBehaviorCode::Havior_TurnEnd));
 	//	return EBTNodeResult::Succeeded;
 	//}
-
+	
+	if (CheckPreviousFailedHavior(OwnerComp))
+	{
+		return EBTNodeResult::Succeeded;
+	}
 
 	//이전 행동에 의한 명령 가중치 설정
 	float PreviousHaviorWeight = 0.0f;
@@ -74,7 +83,7 @@ EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComp
 			HaviorStateSequence.HaviorCode = HaviorWeight.HaviorCode;
 			HaviorStateSequence.AIHaviorState = EAIBehaviorState::Waiting;
 			HaviorStateSequence.SpawnObjectType = ESpawnObject::None;
-
+			HaviorStateSequence.IsHaviorChecked = false;
 			FHaviorStateSequence LastHaviorStateSequence = CommanderAI->HaviorStateSequenceQueue[CommanderAI->HaviorStateSequenceQueue.Num() - 1];
 
 			CommanderAI->HaviorStateSequenceQueue.RemoveAt(CommanderAI->HaviorStateSequenceQueue.Num() - 1);
@@ -90,6 +99,57 @@ EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComp
 
 	return EBTNodeResult::Succeeded;
 
+}
+
+bool UBTTask_CommandAI_SetAIHavior::CheckPreviousFailedHavior(UBehaviorTreeComponent& OwnerComp)
+{
+	ACommanderAI* CommanderAI = Cast<ACommanderAI>(OwnerComp.GetAIOwner());
+
+	for (int8 i = 0; i < CommanderAI->HaviorStateSequenceQueue.Num(); i++)
+	{
+		FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[i];
+		FHaviorStateSequence LastHaviorStateSequence = CommanderAI->HaviorStateSequenceQueue[CommanderAI->HaviorStateSequenceQueue.Num() - 1];
+
+		FHaviorStateSequence HaviorStateSequence;
+
+		if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Building)
+		{
+			FUnitTableRow* UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(HaviorStateSequenceQueue.SpawnObjectType));
+
+			HaviorStateSequence.HaviorCode = EAIBehaviorCode::Havior_SpawnBuilding_Unit;
+			HaviorStateSequence.AIHaviorState = EAIBehaviorState::Waiting;
+			HaviorStateSequence.SpawnObjectType = static_cast<ESpawnObject>(UnitDataInfo->ProductionBuilding);
+			HaviorStateSequence.IsHaviorChecked = false;
+
+			CommanderAI->HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting_Building;
+			
+			CommanderAI->HaviorStateSequenceQueue.RemoveAt(CommanderAI->HaviorStateSequenceQueue.Num() - 1);
+			CommanderAI->HaviorStateSequenceQueue.Add(HaviorStateSequence);
+
+			CommanderAI->HaviorStateSequenceQueue.Add(LastHaviorStateSequence);
+
+			return true;
+		}
+		else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Territory)
+		{
+			HaviorStateSequence.HaviorCode = EAIBehaviorCode::Havior_SpawnBuilding_Territory;
+			HaviorStateSequence.AIHaviorState = EAIBehaviorState::Waiting;
+			HaviorStateSequence.SpawnObjectType = ESpawnObject::EnergyRepeater;
+			HaviorStateSequence.IsHaviorChecked = false;
+
+			CommanderAI->HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting_Territory;
+
+			CommanderAI->HaviorStateSequenceQueue.RemoveAt(CommanderAI->HaviorStateSequenceQueue.Num() - 1);
+			CommanderAI->HaviorStateSequenceQueue.Add(HaviorStateSequence);
+
+			CommanderAI->HaviorStateSequenceQueue.Add(LastHaviorStateSequence);
+
+			return  true;
+		}
+
+	}
+
+	return false;
 }
 
 float UBTTask_CommandAI_SetAIHavior::GetSpawnUnitWeight(TArray<class AActor*> SightEnemyArr, TArray<class ADefaultUnit*> TeamUnitArr, float RemainWeight, TArray<FHaviorWeight>& HaviorWeightArr)

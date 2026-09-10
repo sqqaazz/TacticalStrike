@@ -33,7 +33,7 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 	
 	ADefaultBuilding* CurSpawnBuilding = nullptr;
 	
-	int8 CurUnitDataArryNum = 5;
+	int32 CurUnitDataArrayNum = 1000;
 
 	for (const TWeakObjectPtr<ADefaultBuilding> Building : CommanderAI->AIBuildingsArr)
 	{
@@ -42,17 +42,43 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 			UBuildingClickableComponent* BuildingComponent = Cast<UBuildingClickableComponent>
 				(Building->ObjectInfo.ObjectActor->GetComponentByClass(UBuildingClickableComponent::StaticClass()));
 
-			if (Building->ObjectInfo.ObjectState == EObjectState::Activated)
+			if (Building->ObjectInfo.ObjectState == EObjectState::DeActivated)
 			{
-				if (BuildingComponent->UnitDataArray.Num() < CurUnitDataArryNum)
+				int32 DeActivatedArrayNum = CurUnitDataArrayNum - Building->ObjectInfo.CurrentBuildTime;
+
+				if (DeActivatedArrayNum < CurUnitDataArrayNum)
 				{
 					CurSpawnBuilding = Cast<ADefaultBuilding>(Building->ObjectInfo.ObjectActor);
-					CurUnitDataArryNum = BuildingComponent->UnitDataArray.Num();
+					CurUnitDataArrayNum = DeActivatedArrayNum;
 					continue;
 				}
 				else
 					continue;
 			}
+			else if (Building->ObjectInfo.ObjectState == EObjectState::Activated)
+			{
+				if (BuildingComponent->UnitDataArray.Num() < CurUnitDataArrayNum && BuildingComponent->UnitDataArray.Num() < 5)
+				{
+					CurSpawnBuilding = Cast<ADefaultBuilding>(Building->ObjectInfo.ObjectActor);
+					CurUnitDataArrayNum = BuildingComponent->UnitDataArray.Num();
+					continue;
+				}
+				else
+					continue;
+			}
+
+
+			//if (Building->ObjectInfo.ObjectState == EObjectState::Activated)
+			//{
+			//	if (BuildingComponent->UnitDataArray.Num() < CurUnitDataArryNum)
+			//	{
+			//		CurSpawnBuilding = Cast<ADefaultBuilding>(Building->ObjectInfo.ObjectActor);
+			//		CurUnitDataArryNum = BuildingComponent->UnitDataArray.Num();
+			//		continue;
+			//	}
+			//	else
+			//		continue;
+			//}
 		}
 	}
 
@@ -102,7 +128,7 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 	}
 	else
 	{
-		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Waited_Building;
+		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Failed_Lack_Building;
 		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = nullptr;
 	}
 

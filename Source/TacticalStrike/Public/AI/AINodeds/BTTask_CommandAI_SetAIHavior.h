@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
 #include "AI/AIController/CommanderAI.h"
+//#include "DataTables/UnitDataTables.h"
 #include "BTTask_CommandAI_SetAIHavior.generated.h"
 
 USTRUCT(BlueprintType)
@@ -34,9 +35,16 @@ private:
 	UPROPERTY()
 	float TotalWeight;
 
+	bool CheckPreviousFailedHavior(UBehaviorTreeComponent& OwnerComp);
+
 	float GetPreviousHaviorWeight(UBehaviorTreeComponent& OwnerComp, float RemainWeight, TArray<FHaviorWeight>& HaviorWeightArr);
 	float GetSpawnUnitWeight(TArray<class AActor*> SightEnemyArr, TArray<class ADefaultUnit*> TeamUnitArr, float RemainWeight, TArray<FHaviorWeight>& HaviorWeightArr);
 
 	float GetResearchWeight(float RemainWeight, TArray<FHaviorWeight>& HaviorWeightArr);
 	float GetResourceWeight(float RemainWeight, TArray<FHaviorWeight>& HaviorWeightArr);
+
+	UPROPERTY()
+	class UTacticalStrikeGameInstance* GameInstance;
+
+	//struct FUnitTableRow* UnitDataInfo;
 };

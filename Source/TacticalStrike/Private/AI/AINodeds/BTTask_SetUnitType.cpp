@@ -26,10 +26,10 @@ EBTNodeResult::Type UBTTask_SetUnitType::ExecuteTask(UBehaviorTreeComponent& Own
 	int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
 	FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
 
-	if (static_cast<int8>(HaviorStateSequenceQueue.SpawnObjectType) != INDEX_NONE && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
-	{
+	//if (static_cast<int8>(HaviorStateSequenceQueue.SpawnObjectType) != INDEX_NONE && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
+	//{
 
-	}
+	//}
 
 	if (GameInstance != nullptr)
 		UnitDataTable = GameInstance->GetAllUnitTable();

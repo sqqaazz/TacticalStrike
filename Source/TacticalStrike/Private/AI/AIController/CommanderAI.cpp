@@ -117,6 +117,8 @@ void ACommanderAI::StartAITurn()
 		TurnEndHavior.SpawnBuilding = nullptr;
 
 		HaviorStateSequenceQueue.Add(TurnEndHavior);
+
+		AIHaviorSequenceIndex = INDEX_NONE;
 	}
 	else
 	{

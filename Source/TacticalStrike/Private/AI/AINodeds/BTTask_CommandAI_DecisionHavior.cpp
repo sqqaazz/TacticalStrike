@@ -35,7 +35,13 @@ EBTNodeResult::Type UBTTask_CommandAI_DecisionHavior::ExecuteTask(UBehaviorTreeC
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(CommanderAI->HaviorStateSequenceQueue[i].HaviorCode));
 			return EBTNodeResult::Succeeded;
 		}
-		else if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waited_Building)
+		else if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting_Building && HaviorStateSequenceQueue[i].IsHaviorChecked == false)
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, i);
+			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(CommanderAI->HaviorStateSequenceQueue[i].HaviorCode));
+			return EBTNodeResult::Succeeded;
+		}
+		else if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting_Territory && HaviorStateSequenceQueue[i].IsHaviorChecked == false)
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, i);
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(CommanderAI->HaviorStateSequenceQueue[i].HaviorCode));
@@ -43,9 +49,17 @@ EBTNodeResult::Type UBTTask_CommandAI_DecisionHavior::ExecuteTask(UBehaviorTreeC
 		}
 		else if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
 		{
-			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, HaviorStateSequenceQueue.Num() - 1);
-			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(EAIBehaviorCode::Havior_TurnEnd));
-			return EBTNodeResult::Succeeded;
+			if (HaviorStateSequenceQueue[i].IsHaviorChecked == false)
+			{
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, i);
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(CommanderAI->HaviorStateSequenceQueue[i].HaviorCode));
+			}
+			else
+			{
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, HaviorStateSequenceQueue.Num() - 1);
+				OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorKey, static_cast<int8>(EAIBehaviorCode::Havior_TurnEnd));
+				return EBTNodeResult::Succeeded;
+			}
 		}
 		else if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::TurnEnd)
 		{

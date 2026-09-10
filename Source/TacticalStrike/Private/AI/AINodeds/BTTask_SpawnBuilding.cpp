@@ -38,10 +38,10 @@ EBTNodeResult::Type UBTTask_SpawnBuilding::ExecuteTask(UBehaviorTreeComponent& O
 		int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
 		FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
 
-		if (HaviorStateSequenceQueue.HaviorCode == EAIBehaviorCode::Havior_SpawnBuilding_Unit && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
-		{
-			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState == EAIBehaviorState::Waited_SpawnUnit;
-		}
+		//if (HaviorStateSequenceQueue.HaviorCode == EAIBehaviorCode::Havior_SpawnBuilding_Unit && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
+		//{
+		//	//CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState == EAIBehaviorState::Waited_SpawnUnit;
+		//}
 	}
 	else
 	{
