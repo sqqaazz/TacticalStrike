@@ -31,6 +31,15 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 	UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(HaviorStateSequenceQueue.SpawnObjectType));
 	//AIEnergyTileArr = GridActor->CheckAIEnegyTile();
 	
+	if (HaviorStateSequenceQueue.IsHaviorChecked == true)
+		return EBTNodeResult::Succeeded;
+	
+
+	if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
+		return EBTNodeResult::Succeeded;
+	
+	
+
 	ADefaultBuilding* CurSpawnBuilding = nullptr;
 	
 	int32 CurUnitDataArrayNum = 1000;
@@ -121,15 +130,31 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 	//}
 
 	//세팅된 유닛을 스폰시킬 건물 중 대기열이 가장 짧은 건물을 찾아 활성 상태일 경우 세팅, 찾지 못하였을 경우 명령 상태를 '스폰 건물 대기'로 변경
-	if (CurSpawnBuilding != nullptr)
+
+	if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waiting_Building)
 	{
-		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Waiting;
-		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = CurSpawnBuilding;
+		if (CurSpawnBuilding != nullptr)
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Waiting;
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = CurSpawnBuilding;
+		}
+		else
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].IsHaviorChecked = true;
+			//CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = nullptr;
+		}
 	}
-	else
+	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waiting)
 	{
-		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Failed_Lack_Building;
-		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = nullptr;
+		if (CurSpawnBuilding != nullptr)
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = CurSpawnBuilding;
+		}
+		else
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Failed_Lack_Building;
+			//CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnBuilding = nullptr;
+		}
 	}
 
 	return EBTNodeResult::Succeeded;

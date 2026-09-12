@@ -121,7 +121,7 @@ bool UBTTask_CommandAI_SetAIHavior::CheckPreviousFailedHavior(UBehaviorTreeCompo
 			HaviorStateSequence.SpawnObjectType = static_cast<ESpawnObject>(UnitDataInfo->ProductionBuilding);
 			HaviorStateSequence.IsHaviorChecked = false;
 
-			CommanderAI->HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting_Building;
+			CommanderAI->HaviorStateSequenceQueue[i].AIHaviorState = EAIBehaviorState::Waiting_Building;
 			
 			CommanderAI->HaviorStateSequenceQueue.RemoveAt(CommanderAI->HaviorStateSequenceQueue.Num() - 1);
 			CommanderAI->HaviorStateSequenceQueue.Add(HaviorStateSequence);
@@ -137,7 +137,7 @@ bool UBTTask_CommandAI_SetAIHavior::CheckPreviousFailedHavior(UBehaviorTreeCompo
 			HaviorStateSequence.SpawnObjectType = ESpawnObject::EnergyRepeater;
 			HaviorStateSequence.IsHaviorChecked = false;
 
-			CommanderAI->HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::Waiting_Territory;
+			CommanderAI->HaviorStateSequenceQueue[i].AIHaviorState = EAIBehaviorState::Waiting_Territory;
 
 			CommanderAI->HaviorStateSequenceQueue.RemoveAt(CommanderAI->HaviorStateSequenceQueue.Num() - 1);
 			CommanderAI->HaviorStateSequenceQueue.Add(HaviorStateSequence);

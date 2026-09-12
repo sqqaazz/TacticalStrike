@@ -15,6 +15,12 @@ EBTNodeResult::Type UBTTask_EndAITurn::ExecuteTask(UBehaviorTreeComponent& Owner
 {
 	ATacticalStrikeGameStateBase* GameStateBase = Cast<ATacticalStrikeGameStateBase>(GetWorld()->GetGameState());
 	ACommanderAI* CommanderAI = Cast<ACommanderAI>(OwnerComp.GetAIOwner()->GetPawn()->GetController());
+
+	for (int32 i = 0; i < CommanderAI->HaviorStateSequenceQueue.Num(); i++)
+	{
+		CommanderAI->HaviorStateSequenceQueue[i].IsHaviorChecked = false;
+	}
+
 	if (GameStateBase != nullptr && CommanderAI != nullptr)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("EndAITurn"));

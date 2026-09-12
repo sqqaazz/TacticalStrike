@@ -25,6 +25,9 @@ EBTNodeResult::Type UBTTask_CommandAI_DecisionHavior::ExecuteTask(UBehaviorTreeC
 		if (i == INDEX_NONE)
 			continue;
 
+		if (HaviorStateSequenceQueue[i].IsHaviorChecked == true)
+			continue;
+
 		if (HaviorStateSequenceQueue[i].AIHaviorState == EAIBehaviorState::None)
 		{
 			continue;

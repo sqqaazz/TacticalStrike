@@ -30,13 +30,25 @@ EBTNodeResult::Type UBTTask_SpawnUnit::ExecuteTask(UBehaviorTreeComponent& Owner
 	uint8 UnitTypeKey = static_cast<uint8>(HaviorStateSequenceQueue.SpawnObjectType);
 	UnitDataInfo = GameInstance->GetUnitTable(static_cast<int32>(UnitTypeKey));
 
-	if (!HaviorStateSequenceQueue.SpawnBuilding.IsValid() || CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState == EAIBehaviorState::Failed_Lack_Building)
+	if (HaviorStateSequenceQueue.IsHaviorChecked == true)
+		return EBTNodeResult::Succeeded;
+	
+
+	if (!HaviorStateSequenceQueue.SpawnBuilding.IsValid() || HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Building)
 	{
-		//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Waited_Building));
 		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Failed_Lack_Building;
 		return EBTNodeResult::Succeeded;
 	}
-	//UE_LOG(LogTemp, Log, TEXT("Resource: %d"), AIResource);
+
+	if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
+	{
+		if (AIResource < UnitDataInfo->Cost)
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].IsHaviorChecked = true;
+			return EBTNodeResult::Succeeded;
+		}
+	}
+
 	if (AIResource < UnitDataInfo->Cost)
 	{
 		//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));

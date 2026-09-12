@@ -26,17 +26,27 @@ EBTNodeResult::Type UBTTask_SpawnBuilding::ExecuteTask(UBehaviorTreeComponent& O
 	if (GameInstance == nullptr || GridActor == nullptr)
 		return EBTNodeResult::Failed;
 
+	int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
+	FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
+
+	if (HaviorStateSequenceQueue.IsHaviorChecked == true)
+		return EBTNodeResult::Succeeded;
+
 	AIEnergyTileArr = GridActor->CheckAIEnegyTile();
 	//UE_LOG(LogTemp, Log, TEXT("EnegyTile: %d"), AIEnergyTileArr.Num());
 	//int TempBuildingTypeKey = static_cast<int32>(ESpawnBuilding::Barracks);
 	//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::BuildingTypeKey, TempBuildingTypeKey);
 
-	int32 BuildingTypeKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::BuildingTypeKey);
+	//int32 BuildingTypeKey = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::BuildingTypeKey);
+
+	int32 BuildingTypeKey = static_cast<int32>(HaviorStateSequenceQueue.SpawnObjectType);
 
 	if (SpawnGridBuilding(BuildingTypeKey, OwnerComp))
 	{
-		int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
-		FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
+		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Successed;
+
+		//int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
+		//FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
 
 		//if (HaviorStateSequenceQueue.HaviorCode == EAIBehaviorCode::Havior_SpawnBuilding_Unit && HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Waited_Building)
 		//{
@@ -56,9 +66,21 @@ bool UBTTask_SpawnBuilding::SpawnGridBuilding(int32 BuildingKey, UBehaviorTreeCo
 	BuildingDataInfo = GameInstance->GetBuildingTable(static_cast<int32>(BuildingKey));
 
 	int32 AIResource = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
+
+	int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
+	FHaviorStateSequence HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex];
 	if (AIResource < BuildingDataInfo->Cost)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));
+		if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].IsHaviorChecked = true;
+		}
+		else
+		{
+			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].AIHaviorState = EAIBehaviorState::Failed_Lack_Resource;
+			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::Failed_Lack_Resource));
+		}
+
 		return false;
 	}
 
