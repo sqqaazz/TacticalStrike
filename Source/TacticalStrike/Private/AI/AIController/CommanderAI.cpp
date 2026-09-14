@@ -119,6 +119,7 @@ void ACommanderAI::StartAITurn()
 		HaviorStateSequenceQueue.Add(TurnEndHavior);
 
 		AIHaviorSequenceIndex = INDEX_NONE;
+		TurnAIHaviorNumber = 5;
 	}
 	else
 	{

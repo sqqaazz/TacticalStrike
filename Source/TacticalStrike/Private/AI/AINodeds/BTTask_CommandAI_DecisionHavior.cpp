@@ -20,7 +20,9 @@ EBTNodeResult::Type UBTTask_CommandAI_DecisionHavior::ExecuteTask(UBehaviorTreeC
 	int8 AIHaviorSequenceIndex = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey);
 	TArray<FHaviorStateSequence> HaviorStateSequenceQueue = CommanderAI->HaviorStateSequenceQueue;
 
-	for (int8 i = AIHaviorSequenceIndex; i < HaviorStateSequenceQueue.Num(); i++)
+	UE_LOG(LogTemp, Log, TEXT("Resource: %d"), OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey));
+
+	for (int8 i = 0; i < HaviorStateSequenceQueue.Num(); i++)
 	{
 		if (i == INDEX_NONE)
 			continue;

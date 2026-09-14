@@ -53,7 +53,7 @@ EBTNodeResult::Type UBTTask_SetSpawnBuilding::ExecuteTask(UBehaviorTreeComponent
 
 			if (Building->ObjectInfo.ObjectState == EObjectState::DeActivated)
 			{
-				int32 DeActivatedArrayNum = CurUnitDataArrayNum - Building->ObjectInfo.CurrentBuildTime;
+				int32 DeActivatedArrayNum = CurUnitDataArrayNum - (Building->ObjectInfo.CurrentBuildTime + 1);
 
 				if (DeActivatedArrayNum < CurUnitDataArrayNum)
 				{

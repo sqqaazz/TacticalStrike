@@ -21,12 +21,12 @@ EBTNodeResult::Type UBTTask_FinishAIHavior::ExecuteTask(UBehaviorTreeComponent& 
 
 	if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Successed)
 	{
-		//CommanderAI->HaviorStateSequenceQueue.RemoveAt(AIHaviorSequenceIndex);
+		CommanderAI->HaviorStateSequenceQueue.RemoveAt(AIHaviorSequenceIndex);
 		return EBTNodeResult::Succeeded;
 	}
 	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, CommanderAI->HaviorStateSequenceQueue.Num() - 1);
+		//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, CommanderAI->HaviorStateSequenceQueue.Num() - 1);
 		return EBTNodeResult::Succeeded;
 	}
 	else if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Building)

@@ -146,6 +146,10 @@ public:
 	UPROPERTY()
 	int8 AIHaviorSequenceIndex;
 
+	//한 턴에 추가될 수 있는 명령의 최대 갯수(결핍으로 인한 명령 추가는 제외) 
+	UPROPERTY()
+	int32 TurnAIHaviorNumber;
+
 	//UPROPERTY()
 	//TArray<int8> PreviousAIHaviorStack;
 

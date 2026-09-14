@@ -26,6 +26,7 @@ EBTNodeResult::Type UBTTask_EndAITurn::ExecuteTask(UBehaviorTreeComponent& Owner
 		//UE_LOG(LogTemp, Log, TEXT("EndAITurn"));
 		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::PreviousAIHaviorStateKey, static_cast<uint8>(EAIBehaviorState::None));
 		OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::AIHaviorSequenceIndexKey, INDEX_NONE);
+		CommanderAI->TurnAIHaviorNumber = 5;
 		GameStateBase->PlayerTurnStart();
 		CommanderAI->BrainComponent->StopLogic("Turn End");
 

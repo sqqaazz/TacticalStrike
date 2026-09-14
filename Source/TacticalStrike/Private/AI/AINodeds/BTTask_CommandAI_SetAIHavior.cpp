@@ -50,6 +50,11 @@ EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComp
 		return EBTNodeResult::Succeeded;
 	}
 
+	//한 턴에 추가될 수 있는 명령의 최대 갯수 제한(결핍으로 인한 명령 추가는 제외) 
+	if (CommanderAI->TurnAIHaviorNumber < 1)
+		return EBTNodeResult::Succeeded;
+	CommanderAI->TurnAIHaviorNumber--;
+
 	//이전 행동에 의한 명령 가중치 설정
 	float PreviousHaviorWeight = 0.0f;
 	PreviousHaviorWeight = GetPreviousHaviorWeight(OwnerComp, RemainWeight, HaviorWeightArray);
@@ -68,10 +73,12 @@ EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComp
 	float RandomWeight = FMath::RandRange(0.0f, TotalWeight);
 	float CurrentWeight = 0.0f;
 
-	for (const FHaviorWeight HaviorWeight : HaviorWeightArray)
-	{
-		UE_LOG(LogTemp, Log, TEXT("RandomWeight: %f, Havior: [%d, %f]"), RandomWeight, static_cast<uint8>(HaviorWeight.HaviorCode), HaviorWeight.HaviorWeight);
-	}
+
+
+	//for (const FHaviorWeight HaviorWeight : HaviorWeightArray)
+	//{
+	//	UE_LOG(LogTemp, Log, TEXT("RandomWeight: %f, Havior: [%d, %f]"), RandomWeight, static_cast<uint8>(HaviorWeight.HaviorCode), HaviorWeight.HaviorWeight);
+	//}
 
 	for (const FHaviorWeight HaviorWeight : HaviorWeightArray)
 	{
