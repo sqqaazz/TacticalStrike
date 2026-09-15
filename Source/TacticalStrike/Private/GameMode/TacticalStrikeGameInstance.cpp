@@ -152,7 +152,7 @@ UTacticalStrikeGameInstance::UTacticalStrikeGameInstance()
 	static ConstructorHelpers::FObjectFinder<UMaterialInstance> Basic_Material_EnergyRepeater(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/HoverVehicles/Materials/LampPole/MAT_LampPole.MAT_LampPole'"));
 	if (Basic_Material_EnergyRepeater.Succeeded())
 		BasicMat_EnergyRepeater = Basic_Material_EnergyRepeater.Object;
-	static ConstructorHelpers::FObjectFinder<UMaterialInstance> Basic_Material_ResourceGathering(TEXT("/Script/Engine.Material'/Game/3DModels/Buildings/MRowaBuildings/smeltery/source/Placeable.Placeable'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> Basic_Material_ResourceGathering(TEXT("/Script/Engine.Material'/Game/3DModels/Buildings/MRowaBuildings/smeltery/source/Placeable.Placeable'"));
 	if (Basic_Material_ResourceGathering.Succeeded())
 		BasicMat_ResourceGathering = Basic_Material_ResourceGathering.Object;
 

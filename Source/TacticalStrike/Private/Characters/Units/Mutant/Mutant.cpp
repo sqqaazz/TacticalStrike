@@ -13,7 +13,7 @@
 
 AMutant::AMutant()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	//PrimaryActorTick.bCanEverTick = true;
 	UnitType = 3;
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MutantMesh(TEXT("SkeletalMesh'/Game/3DModels/Character/Mutant/Mutant.Mutant'"));

@@ -50,8 +50,8 @@ EBTNodeResult::Type UBTTask_CommandAI_SetAIHavior::ExecuteTask(UBehaviorTreeComp
 		return EBTNodeResult::Succeeded;
 	}
 
-	//한 턴에 추가될 수 있는 명령의 최대 갯수 제한(결핍으로 인한 명령 추가는 제외) 
-	if (CommanderAI->TurnAIHaviorNumber < 1)
+	//한 턴에 추가될 수 있는 명령의 최대 갯수 제한, 최대 명령 대기열 갯수 제한(결핍으로 인한 명령 추가는 제외) 
+	if (CommanderAI->TurnAIHaviorNumber < 1 || CommanderAI->HaviorStateSequenceQueue.Num() > 6)
 		return EBTNodeResult::Succeeded;
 	CommanderAI->TurnAIHaviorNumber--;
 

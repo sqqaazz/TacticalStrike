@@ -13,6 +13,8 @@
 UBTTask_DefaultUnit_GetTarget::UBTTask_DefaultUnit_GetTarget()
 {
 	NodeName = TEXT("DefaultUnit_GetTarget");
+
+	//UnitSightRange = 2000.0f;
 }
 
 EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -29,7 +31,7 @@ EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComp
 
 	if (UnitFinalTarget == nullptr || TeamMainAI == nullptr || DefaultUnit == nullptr)
 		return EBTNodeResult::Failed;
-	//UE_LOG(LogTemp, Log, TEXT("vtttttttttccccc"));
+	
 	if (SightEnemyArr.IsEmpty())
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
@@ -40,8 +42,11 @@ EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComp
 
 	for (AActor* SightEnemy : SightEnemyArr)
 	{
-		if (UnitRange < DefaultUnit->GetDistanceTo(SightEnemy))
+		if (GameConstants::UnitSightRange < DefaultUnit->GetDistanceTo(SightEnemy))
 			continue;
+
+		//if (UnitRange < DefaultUnit->GetDistanceTo(SightEnemy))
+		//	continue;
 
 		if (DefaultUnit->GetDistanceTo(SightEnemy) <= DefaultUnit->GetDistanceTo(UnitFinalTarget))
 			UnitFinalTarget = SightEnemy;
@@ -49,10 +54,15 @@ EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComp
 		//UE_LOG(LogTemp, Log, TEXT("%f"), DefaultUnit->GetDistanceTo(SightEnemy));
 
 	}
-	if (DefaultUnit->GetDistanceTo(UnitFinalTarget) < UnitRange)
+	if (DefaultUnit->GetDistanceTo(UnitFinalTarget) <= UnitRange)
 	{
 		//UE_LOG(LogTemp, Log, TEXT("%f"), DefaultUnit->GetDistanceTo(UnitFinalTarget));
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
+	}
+	else
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
 	}
 

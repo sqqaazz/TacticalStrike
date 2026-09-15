@@ -12,7 +12,7 @@
 
 ASwordMan::ASwordMan()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	//PrimaryActorTick.bCanEverTick = true;
 	UnitType = 2;
 
 	SwordMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordMan_Weapon"));

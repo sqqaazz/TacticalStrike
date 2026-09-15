@@ -8,7 +8,7 @@
 
 UBTTask_Ready::UBTTask_Ready()
 {
-	NodeName = TEXT("Detect_Ready");
+	NodeName = TEXT("Detect_Enemy");
 }
 
 EBTNodeResult::Type UBTTask_Ready::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

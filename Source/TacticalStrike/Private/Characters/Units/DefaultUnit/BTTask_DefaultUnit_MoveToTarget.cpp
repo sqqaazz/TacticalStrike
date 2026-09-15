@@ -30,7 +30,8 @@ EBTNodeResult::Type UBTTask_DefaultUnit_MoveToTarget::ExecuteTask(UBehaviorTreeC
 	DefaultUnit->MovingStopDelegate.AddUniqueDynamic(this, &UBTTask_DefaultUnit_MoveToTarget::EndMove);
 
 	//FVector MovingLocation = OwnerComp.GetBlackboardComponent()->GetValueAsVector(ADefaultUnitAI::MovingPosKey);
-	UnitTarget = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::FinalTargetKey));
+	//UnitTarget = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::FinalTargetKey));
+	UnitTarget = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
 	if (UnitTarget == nullptr)
 		return EBTNodeResult::Failed;
 	FVector MovingLocation = UnitTarget->GetActorLocation();

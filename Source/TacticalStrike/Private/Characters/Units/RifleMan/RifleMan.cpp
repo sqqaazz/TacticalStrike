@@ -12,7 +12,7 @@
 
 ARifleMan::ARifleMan()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
 	UnitType = 1;
 
 	RifleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RifleMan_Weapon"));

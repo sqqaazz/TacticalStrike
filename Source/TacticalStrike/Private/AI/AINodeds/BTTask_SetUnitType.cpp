@@ -51,6 +51,9 @@ EBTNodeResult::Type UBTTask_SetUnitType::ExecuteTask(UBehaviorTreeComponent& Own
 			//UE_LOG(LogTemp, Log, TEXT("i: %d, UnitTyype: %d"), i, UnitDataTable[i]->UnitType);
 			CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnObjectType = static_cast<ESpawnObject>(UnitDataTable[i]->UnitType);
 			OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, UnitDataTable[i]->UnitType);
+			//CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].SpawnObjectType = static_cast<ESpawnObject>(ESpawnObject::RifleMan);
+			//OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::UnitTypeKey, static_cast<int32>(ESpawnObject::RifleMan));
+
 			break;
 		}
 		else

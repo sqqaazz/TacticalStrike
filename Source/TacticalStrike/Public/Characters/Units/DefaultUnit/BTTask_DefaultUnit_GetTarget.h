@@ -27,4 +27,6 @@ private:
 	UPROPERTY()
 	class UTacticalStrikeGameInstance* GameInstance;
 	FUnitTableRow* UnitDataInfo;
+	//UPROPERTY()
+	//float UnitSightRange;
 };

@@ -12,6 +12,15 @@ struct FBuildingTableRow;
 struct FUpgradeTableRow;
 class UDataTable;
 
+namespace GameConstants
+{
+	inline constexpr int32 TileSize = 100;
+	inline constexpr float UnitSightRange = 2000.0f;
+}
+
+
+
+
 UENUM(BlueprintType)
 enum class ESpawnUnit : uint8
 {

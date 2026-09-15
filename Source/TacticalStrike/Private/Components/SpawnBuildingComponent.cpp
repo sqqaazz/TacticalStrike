@@ -3,6 +3,7 @@
 
 #include "Components/SpawnBuildingComponent.h"
 #include "Controllers/CommanderController.h"
+#include "AI/AIController/CommanderAI.h"
 #include "Objects/GridActor.h"
 #include "DataTables/BuildingDataTables.h"
 #include "Kismet/GameplayStatics.h"
@@ -39,7 +40,8 @@ USpawnBuildingComponent::USpawnBuildingComponent()
 		Building_Crystal = Spawning_Crystal.Class;
 
 	OwnerController = Cast<ACommanderController>(GetOwner());
-	//if (CommanderController != nullptr)
+	if (OwnerController == nullptr)
+		OwnerController = Cast<ACommanderAI>(GetOwner());
 
 	GameInstance = Cast<UTacticalStrikeGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 

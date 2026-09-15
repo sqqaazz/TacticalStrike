@@ -9,7 +9,7 @@
 
 UBTTask_Idle::UBTTask_Idle()
 {
-	NodeName = TEXT("DontDetect_Idle");
+	NodeName = TEXT("DontDetect_Enemy");
 }
 
 EBTNodeResult::Type UBTTask_Idle::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

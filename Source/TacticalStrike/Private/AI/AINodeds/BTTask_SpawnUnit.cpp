@@ -41,7 +41,10 @@ EBTNodeResult::Type UBTTask_SpawnUnit::ExecuteTask(UBehaviorTreeComponent& Owner
 	}
 
 	if (HaviorStateSequenceQueue.SpawnBuilding->ObjectInfo.ObjectState == EObjectState::DeActivated)
+	{
+		CommanderAI->HaviorStateSequenceQueue[AIHaviorSequenceIndex].IsHaviorChecked = true;
 		return EBTNodeResult::Succeeded;
+	}
 
 	if (HaviorStateSequenceQueue.AIHaviorState == EAIBehaviorState::Failed_Lack_Resource)
 	{

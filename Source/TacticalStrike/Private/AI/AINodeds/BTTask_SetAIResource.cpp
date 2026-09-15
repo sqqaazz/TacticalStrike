@@ -57,7 +57,7 @@ EBTNodeResult::Type UBTTask_SetAIResource::ExecuteTask(UBehaviorTreeComponent& O
 	}
 
 	uint32 CurrentResourceAmount = OwnerComp.GetBlackboardComponent()->GetValueAsInt(ACommanderAI::ResourceKey);
-	uint32 NewResourceAmount = CurrentResourceAmount + (GatheringCrystalArr.Num() * 5);
+	uint32 NewResourceAmount = CurrentResourceAmount + (GatheringCrystalArr.Num() * 5) + 30;
 	OwnerComp.GetBlackboardComponent()->SetValueAsInt(ACommanderAI::ResourceKey, NewResourceAmount);
 	//UE_LOG(LogTemp, Log, TEXT("%d"), CurrentResourceAmount + 30);
 	return EBTNodeResult::Succeeded;
