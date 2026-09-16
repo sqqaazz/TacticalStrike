@@ -35,6 +35,7 @@ EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComp
 	if (SightEnemyArr.IsEmpty())
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInSight, false);
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
 		return EBTNodeResult::Succeeded;
 	}
@@ -58,11 +59,13 @@ EBTNodeResult::Type UBTTask_DefaultUnit_GetTarget::ExecuteTask(UBehaviorTreeComp
 	{
 		//UE_LOG(LogTemp, Log, TEXT("%f"), DefaultUnit->GetDistanceTo(UnitFinalTarget));
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInSight, true);
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
 	}
 	else
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInRange, false);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ADefaultUnitAI::InPlace_bIsTargetInSight, true);
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(ADefaultUnitAI::CurTargetKey, UnitFinalTarget);
 	}
 

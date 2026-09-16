@@ -166,6 +166,11 @@ void ASwordMan::EquipWeapon()
 {
 	SwordMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HandSocket);
 	const USkeletalMeshSocket* EquipWeaponSocekt = GetMesh()->GetSocketByName(HandSocket);
+
+	SwordMesh->SetRelativeLocation(FVector(-35.0f, -5.0f, 165.0f));
+	SwordMesh->SetRelativeRotation(FRotator(10.0f, 15.0f, 180.0f));
+
+
 	//if (EquipWeaponSocekt != nullptr)
 	//	EquipWeaponSocekt->AttachActor(nullptr, SwordMesh);
 	// 
@@ -183,8 +188,8 @@ void ASwordMan::EquipWeapon()
 
 void ASwordMan::UnEquipWeapon()
 {
-	//SwordMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, BackSocket);
-	SwordMesh->SetupAttachment(GetMesh(), BackSocket);
+	SwordMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, BackSocket);
+	//SwordMesh->SetupAttachment(GetMesh(), BackSocket);
 	SwordMesh->SetRelativeLocation(FVector(-130.0f, -20.0f, -15.0f));
 	SwordMesh->SetRelativeRotation(FRotator(-80.0f, 0.0f, 0.0f));
 }

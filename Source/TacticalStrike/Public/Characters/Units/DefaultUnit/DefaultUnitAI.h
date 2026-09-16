@@ -43,8 +43,11 @@ public:
 
 	//현재 위치에서 사거리 내의 타깃이 있는지 여부를 체크하는 키
 	static const FName InPlace_bIsTargetInRange;
+	//유닛의 시야에 타겟이 있는지 여부를 체크하는 키
+	static const FName InPlace_bIsTargetInSight;
 
 	static const FName Move_bIsTargetInRange;
+
 
 	void StopAI();
 

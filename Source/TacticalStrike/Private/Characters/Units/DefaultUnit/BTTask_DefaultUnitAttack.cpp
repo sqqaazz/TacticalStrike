@@ -31,7 +31,7 @@ EBTNodeResult::Type UBTTask_DefaultUnitAttack::ExecuteTask(UBehaviorTreeComponen
 	ADefaultUnit* DefaultUnit = Cast<ADefaultUnit>(OwnerComp.GetAIOwner()->GetPawn());
 	AActor* Target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));
 	DefaultUnit->OnAttackEnd.AddUniqueDynamic(this, &UBTTask_DefaultUnitAttack::FinishUnithaviorTask);
-
+	UE_LOG(LogTemp, Log, TEXT("Name: %s"), *Target->GetName());
 	if (Cast<ADefaultUnit>(Target) != nullptr)
 	{
 		ADefaultUnit* UnitTarget = Cast<ADefaultUnit>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ADefaultUnitAI::CurTargetKey));

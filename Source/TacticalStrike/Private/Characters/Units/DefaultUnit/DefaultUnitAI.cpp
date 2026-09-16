@@ -29,7 +29,9 @@ const FName ADefaultUnitAI::DefaultUnitAI_bSightTriggerActivatedKey(TEXT("Defaul
 
 const FName ADefaultUnitAI::ActionCountKey(TEXT("ActionCountKey"));
 const FName ADefaultUnitAI::InPlace_bIsTargetInRange(TEXT("InPlace_bIsTargetInRange"));
+const FName ADefaultUnitAI::InPlace_bIsTargetInSight(TEXT("InPlace_bIsTargetInSight"));
 const FName ADefaultUnitAI::Move_bIsTargetInRange(TEXT("Move_bIsTargetInRange"));
+
 
 ADefaultUnitAI::ADefaultUnitAI()
 {
@@ -104,6 +106,7 @@ void ADefaultUnitAI::OnPossess(APawn* InPawn)
 		GetBlackboardComponent()->SetValueAsBool(UnitActionTriggerKey, false);
 		GetBlackboardComponent()->SetValueAsBool(DefaultUnitAI_bSightTriggerActivatedKey, false);
 		GetBlackboardComponent()->SetValueAsBool(InPlace_bIsTargetInRange, false);
+		GetBlackboardComponent()->SetValueAsBool(InPlace_bIsTargetInSight, false);
 		GetBlackboardComponent()->SetValueAsBool(Move_bIsTargetInRange, false);
 
 		GetBlackboardComponent()->SetValueAsInt(ActionCountKey, 0);
