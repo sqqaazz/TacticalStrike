@@ -42,8 +42,12 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	UPROPERTY()
 	ATeamMainAI* TeamMainAIInstance;
+
+	UPROPERTY()
+	bool IsAttachToTarget;
+	void AttachToTarget(float DeltaTime, FVector TargetLocation);
 
 private:
 	void MoveForward(float AxisValue);

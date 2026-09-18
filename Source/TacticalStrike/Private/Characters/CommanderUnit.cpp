@@ -60,6 +60,8 @@ ACommanderUnit::ACommanderUnit()
 	SpringArmLength = 0.0f;
 
 	CommanderMesh->SetVisibility(false);
+
+	IsAttachToTarget = false;
 }
 
 // Called when the game starts or when spawned
@@ -148,6 +150,15 @@ void ACommanderUnit::ViewTile(const FInputActionInstance& Instance)
 	{
 		CommanderController->ViewGridTile();
 	}
+}
+
+void ACommanderUnit::AttachToTarget(float DeltaTime, FVector TargetLocation)
+{
+	FVector DesiredLocation = TargetLocation + FVector(4600.f, 0.f, 1700.f);
+
+	FVector NewLocation = FMath::VInterpTo(TargetLocation, DesiredLocation, DeltaTime, 5.0f);
+
+	SetActorLocation(NewLocation);
 }
 
 void ACommanderUnit::LeftMouseClicked(const FInputActionInstance& Instance)
